@@ -1,1 +1,5 @@
 .vercel
+
+# node.js
+#
+node_modules/

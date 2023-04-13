@@ -1,6 +1,5 @@
 import { XStack, YStack, Text, styled, ColorTokens } from "tamagui"
 import { Grid, Edit3, BookOpen } from "@tamagui/lucide-icons"
-import { createParam } from "solito"
 import { Link } from "solito/link"
 import { Button, H1 } from "@my/ui"
 
@@ -10,7 +9,11 @@ const borderWidth = 2
 const borderColor = 'rgba(0,0,0,.15)'
 const sidePadding = 16
 
-const { useParams } = createParam()
+enum routes {
+  home = '/',
+  edit = '/edit',
+  notebook = '/notebook'
+}
 
 const NavLink = ({ children, href }) => (
   <Link 
@@ -44,13 +47,13 @@ export const WebNavigation = ({ children, pathname }) => {
           w={width}
           brw={borderWidth}
           brc={borderColor}>
-            <NavLink href='/'>
+            <NavLink href={routes.home}>
               <Grid/>
             </NavLink>
-            <NavLink href='/edit'>
+            <NavLink href={routes.edit}>
               <Edit3/>
             </NavLink>
-            <NavLink href='/notebook'>
+            <NavLink href={routes.notebook}>
               <BookOpen/>
             </NavLink>
         </YStack>
@@ -62,14 +65,14 @@ export const WebNavigation = ({ children, pathname }) => {
   )
 }
 
-const getTitle = pathname => {
+const getTitle = (pathname: string) => {
   console.log('name',pathname)
   switch(pathname) {
-    case '/':
+    case routes.home:
       return 'Dashboard';
-    case '/edit':
+    case routes.edit:
       return 'Edit Metrics'
-    case '/notebook':
+    case routes.notebook:
       return 'Notebook'
     default:
       return 'Page not found'

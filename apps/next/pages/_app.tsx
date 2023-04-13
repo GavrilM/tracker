@@ -8,6 +8,7 @@ import { Provider } from 'app/provider'
 import Head from 'next/head'
 import React, { startTransition } from 'react'
 import type { SolitoAppProps } from 'solito'
+import { WebNavigation } from 'app/navigation/web'
 
 function MyApp({ Component, pageProps }: SolitoAppProps) {
   return (
@@ -18,7 +19,9 @@ function MyApp({ Component, pageProps }: SolitoAppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ThemeProvider>
-        <Component {...pageProps} />
+        <WebNavigation>
+          <Component {...pageProps} />
+        </WebNavigation>
       </ThemeProvider>
     </>
   )

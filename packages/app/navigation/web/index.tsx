@@ -1,6 +1,6 @@
 import { XStack, YStack, Text, styled, ColorTokens } from "tamagui"
 import { Grid, Edit3, BookOpen } from "@tamagui/lucide-icons"
-import { Link } from "solito/link"
+import { Link, useLink } from "solito/link"
 import { Button, H1 } from "@my/ui"
 
 const width = 60
@@ -38,15 +38,9 @@ export const WebNavigation = ({ children, pathname }) => {
         pr={sidePadding}>
         <H1>{getTitle(pathname)}</H1>
         <XStack space>
-          <Link href={routes.addgoal}>
-            <Button color="lightblue">Add Goal</Button>
-          </Link>
-          <Link href={routes.addcell}>
-            <Button href={routes.addcell} color="lightblue">Add Cell</Button>
-          </Link>
-          <Link href={routes.collect}>
-            <Button href={routes.collect} color="green">Collect Data</Button>
-          </Link>
+            <Button {...useLink({href: routes.addgoal})} color="lightblue">Add Goal</Button>
+            <Button {...useLink({href: routes.addcell})} color="lightblue">Add Cell</Button>
+            <Button {...useLink({href: routes.collect})} color="green">Collect Data</Button>
         </XStack>
       </XStack>
       <XStack f={1}>

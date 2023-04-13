@@ -1,0 +1,1 @@
+export { NotebookScreen as default } from 'app/features/notebook/screen'

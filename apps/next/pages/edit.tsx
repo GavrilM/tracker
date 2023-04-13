@@ -1,0 +1,1 @@
+export { EditScreen as default } from 'app/features/edit/screen'

@@ -6,8 +6,8 @@ import { Button, H1 } from "@my/ui"
 const width = 60
 const headerHeight = 100
 const borderWidth = 2
-const borderColor = 'rgba(0,0,0,.15)'
-const sidePadding = 16
+const borderColor = 'rgba(255,255,255,.15)'
+const padding = 16
 
 enum routes {
   home = '/',
@@ -29,13 +29,14 @@ const NavLink = ({ children, href }) => (
 export const WebNavigation = ({ children, pathname }) => {
   return (
     <YStack f={1}>
-      <XStack 
+      <XStack
         ai="center"
         jc="space-between"
-        width={'100%'}
         height={headerHeight}
-        pl={width+sidePadding}
-        pr={sidePadding}>
+        pl={width+padding}
+        pr={padding*2}
+        bbc={borderColor}
+        bbw={borderWidth}>
         <H1>{getTitle(pathname)}</H1>
         <XStack space>
             <Button {...useLink({href: routes.addgoal})} color="lightblue">Add Goal</Button>
@@ -60,7 +61,7 @@ export const WebNavigation = ({ children, pathname }) => {
               <BookOpen/>
             </NavLink>
         </YStack>
-        <XStack f={1} px={sidePadding}>
+        <XStack f={1} px={padding} pt={padding}>
           {children}
         </XStack>
       </XStack>

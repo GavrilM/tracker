@@ -1,58 +1,23 @@
 import {
-  Anchor,
   Button,
-  H1,
-  Input,
-  Paragraph,
-  Separator,
+  Card,
   Sheet,
   XStack,
-  YStack,
   useToast,
 } from '@my/ui'
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons'
 import React, { useState } from 'react'
-import { useLink } from 'solito/link'
 
 export function HomeScreen() {
-  const linkProps = useLink({
-    href: '/user/nate',
-  })
-  const toast = useToast()
-
+  let list: Array<React.ReactElement> = []
+  for (let i = 0; i < 10; i++) {
+    list.push(<Card key={i} size="$4" bordered width={225} height={225} theme="alt1" mr="$4" mb="$4"/>)
+  }
+  
   return (
-    <YStack f={1} jc="center" ai="center" p="$4" space>
-      <YStack space="$4" maw={600}>
-        <H1 ta="center">Welcome to Tamagui.</H1>
-        <Paragraph ta="center">
-          Here's a basic starter to show navigating from one screen to another. This screen uses the
-          same code on Next.js and React Native.
-        </Paragraph>
-
-        <Separator />
-        <Paragraph ta="center">
-          Made by{' '}
-          <Anchor color="$color12" href="https://twitter.com/natebirdman" target="_blank">
-            @natebirdman
-          </Anchor>
-          ,{' '}
-          <Anchor
-            color="$color12"
-            href="https://github.com/tamagui/tamagui"
-            target="_blank"
-            rel="noreferrer"
-          >
-            give it a ⭐️
-          </Anchor>
-        </Paragraph>
-      </YStack>
-
-      <XStack>
-        <Button {...linkProps}>Link to user</Button>
-      </XStack>
-
-      <SheetDemo />
-    </YStack>
+    <XStack f={1} flexWrap='wrap' ac="flex-start">
+      {list}
+    </XStack>
   )
 }
 

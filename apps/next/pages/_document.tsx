@@ -30,7 +30,7 @@ export default class Document extends NextDocument {
         <Head>
           <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         </Head>
-        <body>
+        <body style={{overflowX: "hidden"}}>
           <Main />
           <NextScript />
         </body>

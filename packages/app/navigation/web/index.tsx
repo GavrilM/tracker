@@ -12,7 +12,10 @@ const sidePadding = 16
 enum routes {
   home = '/',
   edit = '/edit',
-  notebook = '/notebook'
+  notebook = '/notebook',
+  collect = '/collect',
+  addcell = '/addcell',
+  addgoal = '/addgoal'
 }
 
 const NavLink = ({ children, href }) => (
@@ -35,9 +38,15 @@ export const WebNavigation = ({ children, pathname }) => {
         pr={sidePadding}>
         <H1>{getTitle(pathname)}</H1>
         <XStack space>
-          <Button color="lightblue">Add Goal</Button>
-          <Button color="lightblue">Add Cell</Button>
-          <Button color="green">Collect Data</Button>
+          <Link href={routes.addgoal}>
+            <Button color="lightblue">Add Goal</Button>
+          </Link>
+          <Link href={routes.addcell}>
+            <Button href={routes.addcell} color="lightblue">Add Cell</Button>
+          </Link>
+          <Link href={routes.collect}>
+            <Button href={routes.collect} color="green">Collect Data</Button>
+          </Link>
         </XStack>
       </XStack>
       <XStack f={1}>
@@ -74,6 +83,12 @@ const getTitle = (pathname: string) => {
       return 'Edit Metrics'
     case routes.notebook:
       return 'Notebook'
+    case routes.collect:
+      return 'Collect Data'
+    case routes.addcell:
+      return 'Add Cell'
+    case routes.addgoal:
+      return 'Add Goal'
     default:
       return 'Page not found'
   }

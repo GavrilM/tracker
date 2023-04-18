@@ -1,18 +1,31 @@
 import {
   Button,
   Card,
+  H2,
   Sheet,
+  Spinner,
   XStack,
   useToast,
 } from '@my/ui'
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons'
+import { useMetrics } from 'app/hooks'
 import React, { useState } from 'react'
 
 export function HomeScreen() {
-  let list: Array<React.ReactElement> = []
-  for (let i = 0; i < 10; i++) {
-    list.push(<Card key={i} size="$4" bordered width={225} height={225} theme="alt1" mr="$4" mb="$4"/>)
+  const {loading, data} = useMetrics()
+
+  if (loading) {
+    return <Spinner />
   }
+
+  console.log(data)
+  let list = data.map((m, i) => (
+    <Card key={i} size="$4" bordered width={225} height={225} theme="alt1" mr="$4" mb="$4" ai="center">
+      <Card.Header/>
+      <H2 f={1}>{m.name}</H2>
+    </Card>
+  ))
+
   
   return (
     <XStack f={1} flexWrap='wrap' ac="flex-start">

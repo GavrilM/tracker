@@ -1,7 +1,9 @@
 import { XStack, YStack, Text, styled, ColorTokens } from "tamagui"
-import { Grid, Edit3, BookOpen } from "@tamagui/lucide-icons"
+import { Grid, Edit3, BookOpen, LogOut } from "@tamagui/lucide-icons"
 import { Link, useLink } from "solito/link"
 import { Button, H1 } from "@my/ui"
+import { useRealmApp } from "app/provider/realm"
+import { Pressable } from "react-native"
 
 const width = 60
 const headerHeight = 100
@@ -9,8 +11,9 @@ const borderWidth = 2
 const borderColor = 'rgba(255,255,255,.15)'
 const padding = 16
 
-enum routes {
+export enum routes {
   home = '/',
+  login = '/login',
   edit = '/edit',
   notebook = '/notebook',
   collect = '/collect',
@@ -27,6 +30,16 @@ const NavLink = ({ children, href }) => (
 )
 
 export const WebNavigation = ({ children, pathname }) => {
+  const { logOut } = useRealmApp()
+
+  const goalLink = useLink({href: routes.addgoal})
+  const cellLink = useLink({href: routes.addcell})
+  const collectLink = useLink({href: routes.collect})
+  
+  if (pathname === routes.login) {
+    return <>{children}</>
+  }
+
   return (
     <YStack f={1}>
       <XStack
@@ -39,27 +52,23 @@ export const WebNavigation = ({ children, pathname }) => {
         bbw={borderWidth}>
         <H1>{getTitle(pathname)}</H1>
         <XStack space>
-            <Button {...useLink({href: routes.addgoal})} color="lightblue">Add Goal</Button>
-            <Button {...useLink({href: routes.addcell})} color="lightblue">Add Cell</Button>
-            <Button {...useLink({href: routes.collect})} color="green">Collect Data</Button>
+            <Button {...goalLink} color="lightblue">Add Goal</Button>
+            <Button {...cellLink} color="lightblue">Add Cell</Button>
+            <Button {...collectLink} color="green">Collect Data</Button>
         </XStack>
       </XStack>
       <XStack f={1}>
-        <YStack // sidebar
-          ai="center" 
-          pt={width/4}
-          w={width}
-          brw={borderWidth}
-          brc={borderColor}>
-            <NavLink href={routes.home}>
-              <Grid/>
-            </NavLink>
-            <NavLink href={routes.edit}>
-              <Edit3/>
-            </NavLink>
-            <NavLink href={routes.notebook}>
-              <BookOpen/>
-            </NavLink>
+        {/* sidebar */}
+        <YStack jc="space-between" ai="center" brw={borderWidth} brc={borderColor}> 
+          <YStack 
+            ai="center" 
+            pt={width/4}
+            w={width}>
+              <NavLink href={routes.home}><Grid/></NavLink>
+              <NavLink href={routes.edit}><Edit3/></NavLink>
+              <NavLink href={routes.notebook}><BookOpen/></NavLink>
+          </YStack>
+          <Pressable onPress={logOut} style={{paddingBottom: 15}}><LogOut/></Pressable>
         </YStack>
         <XStack f={1} px={padding} pt={padding}>
           {children}
@@ -70,7 +79,6 @@ export const WebNavigation = ({ children, pathname }) => {
 }
 
 const getTitle = (pathname: string) => {
-  console.log('name',pathname)
   switch(pathname) {
     case routes.home:
       return 'Dashboard';

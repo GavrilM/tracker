@@ -8,17 +8,17 @@ import {
   useToast,
 } from '@my/ui'
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons'
-import { useMetrics } from 'app/hooks'
+import { useMetrics, useUserorRedirect } from 'app/hooks'
 import React, { useState } from 'react'
 
 export function HomeScreen() {
+  const user = useUserorRedirect()
   const {loading, data} = useMetrics()
 
-  if (loading) {
+  if (loading || !user) {
     return <Spinner />
   }
 
-  console.log(data)
   let list = data.map((m, i) => (
     <Card key={i} size="$4" bordered width={225} height={225} theme="alt1" mr="$4" mb="$4" ai="center">
       <Card.Header/>

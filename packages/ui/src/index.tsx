@@ -3,3 +3,7 @@ export * from '@tamagui/toast'
 export * from './CustomToast'
 export * from './MyComponent'
 export { config } from './tamagui.config'
+
+export { FormButton } from './form/FormButton'
+export { FormCard } from './form/FormCard'
+export { TextInput } from './form/TextInput'

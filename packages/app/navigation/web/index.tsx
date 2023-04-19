@@ -1,7 +1,7 @@
 import { XStack, YStack, Text, styled, ColorTokens } from "tamagui"
 import { Grid, Edit3, BookOpen, LogOut } from "@tamagui/lucide-icons"
 import { Link, useLink } from "solito/link"
-import { Button, H1 } from "@my/ui"
+import { FormButton, H1 } from "@my/ui"
 import { useRealmApp } from "app/provider/realm"
 import { Pressable } from "react-native"
 
@@ -52,9 +52,9 @@ export const WebNavigation = ({ children, pathname }) => {
         bbw={borderWidth}>
         <H1>{getTitle(pathname)}</H1>
         <XStack space>
-            <Button {...goalLink} color="lightblue">Add Goal</Button>
-            <Button {...cellLink} color="lightblue">Add Cell</Button>
-            <Button {...collectLink} color="green">Collect Data</Button>
+            <FormButton {...goalLink} type="primary">Add Goal</FormButton>
+            <FormButton {...cellLink} type="primary">Add Cell</FormButton>
+            <FormButton {...collectLink} type="save">Collect Data</FormButton>
         </XStack>
       </XStack>
       <XStack f={1}>

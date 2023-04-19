@@ -20,7 +20,7 @@ export function TextInput({placeholder, onChangeText, validate, inputProps}: Tex
   const handleBlur = () => {
     setFocused(false)
     if(validate && !validate(value)) {
-      // show error
+      // TODO: show error
     }
   }
 
@@ -31,6 +31,7 @@ export function TextInput({placeholder, onChangeText, validate, inputProps}: Tex
     if(isFocused)
       handleFocus()
   })
+  // TODO: replace with theme colors
   let labelStyle = {
     mt: '$-2',
     fos: '$2.5'

@@ -3,7 +3,6 @@ import { Grid, Edit3, BookOpen, LogOut } from "@tamagui/lucide-icons"
 import { Link, useLink } from "solito/link"
 import { FormButton, H1 } from "@my/ui"
 import { useRealmApp } from "app/provider/realm"
-import { Pressable } from "react-native"
 
 const width = 60
 const headerHeight = 100
@@ -68,7 +67,7 @@ export const WebNavigation = ({ children, pathname }) => {
               <NavLink href={routes.edit}><Edit3/></NavLink>
               <NavLink href={routes.notebook}><BookOpen/></NavLink>
           </YStack>
-          <Pressable onPress={logOut} style={{paddingBottom: 15}}><LogOut/></Pressable>
+          <XStack onPress={logOut} style={{paddingBottom: 15}}><LogOut/></XStack>
         </YStack>
         <XStack f={1} px={padding} pt={padding}>
           {children}

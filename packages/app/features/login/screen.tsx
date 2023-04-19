@@ -2,7 +2,6 @@ import { Card, Form, Input, H2, XStack, YStack, Label, Button, SizableText, Para
 import * as Realm from "realm-web"
 import { useRealmApp } from "app/provider/realm";
 import { useEffect, useState } from "react";
-import { Pressable } from "react-native";
 import { useRouter } from "solito/router";
 import { routes } from "app/navigation/web";
 
@@ -82,13 +81,13 @@ export function LoginScreen() {
           <Form.Trigger asChild>
             <Button size="$4" mt={10} mb={20}>{isSignup ? "Create Account" : "Log In"}</Button>
           </Form.Trigger>
-          <Pressable onPress={() => toggleIsSignup()}>
+          <XStack onPress={toggleIsSignup}>
             <SizableText style={{textDecorationLine: "underline"}}>
               {isSignup
                 ? "Already have an account? Log In"
                 : "Sign up for an account"}
             </SizableText>
-          </Pressable>
+          </XStack>
         </Form>
       </Card>
     </YStack>

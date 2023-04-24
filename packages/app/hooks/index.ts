@@ -5,10 +5,20 @@ export function useUserorRedirect() {
   return null;
 }
 
+export function useUserData() {
+  return {
+    loading: false,
+    userData: { user_id: '', boards: [] }
+  }
+}
+
 export const useMetrics = (): QueryResult<Array<Metric>> => {
-  console.log('mobile')
   return {
     loading: false,
     data: []
   }
+}
+
+export const useCreateMetric = metric => {
+
 }

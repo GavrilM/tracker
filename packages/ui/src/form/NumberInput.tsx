@@ -1,39 +1,57 @@
 import { MinusCircle, PlusCircle } from '@tamagui/lucide-icons'
 import { useState } from 'react'
-import { Input, SizableText, Slider, XStack, YStack } from "tamagui"
+import { Input, Label, SizableText, Slider, XStack, YStack } from "tamagui"
 
 type NumberInputProps = {
+  autofocus?: boolean,
+  defaultValue?: number
   min?: number,
   max?: number,
   minLabel?: string,
   maxLabel?: string,
   units?: string,
-  validate?: (string) => boolean
+  validate?: (number) => boolean
+  onChange: (number) => void,
 }
 
 export function NumberInput({
+  autofocus,
+  defaultValue,
   min,
   minLabel,
   max,
   maxLabel,
   units,
-  validate
+  validate,
+  onChange,
 }: NumberInputProps) {
+  const isNumber = v =>  !isNaN(v) && !isNaN(parseFloat(v))
   const isBounded = min != undefined && max != undefined
-  const defaultValue = isBounded ? Math.round((max-min)/2) : 0
+  //@ts-ignore
+  let initalValue = defaultValue ? defaultValue : isBounded ? Math.round((max-min)/2+min) : undefined
   const stepValue = !isBounded || max-min > 10 ? 1 : .5
+  
+  const [value, setValue] = useState(initalValue)
+  const [errorMessage, setError] = useState("")
+  //@ts-ignore 
+  const canDecrement = isNumber(value) && (min == undefined || value - stepValue >= min)
+  //@ts-ignore
+  const canIncrement = isNumber(value) && (max == undefined ||  value + stepValue <= max)
 
-  const [value, setValue] = useState(defaultValue)
-  const [error, setError] = useState("")
-
-  const canDecrement = min == undefined || value - stepValue >= min
-  const canIncrement = max == undefined || value + stepValue <= max
-
-  const decrement = () => setValue(canDecrement ? value - stepValue : value)
-  const increment = () => setValue(canIncrement ? value + stepValue : value)
-  const isNumber = v =>  v === "" || (!isNaN(v) && !isNaN(parseFloat(v)))
-  const checkValid = v => {
-    if(!isNumber(v)){
+  const saveValue = v => {
+    setValue(v)
+    onChange(v)
+  }
+  //@ts-ignore 
+  const decrement = () => saveValue(canDecrement ? value - stepValue : value)
+  //@ts-ignore 
+  const increment = () => saveValue(canIncrement ? value + stepValue : value)
+  const handleChange = v => {
+    if(v === ""){
+      setError("")
+      saveValue(undefined)
+      return
+    } else if (!isNumber(v)){
       return
     } else if (validate && !validate(v)) {
       setError("Please enter a valid number")
@@ -48,25 +66,42 @@ export function NumberInput({
     } else {
       setError("")
     }
-    setValue(parseFloat(v))
+    saveValue(newValue)
   }
 
+  const sliderValue = value ? [value] : undefined
+  let label = <></>
+  if(errorMessage)
+    label = <SizableText position='absolute' color="$red10" top={56}>{errorMessage}</SizableText>
+  else if (units)
+    label = <Label>{units}</Label>
+
   return (
-    <YStack py={16}>
+    <YStack py={16} ai='center'>
       <XStack jc="center" ai="center">
-        {!error && canDecrement && 
-          <XStack onPress={decrement} mr={16}><MinusCircle color='$gray10'/></XStack>}
-        <Input placeholder="#" value={value === 0 || value ? value.toString() : ''} keyboardType='numeric' onChangeText={checkValid}
-          maw={60} ta="center" bc="white" color="black" bw={2} />
-        {!error && canIncrement &&
-          <XStack onPress={increment} ml={16}><PlusCircle color='$gray10'/></XStack>}
+        {!errorMessage && canDecrement 
+          ? <XStack onPress={decrement} mr={16}><MinusCircle color='$gray10'/></XStack>
+          : <XStack width={40}/>}
+
+        <Input placeholder="#" value={value === 0 || value ? value.toString() : ''} keyboardType='numeric' onChangeText={handleChange}
+          maw={80} ta="center" bc="white" color="black" bw={2} autoFocus={autofocus} 
+          focusStyle={{outlineColor: 'rgb(100,100,255)', outlineStyle: 'solid', outlineWidth:4}} />
+
+        {!errorMessage && canIncrement 
+          ? <XStack onPress={increment} ml={16}><PlusCircle color='$gray10'/></XStack>
+          : <XStack width={40}/>}
       </XStack>
-      {error ? <SizableText color="$red10">{error}</SizableText> : <SizableText>{units}</SizableText>}
+
+      {label}
+
       {isBounded &&
         <YStack f={1} mt={16} ai="center">
+          {/* Slider */}
           <XStack f={1} ai="center">
-            <SizableText color="black" mr={8}>{min}</SizableText>
-            <Slider min={min} max={max} step={stepValue} defaultValue={[defaultValue]} value={[value]}
+            <SizableText mr={8}>{min}</SizableText>
+
+            <Slider min={min} max={max} step={stepValue}
+              defaultValue={sliderValue} value={sliderValue}
               width={250}
               onValueChange={([v]) => setValue(v)}>
               <Slider.Track>
@@ -74,11 +109,13 @@ export function NumberInput({
               </Slider.Track>
               <Slider.Thumb index={0} circular />
             </Slider>
-            <SizableText color="black" ml={8}>{max}</SizableText>
+
+            <SizableText ml={8}>{max}</SizableText>
           </XStack>
+          {/* Slider Labels */}
           <XStack width="100%" jc="space-between">
-            <SizableText color="black">{minLabel}</SizableText>
-            <SizableText color="black">{maxLabel}</SizableText>
+            <SizableText>{minLabel}</SizableText>
+            <SizableText>{maxLabel}</SizableText>
           </XStack>
         </YStack>
       }

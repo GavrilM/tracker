@@ -5450,6 +5450,7 @@ __metadata:
     expo-constants: ^14.2.1
     expo-linking: ^3.2.3
     graphql: ^16.6.0
+    lodash: ^4.17.21
     realm-web: ^2.0.0
     solito: ^3.0.0
   languageName: unknown

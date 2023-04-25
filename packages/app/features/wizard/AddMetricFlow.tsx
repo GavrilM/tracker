@@ -41,7 +41,7 @@ const lyPeriodStrings = {
 }
 
 const isAggregate = t => t === MetricType.total || t === MetricType.average
-const doesReset = v => (v?.weekday || v?.month_date) != undefined
+const doesReset = v => v?.weekday != undefined || v?.month_date != undefined
 function getPeriod(view) {
   const uselyPeriods = view?.type === MetricType.streak || (isAggregate(view?.type) && doesReset(view))
   const periods = uselyPeriods ? lyPeriods : nPeriods 
@@ -96,15 +96,20 @@ export const AddMetricFlow: WizardFlow = [
         defaultValue?.base_unit != undefined ? defaultValue.base_unit : 1)
     
       const handleChange = (field, fn) => value => {
-        if(field === 'type' && value === MetricType.streak && base_unit === 0)
+        let tempBaseUnit = base_unit
+        if(field === 'type' && value === MetricType.streak && base_unit === 0) {
+          tempBaseUnit = 1
           setBaseUnit(1)
-        if(field === 'type' && isAggregate(value) && base_unit === 1)
+        }
+        if(field === 'type' && isAggregate(value) && base_unit === 1) {
+          tempBaseUnit = 0
           setBaseUnit(0)
+        }
         value = field === 'base_unit' ? periods[value]: value        
         fn(value)
         onChange(Object.assign({
           type,
-          base_unit,
+          base_unit: tempBaseUnit,
           weekday,
           month_date
         }, {[field]: value}))

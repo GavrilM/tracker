@@ -1,12 +1,12 @@
-import { FormCard, YStack, H1, TextInput, H3 } from "@my/ui"
+import { FormCard, YStack, H1, H3 } from "@my/ui"
 import { useState } from "react"
 import { pick } from "lodash"
 import { WizardFlow, WizardType } from "./WizardTypes"
 import { AddMetricFlow, AddMetricReview } from "./AddMetricFlow"
-import { useRealmApp } from "app/provider/realm"
-import { useCreateMetric, useUserData } from "app/hooks"
+import { useCollectPoint, useCreateMetric, useUserId } from "app/hooks"
 import { useRouter } from "solito/router"
 import { routes } from "app/navigation/web"
+import { CollectFlow, CollectReview } from "./CollectFlow"
 
 type WizardScreenProps = {
   wizardType: WizardType,
@@ -14,33 +14,46 @@ type WizardScreenProps = {
   icons?: Array<React.ReactNode>
 }
 
+const dummyMutation = () => [() => {}]
+
 const wizards = {
-  [WizardType.metric]: AddMetricFlow
+  [WizardType.metric]: AddMetricFlow,
+  [WizardType.collect]: CollectFlow
 }
 
 const reviewComponents = {
-  [WizardType.metric]: AddMetricReview
+  [WizardType.metric]: AddMetricReview,
+  [WizardType.collect]: CollectReview,
 }
 
-const useMutation = {
-  [WizardType.metric]: useCreateMetric
+const useCompleteMutation = {
+  [WizardType.metric]: useCreateMetric,
+  [WizardType.collect]: dummyMutation,
+}
+
+const useStepMutation = {
+  [WizardType.metric]: dummyMutation,
+  [WizardType.collect]: useCollectPoint
 }
 
 const submitText = {
-  [WizardType.metric]: "Create Cell"
+  [WizardType.metric]: "Create Cell",
+  [WizardType.collect]: "Save and Exit"
 }
 
 export const WizardScreen = ({ wizardType }: WizardScreenProps) => {
-  const app = useRealmApp()
-  const {loading, userData} = useUserData()
-  console.log(userData)
+  const userId = useUserId()
+  const withOwnerId = o => Object.assign({owner_id: {link: userId}}, o)
   const { replace } = useRouter()
 
-  const [mutationFn] = useMutation[wizardType]()
+  const [completeFn] = useCompleteMutation[wizardType]()
+  const [stepFn] = useStepMutation[wizardType]()
+  const steps: WizardFlow = wizards[wizardType]
+
   const [stepNum, setStepNum] = useState(0)
   let [stepValue, setStepValue] = useState<any>()
   const [formValue, setFormValue] = useState({})
-  const steps: WizardFlow = wizards[wizardType]
+  console.log(formValue)
 
   const backFn = field => () => {
     if(field)
@@ -59,6 +72,10 @@ export const WizardScreen = ({ wizardType }: WizardScreenProps) => {
       setFormValue(Object.assign(formValue, {[field]: stepValue}))
       setStepNum(stepNum + 1)
       setStepValue(formValue[steps[stepNum + 1]?.field])
+      if(stepValue)
+        stepFn({variables: {
+          data: withOwnerId(stepValue)
+        }})
     }
     const handleBack = stepNum > 0 ? backFn(field) : undefined
 
@@ -82,8 +99,8 @@ export const WizardScreen = ({ wizardType }: WizardScreenProps) => {
         title={'Review'}
         onBack={backFn(false)}
         onComplete={() => {
-          mutationFn({variables: {
-            data: Object.assign(formValue, {owner_id: {link: userData.user_id}}) 
+          completeFn({variables: {
+            data: withOwnerId(formValue) 
           }})
           replace(routes.home)
         }}

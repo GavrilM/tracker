@@ -1,16 +1,52 @@
-import { Label, MetricType, NumberInput, SelectInput, SizableText, TextInput, ToggleGroup, XStack, YStack } from "@my/ui";
+import {
+  Label,
+  MetricType,
+  MonthDateInput,
+  NumberInput,
+  RadioGroup, 
+  SelectInput,
+  SizableText,
+  TextInput,
+  Weekday, 
+  WeekdayInput, 
+  XStack,
+  YStack
+} from "@my/ui";
 import { WizardFlow } from "./WizardTypes";
-import { range } from "lodash"
 import { useEffect, useState } from "react";
 
-const weekdayOptions = {
-  'sun': 'Sundays', 
-  'mon': "Mondays",
-  'tue': "Tuesdays",
-  'wed': "Wednesdays",
-  'thu': "Thursdays",
-  'fri': "Fridays",
-  'sat': "Saturdays"
+const nPeriods = {
+  'Overall': 0,
+  '1 day': 1,
+  '7 day': 7,
+  '30 day': 30,
+}
+const lyPeriods = {
+  'Overall': 0,
+  'Daily': 1,
+  'Weekly': 7,
+  'Monthly': 30
+}
+const nPeriodStrings = {
+  0: 'Overall',
+  1: '1 day',
+  7: '7 day',
+  30: '30 day'
+}
+const lyPeriodStrings = {
+  0: 'Overall',
+  1: 'Daily',
+  7: 'Weekly',
+  30: 'Monthly'
+}
+
+const isAggregate = t => t === MetricType.total || t === MetricType.average
+const doesReset = v => (v.weekday || v.month_date) != undefined
+function getPeriod(view) {
+  const uselyPeriods = view.type === MetricType.streak || (isAggregate(view.type) && doesReset(view))
+  const periods = uselyPeriods ? lyPeriods : nPeriods 
+  const periodStrings = uselyPeriods ? lyPeriodStrings : nPeriodStrings
+  return [periods, periodStrings]
 }
 
 export const AddMetricFlow: WizardFlow = [
@@ -40,37 +76,89 @@ export const AddMetricFlow: WizardFlow = [
         [MetricType.graph]: 'See changes over time',
         [MetricType.lastvalue]: 'A number to beat',
         [MetricType.streak]: 'Don\'t break the chain',
-        [MetricType.total]: 'The sum over a time period'
+        [MetricType.total]: 'Add it all up'
       }
-      const periods = {
-        '1 day': 1,
-        '7 day': 7,
-        '30 day': 30
-      }
-      const showUnit = t => t !== MetricType.lastvalue
+      
+      const [type, setType] = useState(defaultValue?.type || MetricType.graph)
+      const [weekday, setWeekday] = useState(defaultValue?.weekday)
+      const [month_date, setMonthDate] = useState(defaultValue?.month_date)
+      const [reset, setReset] = useState(doesReset(defaultValue))
 
-      const [type, setType] = useState(defaultValue?.type || MetricType.average)
-      const [unit, setBaseUnit] = useState(defaultValue ? `${defaultValue?.base_unit} day` : '1 day')
-      const handleUnitChange = value => {
-        setBaseUnit(value)
-        onChange({ type, base_unit: periods[value] })
+      const showUnit = v => v !== MetricType.lastvalue
+      const [periods, periodStrings] = getPeriod(defaultValue)
+      const periodOptions = type === MetricType.streak 
+        ? Object.keys(periods).filter(ps => ps !== 'Overall')
+        : isAggregate(type)
+        ? Object.keys(periods).filter(ps => ps !== '1 day' && ps !== 'Daily')
+        : Object.keys(periods)
+
+      const [base_unit, setBaseUnit] = useState(
+        defaultValue?.base_unit != undefined ? defaultValue.base_unit : 1)
+    
+      const handleChange = (field, fn) => value => {
+        if(field === 'type' && value === MetricType.streak && base_unit === 0)
+          setBaseUnit(1)
+        if(field === 'type' && isAggregate(value) && base_unit === 1)
+          setBaseUnit(0)
+        value = field === 'base_unit' ? periods[value]: value        
+        fn(value)
+        onChange(Object.assign({
+          type,
+          base_unit,
+          weekday,
+          month_date
+        }, {[field]: value}))
       }
-      const handleTypeChange = value => {
-        setType(value)
-        onChange({ type: value, base_unit: showUnit(value) ? periods[unit] : 1 })
+      const handleReset = v => {
+        if(v === 'n') {
+          setReset(false)
+          setWeekday(undefined)
+          setMonthDate(undefined)
+          onChange({type, base_unit})
+        } else {
+          setReset(true)
+        }
       }
 
-      useEffect(() => onChange({type, base_unit: periods[unit]}), [])
+      useEffect(() => onChange({type, base_unit, weekday, month_date}), [])
 
       return (
         <YStack>
           <XStack space>
-            {showUnit(type) && <SelectInput onChange={handleUnitChange} placeholder="Period"
-              values={['1 day', '7 day', '30 day']} value={unit} width={120}/>}
-            <SelectInput onChange={handleTypeChange} placeholder="Metric type"
+            {showUnit(type) && <SelectInput onChange={handleChange('base_unit', setBaseUnit)} placeholder="Period"
+              values={periodOptions} value={periodStrings[base_unit]} width={120}/>}
+            <SelectInput onChange={handleChange('type', setType)} placeholder="Metric type"
               values={Object.values(MetricType)} value={type} width={160}/>
           </XStack>
           <SizableText ml={showUnit(type) ? 156 : 18} mt={4}>{tips[type]}</SizableText>
+
+          {isAggregate(type) && base_unit > 1 &&
+            <YStack mt={16}>
+            <RadioGroup value={reset ? 'y' : 'n'} onValueChange={handleReset}>
+              <XStack width={300} alignItems="center" space="$4">
+                <RadioGroup.Item value='n' id="reset-n">
+                  <RadioGroup.Indicator />
+                </RadioGroup.Item>
+                <Label htmlFor="reset-n">Count the last 
+                  {base_unit === 7 ? ' 7 days' : ' 30 days'}</Label>
+              </XStack>
+              <XStack width={300} alignItems="center" space="$4">
+                <RadioGroup.Item value='y' id="reset-y">
+                  <RadioGroup.Indicator />
+                </RadioGroup.Item>
+                <Label htmlFor="reset-y">Reset the count</Label>
+              </XStack>
+            </RadioGroup>
+            {reset && base_unit === 7 &&
+              <WeekdayInput label="every" value={weekday} 
+                onChange={handleChange('weekday', setWeekday)} />
+            }
+            {reset && base_unit === 30 &&
+              <MonthDateInput label="every month on the" value={month_date}
+                onChange={handleChange('month_date', setMonthDate)}/>
+            }
+            </YStack>
+          }
         </YStack>
       )
     }
@@ -124,25 +212,12 @@ export const AddMetricFlow: WizardFlow = [
               values={['day(s)', 'week', 'month']} onChange={setMode}/>
           </XStack>
             {mode === 'week' &&
-              <XStack>
-                <Label mr={24}>on</Label>
-                <ToggleGroup type='multiple' value={weekdays} onValueChange={handleChange(setWeekdays, 'weekdays')}>
-                  {Object.keys(weekdayOptions).map((v,i) => (
-                    <ToggleGroup.Item value={v} key={i}>
-                      <SizableText>{v}</SizableText>
-                    </ToggleGroup.Item>
-                  ))}
-                </ToggleGroup>
-              </XStack>
+              <WeekdayInput multiple label={'on'} 
+                values={weekdays} onChange={handleChange(setWeekdays, 'weekdays')}/>
             }
             {mode === 'month' &&
-            <XStack space ai='center' jc='center'>
-                <YStack height={60} jc="center">
-                  <SizableText fow='700'>on the</SizableText>
-                </YStack>
-                <SelectInput placeholder="date" width={120} value={month_date}
-                  values={range(1,32).map(ordinalSuffix).concat(['last day'])} onChange={handleChange(setMonthDate, 'month_date')}/>
-              </XStack>
+              <MonthDateInput label={'on the'} 
+                value={month_date} onChange={handleChange(setMonthDate, 'month_date')} />
             } 
         </YStack>
       )
@@ -200,16 +275,18 @@ export const AddMetricFlow: WizardFlow = [
 export function AddMetricReview(props) {
   let freqStr = props.question_freq.days === 1 ? 'every day' : `every ${props.question_freq.days} days`
   if(props.question_freq.weekdays) {
-    freqStr = `on ${props.question_freq.weekdays.map(w => weekdayOptions[w]).join(", ")}`
+    freqStr = `on ${props.question_freq.weekdays.map(w => Weekday[w]).join("s, ")}s`
   } else if(props.question_freq.monthDate) {
     freqStr = props.question_freq.monthDate !== 'last day'
       ? `on the ${props.question_freq.monthDate}`
       : 'on the last day of the month'
   }
+  const [_, periodStrings] = getPeriod(props.view)
+
   return (
     <YStack>
       <SizableText>{props.name}:
-        {props.view.type !== MetricType.lastvalue ? ` ${props.view.base_unit} day ` : ' '}
+        {props.view.type !== MetricType.lastvalue ? ` ${periodStrings[props.view.base_unit]} `: ' '}
         {props.view.type}</SizableText> 
       <SizableText>Measure this {freqStr} by asking</SizableText>
       <SizableText>{props.question}</SizableText>
@@ -225,19 +302,4 @@ export function AddMetricReview(props) {
       }
     </YStack>
   )
-}
-
-function ordinalSuffix(i) {
-  var j = i % 10,
-      k = i % 100;
-  if (j == 1 && k != 11) {
-      return i + "st";
-  }
-  if (j == 2 && k != 12) {
-      return i + "nd";
-  }
-  if (j == 3 && k != 13) {
-      return i + "rd";
-  }
-  return i + "th";
 }

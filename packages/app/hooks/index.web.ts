@@ -31,8 +31,13 @@ const CREATE_METRIC = gql`
     insertOneMetric(data: $data) {
       _id
       name
-
     }
+  }
+`
+
+const COLLECT_POINT = gql`
+  mutation CollectPoint($data: PointInsertInput!) {
+    insertOnePoint(data: $data)
   }
 `
 
@@ -44,6 +49,11 @@ export const useUserorRedirect = () => {
       router.replace(routes.login)
   }, [currentUser])
   return currentUser
+}
+
+export const useUserId = () => {
+  const { currentUser } = useRealmApp()
+  return currentUser?.id
 }
 
 export const useUserData = () => {
@@ -68,4 +78,8 @@ export const useMetrics = (): QueryResult<Array<Metric>> => {
 
 export const useCreateMetric = () => {
   return useMutation(CREATE_METRIC)
+}
+
+export const useCollectPoint = () => {
+  return useMutation(COLLECT_POINT)
 }

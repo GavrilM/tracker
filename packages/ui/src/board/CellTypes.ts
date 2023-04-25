@@ -1,7 +1,7 @@
 export enum MetricType {
-  average = "average",
   graph = "graph", 
   total = "total",
+  average = "average",
   streak = "streak",
   lastvalue = "last value",
 }

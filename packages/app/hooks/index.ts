@@ -5,6 +5,10 @@ export function useUserorRedirect() {
   return null;
 }
 
+export function useUserId() {
+  return ''
+}
+
 export function useUserData() {
   return {
     loading: false,
@@ -19,6 +23,6 @@ export const useMetrics = (): QueryResult<Array<Metric>> => {
   }
 }
 
-export const useCreateMetric = metric => {
+export const useCreateMetric = () => {}
 
-}
+export const useCollectPoint = () => {}

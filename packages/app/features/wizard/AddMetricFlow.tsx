@@ -41,9 +41,9 @@ const lyPeriodStrings = {
 }
 
 const isAggregate = t => t === MetricType.total || t === MetricType.average
-const doesReset = v => (v.weekday || v.month_date) != undefined
+const doesReset = v => (v?.weekday || v?.month_date) != undefined
 function getPeriod(view) {
-  const uselyPeriods = view.type === MetricType.streak || (isAggregate(view.type) && doesReset(view))
+  const uselyPeriods = view?.type === MetricType.streak || (isAggregate(view?.type) && doesReset(view))
   const periods = uselyPeriods ? lyPeriods : nPeriods 
   const periodStrings = uselyPeriods ? lyPeriodStrings : nPeriodStrings
   return [periods, periodStrings]
@@ -85,7 +85,7 @@ export const AddMetricFlow: WizardFlow = [
       const [reset, setReset] = useState(doesReset(defaultValue))
 
       const showUnit = v => v !== MetricType.lastvalue
-      const [periods, periodStrings] = getPeriod(defaultValue)
+      const [periods, periodStrings] = getPeriod({type, weekday, month_date})
       const periodOptions = type === MetricType.streak 
         ? Object.keys(periods).filter(ps => ps !== 'Overall')
         : isAggregate(type)

@@ -41,6 +41,7 @@ const lyPeriodStrings = {
 }
 
 const isAggregate = t => t === MetricType.total || t === MetricType.average
+const isTimeBounded = t => t === MetricType.streak || t === MetricType.graph
 const doesReset = v => v?.weekday != undefined || v?.month_date != undefined
 function getPeriod(view) {
   const uselyPeriods = view?.type === MetricType.streak || (isAggregate(view?.type) && doesReset(view))
@@ -86,7 +87,7 @@ export const AddMetricFlow: WizardFlow = [
 
       const showUnit = v => v !== MetricType.lastvalue
       const [periods, periodStrings] = getPeriod({type, weekday, month_date})
-      const periodOptions = type === MetricType.streak 
+      const periodOptions = isTimeBounded(type)
         ? Object.keys(periods).filter(ps => ps !== 'Overall')
         : isAggregate(type)
         ? Object.keys(periods).filter(ps => ps !== '1 day' && ps !== 'Daily')
@@ -97,7 +98,7 @@ export const AddMetricFlow: WizardFlow = [
     
       const handleChange = (field, fn) => value => {
         let tempBaseUnit = base_unit
-        if(field === 'type' && value === MetricType.streak && base_unit === 0) {
+        if(field === 'type' && isTimeBounded(value) && base_unit === 0) {
           tempBaseUnit = 1
           setBaseUnit(1)
         }
@@ -191,7 +192,7 @@ export const AddMetricFlow: WizardFlow = [
       const defaultMode = defaultValue?.monthDate ? 'month' : defaultValue?.weekdays ? 'week' : 'day(s)'
       const [mode, setMode] = useState(defaultMode)
       const [days, setDays] = useState(defaultValue?.days || 1)
-      const [weekdays, setWeekdays] = useState(defaultValue?.weekdays || ['sun'])
+      const [weekdays, setWeekdays] = useState(defaultValue?.weekdays || [0])
       const [month_date, setMonthDate] = useState(defaultValue?.month_date || '1st')
       
       useEffect(() => {
@@ -237,15 +238,15 @@ export const AddMetricFlow: WizardFlow = [
         fn(v)
         onChange(Object.assign({
           min,
-          minLabel,
+          min_label,
           max,
-          maxLabel
+          max_label
         }, { [field]: v }))
       }
       const [min, setMin] = useState(defaultValue?.min)
-      const [minLabel, setMinLabel] = useState(defaultValue?.minLabel)
+      const [min_label, setMinLabel] = useState(defaultValue?.minLabel)
       const [max, setMax] = useState(defaultValue?.max)
-      const [maxLabel, setMaxLabel] = useState(defaultValue?.maxLabel)
+      const [max_label, setMaxLabel] = useState(defaultValue?.maxLabel)
 
       return (
         <YStack ai='center'>
@@ -256,10 +257,10 @@ export const AddMetricFlow: WizardFlow = [
             <NumberInput defaultValue={max} onChange={handleChange(setMax, 'max')}/>
           </XStack>
           <XStack space f={1}>
-            <TextInput defaultValue={minLabel} placeholder="Min Label" 
-              onChange={handleChange(setMinLabel, 'minLabel')} width={200}/>
-            <TextInput defaultValue={maxLabel} placeholder="Max Label"
-              onChange={handleChange(setMaxLabel, 'maxLabel')} width={200}/>
+            <TextInput defaultValue={min_label} placeholder="Min Label" 
+              onChange={handleChange(setMinLabel, 'min_label')} width={200}/>
+            <TextInput defaultValue={max_label} placeholder="Max Label"
+              onChange={handleChange(setMaxLabel, 'max_label')} width={200}/>
           </XStack>
         </YStack>
       )
@@ -296,14 +297,14 @@ export function AddMetricReview(props) {
       <SizableText>Measure this {freqStr} by asking</SizableText>
       <SizableText>{props.question}</SizableText>
       {props.limits?.min != undefined && 
-        <SizableText>At least {props.limits.min} ({props.limits.minLabel})</SizableText>
+        <SizableText>At least {props.limits.min} ({props.limits.min_label})</SizableText>
       }
       {props.limits?.max  != undefined && 
-        <SizableText>At most {props.limits.max} ({props.limits.maxLabel})</SizableText>
+        <SizableText>At most {props.limits.max} ({props.limits.max_label})</SizableText>
       }
       {props.target_value != undefined
         ? <SizableText>You should achieve {props.target_value} {props.units}.</SizableText>
-        : <SizableText>Measured in {props.units}</SizableText>
+        : <SizableText>Measured in {props.units ? props.units : '(unitless)'}</SizableText>
       }
     </YStack>
   )

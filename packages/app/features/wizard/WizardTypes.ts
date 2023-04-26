@@ -8,6 +8,7 @@ type WizardStepFormProps = {
   onChange: (any) => void,
   defaultValue?: any
   forwardProps: any
+  date?: Date
 }
 
 export type WizardStep = {
@@ -15,6 +16,7 @@ export type WizardStep = {
   title: string,
   subtitle: string,
   forwardProps?: Array<string>,
+  upsertFields?: Array<string>
   FormComponent: ({ onChange }: WizardStepFormProps) => React.ReactElement
 }
 

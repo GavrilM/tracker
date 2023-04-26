@@ -1,11 +1,11 @@
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { useEffect, useState } from "react";
-import * as Realm from "realm-web";
 import { QueryResult } from "./types/QueryResult";
 import { Metric } from "./types/Metric";
 import { useRealmApp } from "app/provider/realm";
 import { useRouter } from "solito/router";
 import { routes } from "app/navigation/web";
+import { genQuestions } from "./common";
 
 const USER_DATA = gql`
   query UserData($query: UserQueryInput) {
@@ -35,9 +35,40 @@ const CREATE_METRIC = gql`
   }
 `
 
+const COLLECT_METRICS = gql`
+  query LastPoints {
+    metrics {
+      _id
+      name
+      question_freq {
+        days,
+        weekdays,
+        month_date
+      }
+      question
+      limits {
+        max
+        max_label
+        min
+        min_label
+      }
+      units
+      last_point {
+        timestamp
+      }
+    }
+  }
+`
+
 const COLLECT_POINT = gql`
-  mutation CollectPoint($data: PointInsertInput!) {
-    insertOnePoint(data: $data)
+  mutation CollectPoint($query: PointQueryInput, $data: PointInsertInput!) {
+    upsertOnePoint(query: $query, data: $data) {
+      _id
+      metric_id {
+        name
+      }
+      timestamp
+    }
   }
 `
 
@@ -82,4 +113,19 @@ export const useCreateMetric = () => {
 
 export const useCollectPoint = () => {
   return useMutation(COLLECT_POINT)
+}
+
+export const useCollectQuestions = (date: Date): QueryResult<Array<Metric>> => {
+  const { loading, error, data } = useQuery(COLLECT_METRICS)
+  if (error)
+    console.log(error)
+
+  let result
+  if(!loading && data) {
+    result = genQuestions(data.metrics, date)
+  }
+  return {
+    loading,
+    data: result
+  }
 }

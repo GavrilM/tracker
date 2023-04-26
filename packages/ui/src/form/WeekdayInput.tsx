@@ -23,7 +23,7 @@ export function WeekdayInput({ label, multiple, value, values, onChange }: Weekd
     if(typeof v === 'string') {
       onChange(parseInt(v))
     } else {
-      onChange(v.map(parseInt))
+      onChange(v.map(v => parseInt(v)))
     }
   }
   const options = Object.values(Weekday)

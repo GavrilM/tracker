@@ -26,3 +26,10 @@ export const useMetrics = (): QueryResult<Array<Metric>> => {
 export const useCreateMetric = () => {}
 
 export const useCollectPoint = () => {}
+
+export const useCollectQuestions = (date: Date): QueryResult<Array<Metric>> => {
+  return {
+    loading: false,
+    data: []
+  }
+}

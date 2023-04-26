@@ -1,12 +1,11 @@
-import { FormCard, YStack, H1, H3 } from "@my/ui"
-import { useState } from "react"
-import { pick } from "lodash"
+import { FormCard, YStack, H1, H3, Spinner } from "@my/ui"
 import { WizardFlow, WizardType } from "./WizardTypes"
 import { AddMetricFlow, AddMetricReview } from "./AddMetricFlow"
-import { useCollectPoint, useCreateMetric, useUserId } from "app/hooks"
-import { useRouter } from "solito/router"
-import { routes } from "app/navigation/web"
+import { useCollectPoint, useCollectQuestions, useCreateMetric } from "app/hooks"
 import { CollectFlow, CollectReview } from "./CollectFlow"
+import { Wizard } from "./Wizard"
+import { Metric } from "app/hooks/types/Metric"
+import moment from "moment"
 
 type WizardScreenProps = {
   wizardType: WizardType,
@@ -17,8 +16,8 @@ type WizardScreenProps = {
 const dummyMutation = () => [() => {}]
 
 const wizards = {
-  [WizardType.metric]: AddMetricFlow,
-  [WizardType.collect]: CollectFlow
+  [WizardType.metric]: () => AddMetricFlow,
+  [WizardType.collect]: metrics => CollectFlow(metrics)
 }
 
 const reviewComponents = {
@@ -42,73 +41,28 @@ const submitText = {
 }
 
 export const WizardScreen = ({ wizardType }: WizardScreenProps) => {
-  const userId = useUserId()
-  const withOwnerId = o => Object.assign({owner_id: {link: userId}}, o)
-  const { replace } = useRouter()
-
+  let data: Array<Metric> = [],
+    loading = true,
+    date
+  if(wizardType === WizardType.collect) {
+    date = moment(moment().format('YYYYMMDD')).toDate()
+    const result = useCollectQuestions(date)
+    loading = result.loading
+    data = result.data || []
+  } else {
+    loading = false
+  }
+  
   const [completeFn] = useCompleteMutation[wizardType]()
   const [stepFn] = useStepMutation[wizardType]()
-  const steps: WizardFlow = wizards[wizardType]
+  const steps: WizardFlow = wizards[wizardType](data)
 
-  const [stepNum, setStepNum] = useState(0)
-  let [stepValue, setStepValue] = useState<any>()
-  const [formValue, setFormValue] = useState({})
-  console.log(formValue)
-
-  const backFn = field => () => {
-    if(field)
-      setFormValue(Object.assign(formValue, {[field]: stepValue}))
-    setStepValue(formValue[steps[stepNum - 1].field])
-    setStepNum(stepNum - 1)
-  }
-  let content = <H3>Complete!</H3>
-
-  if(stepNum < steps.length) {
-    const { field, title, subtitle, forwardProps, FormComponent } = steps[stepNum]
-
-    let props = forwardProps ? pick(formValue, forwardProps) : {}
-
-    const handleContinue = () => {
-      setFormValue(Object.assign(formValue, {[field]: stepValue}))
-      setStepNum(stepNum + 1)
-      setStepValue(formValue[steps[stepNum + 1]?.field])
-      if(stepValue)
-        stepFn({variables: {
-          data: withOwnerId(stepValue)
-        }})
-    }
-    const handleBack = stepNum > 0 ? backFn(field) : undefined
-
+  let content = <Spinner />
+  if(!loading)
     content = (
-      <>
-        <H1 ta="center">Step {stepNum + 1} of {steps.length}</H1>
-        <FormCard
-          title={title}
-          subtitle={subtitle}
-          onBack={handleBack}
-          onContinue={handleContinue}>
-          <FormComponent onChange={v => {stepValue = v}} 
-            defaultValue={stepValue} forwardProps={props}/>
-        </FormCard>
-      </>
+      <Wizard steps={steps} onStep={stepFn} onComplete={completeFn} date={date}
+          Review={reviewComponents[wizardType]} submitButtonText={submitText[wizardType]}/>
     )
-  } else if (stepNum === steps.length) {
-    const Review = reviewComponents[wizardType]
-    content = (
-      <FormCard
-        title={'Review'}
-        onBack={backFn(false)}
-        onComplete={() => {
-          completeFn({variables: {
-            data: withOwnerId(formValue) 
-          }})
-          replace(routes.home)
-        }}
-        completeText={submitText[wizardType]}>
-        <Review {...formValue} />
-      </FormCard>
-    )
-  }
   
   return (
     <YStack f={1} jc="center" ai="center" p="$4">

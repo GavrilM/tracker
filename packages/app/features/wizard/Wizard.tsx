@@ -7,7 +7,6 @@ import { useRouter } from "solito/router"
 import { routes } from "app/navigation/web"
 
 type WizardProps = {
-  date?: Date,
   steps: WizardFlow
   onStep?: (Object) => void,
   onComplete: (Object) => void,
@@ -15,7 +14,7 @@ type WizardProps = {
   submitButtonText: string
 }
 
-export function Wizard({ date, steps, onStep, onComplete, Review, submitButtonText }: WizardProps) {
+export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: WizardProps) {
   const userId = useUserId()
   const withOwnerId = o => Object.assign({owner_id: {link: userId}}, o)
   const { replace } = useRouter()
@@ -34,7 +33,7 @@ export function Wizard({ date, steps, onStep, onComplete, Review, submitButtonTe
   let content = <H3>Complete!</H3>
 
   if(stepNum < steps.length) {
-    const { field, title, subtitle, forwardProps, FormComponent, upsertFields } = steps[stepNum]
+    const { field, title, subtitle, forwardProps, FormComponent, buildQuery } = steps[stepNum]
 
     let props = forwardProps ? pick(formValue, forwardProps) : {}
 
@@ -44,7 +43,7 @@ export function Wizard({ date, steps, onStep, onComplete, Review, submitButtonTe
       setStepValue(formValue[steps[stepNum + 1]?.field])
       if(stepValue && onStep)
         onStep({variables: {
-          query: pick(stepValue, upsertFields),
+          query: buildQuery ? buildQuery(stepValue) : undefined,
           data: withOwnerId(stepValue)
         }})
     }
@@ -58,7 +57,7 @@ export function Wizard({ date, steps, onStep, onComplete, Review, submitButtonTe
           subtitle={subtitle}
           onBack={handleBack}
           onContinue={handleContinue}>
-          <FormComponent onChange={v => {stepValue = v}} date={date}
+          <FormComponent onChange={v => {stepValue = v}}
             defaultValue={stepValue} forwardProps={props}/>
         </FormCard>
       </>

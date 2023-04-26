@@ -1,11 +1,12 @@
 import { useQuery, gql, useMutation } from "@apollo/client";
-import { useEffect, useState } from "react";
-import { QueryResult } from "./types/QueryResult";
+import { useContext, useEffect } from "react";
+import { CollectReview, QueryResult } from "./types/QueryResult";
 import { Metric } from "./types/Metric";
 import { useRealmApp } from "app/provider/realm";
 import { useRouter } from "solito/router";
 import { routes } from "app/navigation/web";
-import { genQuestions } from "./common";
+import { genQuestionReview, genQuestions } from "./common";
+import { CollectDateContext } from "app/features/wizard/contexts";
 
 const USER_DATA = gql`
   query UserData($query: UserQueryInput) {
@@ -35,6 +36,7 @@ const CREATE_METRIC = gql`
   }
 `
 
+// TODO: accept date as arg to compute last_point
 const COLLECT_METRICS = gql`
   query LastPoints {
     metrics {
@@ -68,6 +70,20 @@ const COLLECT_POINT = gql`
         name
       }
       timestamp
+    }
+  }
+`
+
+const REVIEW_POINTS = gql`
+  query ReviewPoints {
+    metrics {
+      name
+      target_value
+      units
+      last_point {
+        value
+        timestamp
+      }
     }
   }
 `
@@ -116,13 +132,33 @@ export const useCollectPoint = () => {
 }
 
 export const useCollectQuestions = (date: Date): QueryResult<Array<Metric>> => {
-  const { loading, error, data } = useQuery(COLLECT_METRICS)
+  const { loading, error, data } = useQuery(COLLECT_METRICS, {
+    fetchPolicy: 'network-only',
+  })
   if (error)
     console.log(error)
 
   let result
   if(!loading && data) {
     result = genQuestions(data.metrics, date)
+  }
+  return {
+    loading,
+    data: result
+  }
+}
+
+export const useCollectReview = (): QueryResult<CollectReview> => {
+  const date = useContext(CollectDateContext)
+  const { loading, error, data } = useQuery(REVIEW_POINTS, {
+    fetchPolicy: 'network-only',
+  })
+  if (error)
+    console.log(error)
+
+  let result
+  if(!loading && data) {
+    result = genQuestionReview(data.metrics, date)
   }
   return {
     loading,

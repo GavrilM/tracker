@@ -1,5 +1,5 @@
 import { Metric } from "./types/Metric"
-import { QueryResult } from "./types/QueryResult"
+import { CollectReview, QueryResult } from "./types/QueryResult"
 
 export function useUserorRedirect() {
   return null;
@@ -31,5 +31,12 @@ export const useCollectQuestions = (date: Date): QueryResult<Array<Metric>> => {
   return {
     loading: false,
     data: []
+  }
+}
+
+export const useCollectReview = (): QueryResult<CollectReview> => {
+  return {
+    loading: false,
+    data: {targetsMet: [], targetsMissed: []}
   }
 }

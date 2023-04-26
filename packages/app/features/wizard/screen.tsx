@@ -6,6 +6,7 @@ import { CollectFlow, CollectReview } from "./CollectFlow"
 import { Wizard } from "./Wizard"
 import { Metric } from "app/hooks/types/Metric"
 import moment from "moment"
+import { CollectDateContext } from "./contexts"
 
 type WizardScreenProps = {
   wizardType: WizardType,
@@ -40,12 +41,13 @@ const submitText = {
   [WizardType.collect]: "Save and Exit"
 }
 
+const getCurrentDate = () => moment(moment().format('YYYYMMDD')).toDate()
+
 export const WizardScreen = ({ wizardType }: WizardScreenProps) => {
   let data: Array<Metric> = [],
     loading = true,
-    date
+    date = getCurrentDate()
   if(wizardType === WizardType.collect) {
-    date = moment(moment().format('YYYYMMDD')).toDate()
     const result = useCollectQuestions(date)
     loading = result.loading
     data = result.data || []
@@ -60,14 +62,16 @@ export const WizardScreen = ({ wizardType }: WizardScreenProps) => {
   let content = <Spinner />
   if(!loading)
     content = (
-      <Wizard steps={steps} onStep={stepFn} onComplete={completeFn} date={date}
+      <Wizard steps={steps} onStep={stepFn} onComplete={completeFn}
           Review={reviewComponents[wizardType]} submitButtonText={submitText[wizardType]}/>
     )
   
   return (
     <YStack f={1} jc="center" ai="center" p="$4">
       <YStack space="$4" maw={600}>
-        {content}
+        <CollectDateContext.Provider value={date}>
+          {content}
+        </CollectDateContext.Provider>
       </YStack>
     </YStack>
   )

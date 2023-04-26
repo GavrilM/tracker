@@ -16,7 +16,7 @@ export type WizardStep = {
   title: string,
   subtitle: string,
   forwardProps?: Array<string>,
-  upsertFields?: Array<string>
+  buildQuery?: (any) => Object
   FormComponent: ({ onChange }: WizardStepFormProps) => React.ReactElement
 }
 

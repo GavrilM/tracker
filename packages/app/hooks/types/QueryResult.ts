@@ -3,3 +3,8 @@ export type QueryResult<T> = {
   error?: Error,
   data: T
 }
+
+export type CollectReview = {
+  targetsMet: Array<string>,
+  targetsMissed: Array<string>
+}

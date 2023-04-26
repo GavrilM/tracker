@@ -20,5 +20,6 @@ export type Metric = {
   question_freq: QuestionFreq
   limits: Limits
   last_point: Point
+  target_value: number
   units: string
 }

@@ -13,3 +13,5 @@ export { Weekday, WeekdayInput } from './form/WeekdayInput'
 export { MonthDateInput } from './form/MonthDateInput'
 
 export { MetricType } from './board/CellTypes'
+
+export { ExpandibleSection } from './ExpandibleSection'

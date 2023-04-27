@@ -6,7 +6,7 @@ import { CollectFlow, CollectReview } from "./CollectFlow"
 import { Wizard } from "./Wizard"
 import { Metric } from "app/hooks/types/Metric"
 import moment from "moment"
-import { CollectDateContext } from "./contexts"
+import { CollectDateContext } from "./Contexts"
 
 type WizardScreenProps = {
   wizardType: WizardType,

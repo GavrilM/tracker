@@ -40,8 +40,8 @@ const lyPeriodStrings = {
   30: 'Monthly'
 }
 
-const isAggregate = t => t === MetricType.total || t === MetricType.average
-const isTimeBounded = t => t === MetricType.streak || t === MetricType.graph
+const isAggregate = t => t === MetricType.total || t === MetricType.average || t === MetricType.graph
+const isTimeBounded = t => t === MetricType.streak
 const doesReset = v => v?.weekday != undefined || v?.month_date != undefined
 function getPeriod(view) {
   const uselyPeriods = view?.type === MetricType.streak || (isAggregate(view?.type) && doesReset(view))

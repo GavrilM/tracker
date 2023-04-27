@@ -6,7 +6,7 @@ import { useRealmApp } from "app/provider/realm";
 import { useRouter } from "solito/router";
 import { routes } from "app/navigation/web";
 import { genQuestionReview, genQuestions } from "./common";
-import { CollectDateContext } from "app/features/wizard/contexts";
+import { CollectDateContext } from "app/features/wizard/Contexts";
 
 const USER_DATA = gql`
   query UserData($query: UserQueryInput) {
@@ -23,6 +23,17 @@ const ALL_METRICS = gql`
   query AllMetrics {
     metrics {
       name
+      units
+      view {
+        type
+        base_unit
+        weekday
+        month_date
+      }
+      points_default {
+        timestamp
+        value
+      }
     }
   }
 `
@@ -43,8 +54,8 @@ const COLLECT_METRICS = gql`
       _id
       name
       question_freq {
-        days,
-        weekdays,
+        days
+        weekdays
         month_date
       }
       question

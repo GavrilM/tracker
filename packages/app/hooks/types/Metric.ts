@@ -1,4 +1,6 @@
+import { MetricType } from "@my/ui"
 import { Point } from "./Point"
+import { CellViewOptions } from "@my/ui"
 
 type QuestionFreq = {
   days: number,
@@ -19,7 +21,10 @@ export type Metric = {
   question: string,
   question_freq: QuestionFreq
   limits: Limits
-  last_point: Point
   target_value: number
   units: string
+  view: CellViewOptions
+
+  last_point: Point
+  points_default: Array<Point>
 }

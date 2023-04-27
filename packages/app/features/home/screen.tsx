@@ -1,7 +1,6 @@
 import {
   Button,
-  Card,
-  H2,
+  Cell,
   Sheet,
   Spinner,
   XStack,
@@ -18,13 +17,12 @@ export function HomeScreen() {
   if (loading || !user) {
     return <Spinner />
   }
-
-  let list = data.map((m, i) => (
-    <Card key={i} size="$4" bordered width={225} height={225} theme="alt1" mr="$4" mb="$4" ai="center">
-      <Card.Header/>
-      <H2 f={1}>{m.name}</H2>
-    </Card>
-  ))
+  
+  let list = data.map(({name, view, units, points_default}, i) => {
+    return (
+      <Cell key={i} title={name} view={view} units={units} points={points_default}/>
+    )
+  })
 
   
   return (

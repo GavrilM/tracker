@@ -5,3 +5,10 @@ export enum MetricType {
   streak = "streak",
   lastvalue = "last value",
 }
+
+export type CellViewOptions = {
+  base_unit: number,
+  type: MetricType,
+  weekday: number,
+  month_date: string,
+}

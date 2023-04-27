@@ -12,6 +12,7 @@ export { SelectInput } from './form/SelectInput'
 export { Weekday, WeekdayInput } from './form/WeekdayInput'
 export { MonthDateInput } from './form/MonthDateInput'
 
-export { MetricType } from './board/CellTypes'
+export { MetricType, CellViewOptions } from './board/CellTypes'
+export { Cell } from './board/Cell'
 
 export { ExpandibleSection } from './ExpandibleSection'

@@ -66,7 +66,7 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
     content = (
       <FormCard
         title={'Review'}
-        onBack={backFn(false)}
+        onBack={steps.length ? backFn(false) : undefined}
         onComplete={() => {
           onComplete({variables: {
             data: withOwnerId(formValue) 

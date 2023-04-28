@@ -94,7 +94,7 @@ export const AddMetricFlow: WizardFlow = [
         : Object.keys(periods)
 
       const [base_unit, setBaseUnit] = useState(
-        defaultValue?.base_unit != undefined ? defaultValue.base_unit : 1)
+        defaultValue?.base_unit != undefined ? defaultValue.base_unit : 0)
     
       const handleChange = (field, fn) => value => {
         let tempBaseUnit = base_unit

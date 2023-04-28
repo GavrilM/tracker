@@ -1,53 +1,66 @@
 import { Card, H2, H3, SizableText, XStack, YStack } from "tamagui";
 import moment from 'moment'
-import {curveBasis, line, scaleLinear, scaleTime} from 'd3';
+import { useMemo } from 'react'
 import { CellViewOptions, MetricType } from "./CellTypes";
 import { Weekday } from "../form/WeekdayInput";
 import { Graph } from "./Graph";
+import _ from "lodash"
 
-type CellPoint = {
-  timestamp: Date,
-  value: number
+export type CellPoint = {
+  timestamp: string,
+  value: number | undefined
+}
+
+export type Limits = {
+  min: number,
+  max: number
 }
 
 type CellProps = {
-  title: string,
-  view: CellViewOptions,
-  units: string,
+  name: string,
+  view: CellViewOptions
+  limits?: Limits
+  units: string
+  target_value?: number
   lastPointDate?: Date
   points: Array<CellPoint>
 }
 
 const SUMMARY_HEIGHT = 80
-const GRAPH_HEIGHT = 120
-const GRAPH_WIDTH = 180
 
-export function Cell({ title, points, units, view }: CellProps) {
+export function Cell({ name, points, target_value, limits, units, view }: CellProps) {
   let content = <SizableText>(no data)</SizableText>
 
   if(points.length > 0) {
-    if(view.type !== MetricType.graph)
+    if(view.base_unit > 0)
+      points = useMemo(() => formatData(points, view), [points, view])
+
+    if(view.type !== MetricType.graph) {
+      const summary = useMemo(() => getSummary(points, view), [points, view])
       content = (
         <>
           <SizableText fontSize={SUMMARY_HEIGHT} fow='700' color='white'>
-            {getSummary(view, points)}
+            {summary}
           </SizableText>
           <YStack height={SUMMARY_HEIGHT} jc='flex-end' pb={4}>
-            <SizableText >{units}</SizableText>
+            <SizableText >
+              {view.type === MetricType.streak ? getStreakUnits(summary, view) : units}
+            </SizableText>
           </YStack>
         </>
       )
-    else
+    } else {
       content = (
-        <Graph width={GRAPH_WIDTH} height={GRAPH_HEIGHT} 
+        <Graph target={target_value} data={points} yunits={units} limits={limits}
           bottomPadding={20} leftPadding={0}/>
       )
+    }
   }
     
   return (
     <Card size="$4" bordered width={225} height={225} theme="alt1"
       mr="$4" mb="$4" ai="center" jc='space-between' py={16}>
-      <SizableText fow='700' color='white'>{title}</SizableText>
+      <SizableText fow='700' color='rgba(255,255,255, .9)'>{name}</SizableText>
 
       <XStack f={1} ai='center'>
         {content}
@@ -58,30 +71,77 @@ export function Cell({ title, points, units, view }: CellProps) {
   )
 }
 
-function getSummary(view, points) {
-  return 42
+function getSummary(data: Array<CellPoint>, view: CellViewOptions) {
+  if(view.type === MetricType.lastvalue)
+    return data.at(-1)?.value
+  if(view.type === MetricType.streak) {
+    if(view.base_unit === 7)
+      return moment().diff(data[0].timestamp, 'week')
+    else if(view.base_unit === 30)
+      return moment().diff(data[0].timestamp, 'month')
+    else
+      return data.length
+  }
+  
+  let sum = 0
+  data.forEach(p => {sum += (p.value || 0)})
+  if(view.type === MetricType.total)
+    return sum
+  else if(view.type === MetricType.average)
+    return sum/data.length
+
+  return 0
 }
 
-function getGraph(data: Array<CellPoint>) {
-  const max = Math.max(...data.map(val => val.value));
-  const min = Math.min(...data.map(val => val.value));
-  const y = scaleLinear().domain([0, max]).range([GRAPH_HEIGHT, 35]);
-
-  const x = scaleTime()
-    .domain([new Date(2000, 1, 1), new Date(2000, 1, 15)])
-    .range([10, GRAPH_WIDTH - 10]);
-
-  const curvedLine = line<CellPoint>()
-    .x(d => x(new Date(d.timestamp)))
-    .y(d => y(d.value))
-    .curve(curveBasis)(data);
-
-  return {
-    max,
-    min,
-    curve: curvedLine!,
-  };
-};
+function formatData(data: Array<CellPoint>, view: CellViewOptions) {
+  if(view.type === MetricType.lastvalue)
+    return data
+  
+  // average or total: bound
+  let xmin = formatDate(data[0].timestamp).toISOString()
+  if(view.base_unit && view.type !== MetricType.streak) { 
+    const now = moment()
+    let diff = view.base_unit
+    if(view.weekday) {
+      diff = (((now.day() - view.weekday) % 7) + 7) % 7
+    } else if(view.month_date) {
+      const date = view.month_date === 'last day'
+        ? 1
+        : parseInt(view.month_date.slice(0,-2))
+      if(now.date() <= date)
+        now.subtract(1, 'month')
+      now.date(date)
+      diff = moment().diff(now, 'day')
+    }
+    xmin = moment().subtract(diff, 'day').toISOString()
+    data = data.filter(d => d.timestamp >= xmin)
+  }
+  
+  // streak: find first break
+  // graph: bound + fill 0s
+  if(view.type === MetricType.graph || view.type === MetricType.streak) {
+    const now = formatDate(Date.now())
+    const dataPadded: Array<CellPoint> = []
+    let i = 0
+    while(now.toISOString() >= xmin){
+      if(i < data.length &&
+        now.diff(moment(data[i].timestamp), 'day') < 1) {
+        dataPadded.push(data[i])
+        i++
+      } else {
+        if(view.type === MetricType.streak){
+          if(now.diff(moment(), 'day') <= -1)
+            return dataPadded
+        } else {
+          dataPadded.unshift({timestamp: now.toISOString(), value: undefined})
+        }
+      }
+      now.subtract(1, 'day')
+    }
+    data = dataPadded
+  }
+  return data
+}
 
 function getLabel(view, lastPointDate) {
   const today = moment()
@@ -109,8 +169,7 @@ function getLabel(view, lastPointDate) {
           return "since yesterday"
         if(view.month_date === 'last day') {
           return "this month"
-        }
-        else {
+        } else {
           if(today.date() <= parseInt(view.month_date.slice(0,-2)))
             today.subtract(1, 'month')
           return `since ${today.format('MMM')} ${view.month_date}`
@@ -121,4 +180,20 @@ function getLabel(view, lastPointDate) {
           : `${view.base_unit} day ${view.type}`
       }
   }
+}
+
+function getStreakUnits(value, view) {
+  let str = 'day'
+  if(view.base_unit === 7)
+    str = 'week'
+  else if(view.base_unit === 30)
+    str = 'month'
+  
+  if(value === 1)
+    return str
+  return str + 's'
+}
+
+function formatDate(date) {
+  return moment(moment(date).format('YYYYMMDD'))
 }

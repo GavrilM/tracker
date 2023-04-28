@@ -17,10 +17,10 @@ export function HomeScreen() {
   if (loading || !user) {
     return <Spinner />
   }
-  
-  let list = data.map(({name, view, units, points_default}, i) => {
+
+  let list = data.map((m, i) => {
     return (
-      <Cell key={i} title={name} view={view} units={units} points={points_default}/>
+      <Cell key={i} {...m} points={m.points_default} />
     )
   })
 

@@ -16,7 +16,7 @@ export function genQuestions(metrics: Array<Metric>, targetDate: Date): Array<Me
     } else if(question_freq.weekdays != undefined) {
       return question_freq.weekdays.includes(date.day())
     } else {
-      const daysSinceLastPoint = last_point 
+      const daysSinceLastPoint = last_point?.timestamp 
         ? date.diff(moment(last_point.timestamp), 'day')
         : Infinity 
       return daysSinceLastPoint > question_freq.days

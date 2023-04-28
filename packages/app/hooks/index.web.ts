@@ -24,6 +24,11 @@ const ALL_METRICS = gql`
     metrics {
       name
       units
+      limits {
+        min
+        max
+      }
+      target_value
       view {
         type
         base_unit

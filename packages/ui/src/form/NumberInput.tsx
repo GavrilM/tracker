@@ -1,5 +1,5 @@
 import { MinusCircle, PlusCircle } from '@tamagui/lucide-icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Input, Label, SizableText, Slider, XStack, YStack } from "tamagui"
 
 type NumberInputProps = {
@@ -75,6 +75,8 @@ export function NumberInput({
     label = <SizableText position='absolute' color="$red10" top={56}>{errorMessage}</SizableText>
   else if (units)
     label = <Label>{units}</Label>
+
+  useEffect(() => onChange(value), [])
 
   return (
     <YStack py={16} ai='center'>

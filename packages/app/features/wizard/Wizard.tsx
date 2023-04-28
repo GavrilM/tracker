@@ -16,35 +16,55 @@ type WizardProps = {
 
 export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: WizardProps) {
   const userId = useUserId()
-  const withOwnerId = o => Object.assign({owner_id: {link: userId}}, o)
   const { replace } = useRouter()
   
   const [stepNum, setStepNum] = useState(0)
   let [stepValue, setStepValue] = useState<any>()
   const [formValue, setFormValue] = useState({})
-  console.log(formValue)
+  const [autofilled, setAutofilled] = useState({})
+  console.log(formValue, autofilled)
+
+  const getNextStepNum = (direction) => {
+    const skipFields = new Set()
+    Object.values(autofilled).forEach((f: Object) => {
+      Object.keys(f).forEach(k => skipFields.add(k))
+    })
+    let nextStep = stepNum + direction
+    while (nextStep < steps.length && skipFields.has(steps[nextStep].field))
+      nextStep += direction
+    return nextStep
+  }
 
   const backFn = field => () => {
+    const nextStepNum = getNextStepNum(-1)
     if(field)
       setFormValue(Object.assign(formValue, {[field]: stepValue}))
-    setStepValue(formValue[steps[stepNum - 1].field])
-    setStepNum(stepNum - 1)
+    setStepValue(formValue[steps[nextStepNum].field])
+    setStepNum(nextStepNum)
   }
   let content = <H3>Complete!</H3>
 
   if(stepNum < steps.length) {
-    const { field, title, subtitle, forwardProps, FormComponent, buildQuery } = steps[stepNum]
+    const { field, title, subtitle, forwardProps, 
+      FormComponent, buildQuery, autofill, skippable } = steps[stepNum]
 
     let props = forwardProps ? pick(formValue, forwardProps) : {}
 
+    const handleSkip = () => {
+      stepValue = undefined
+      handleContinue()
+    }
     const handleContinue = () => {
+      if(autofill)
+        setAutofilled(Object.assign(autofilled, {[field]: autofill(stepValue)}))
+      const nextStepNum = getNextStepNum(1)
       setFormValue(Object.assign(formValue, {[field]: stepValue}))
-      setStepNum(stepNum + 1)
-      setStepValue(formValue[steps[stepNum + 1]?.field])
+      setStepNum(nextStepNum)
+      setStepValue(formValue[steps[nextStepNum]?.field])
       if(stepValue && onStep)
         onStep({variables: {
           query: buildQuery ? buildQuery(stepValue) : undefined,
-          data: withOwnerId(stepValue)
+          data: stepValue
         }})
     }
     const handleBack = stepNum > 0 ? backFn(field) : undefined
@@ -56,6 +76,7 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
           title={title}
           subtitle={subtitle}
           onBack={handleBack}
+          onSkip={skippable ? handleSkip : undefined}
           onContinue={handleContinue}>
           <FormComponent onChange={v => {stepValue = v}}
             defaultValue={stepValue} forwardProps={props}/>
@@ -68,9 +89,10 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
         title={'Review'}
         onBack={steps.length ? backFn(false) : undefined}
         onComplete={() => {
-          onComplete({variables: {
-            data: withOwnerId(formValue) 
-          }})
+          Object.values(autofilled).forEach(a => {
+            Object.assign(formValue, a)
+          })
+          onComplete(formValue)
           replace(routes.home)
         }}
         completeText={submitButtonText}>

@@ -5,18 +5,20 @@ export enum WizardType {
 }
 
 type WizardStepFormProps = {
-  onChange: (any) => void,
+  onChange: (any) => void
   defaultValue?: any
   forwardProps: any
   date?: Date
 }
 
 export type WizardStep = {
-  field: string,
-  title: string,
-  subtitle: string,
-  forwardProps?: Array<string>,
+  field: string
+  title: string
+  subtitle: string
+  forwardProps?: Array<string>
   buildQuery?: (any) => Object
+  autofill?: (any) => Object
+  skippable?: boolean
   FormComponent: ({ onChange }: WizardStepFormProps) => React.ReactElement
 }
 

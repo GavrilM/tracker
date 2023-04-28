@@ -33,7 +33,7 @@ export function Cell({ name, points, target_value, limits, units, view }: CellPr
 
   if(points.length > 0) {
     if(view.base_unit > 0)
-      points = useMemo(() => formatData(points, view), [points, view])
+      points = useMemo(() => formatData(points, view, target_value), [points, view])
 
     if(view.type !== MetricType.graph) {
       const summary = useMemo(() => getSummary(points, view), [points, view])
@@ -93,7 +93,7 @@ function getSummary(data: Array<CellPoint>, view: CellViewOptions) {
   return 0
 }
 
-function formatData(data: Array<CellPoint>, view: CellViewOptions) {
+function formatData(data: Array<CellPoint>, view: CellViewOptions, target) {
   if(view.type === MetricType.lastvalue)
     return data
   
@@ -124,14 +124,16 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions) {
     const dataPadded: Array<CellPoint> = []
     let i = 0
     while(now.toISOString() >= xmin){
-      if(i < data.length &&
-        now.diff(moment(data[i].timestamp), 'day') < 1) {
-        dataPadded.push(data[i])
-        i++
+      if(i < data.length && now.diff(moment(data[i].timestamp), 'day') < 1) {
+        if(view.type === MetricType.streak && data[i].value !== target) {
+          return dataPadded
+        } else {
+          dataPadded.push(data[i])
+          i++
+        }
       } else {
-        if(view.type === MetricType.streak){
-          if(now.diff(moment(), 'day') <= -1)
-            return dataPadded
+        if(view.type === MetricType.streak && now.diff(moment(), 'day') <= -1) {
+          return dataPadded
         } else {
           dataPadded.unshift({timestamp: now.toISOString(), value: undefined})
         }

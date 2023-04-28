@@ -1,7 +1,7 @@
 import { FormCard, YStack, H1, H3, Spinner } from "@my/ui"
 import { WizardFlow, WizardType } from "./WizardTypes"
 import { AddMetricFlow, AddMetricReview } from "./AddMetricFlow"
-import { useCollectPoint, useCollectQuestions, useCreateMetric } from "app/hooks"
+import { useCollectPoints, useCollectQuestions, useCreateMetric } from "app/hooks"
 import { CollectFlow, CollectReview } from "./CollectFlow"
 import { Wizard } from "./Wizard"
 import { Metric } from "app/hooks/types/Metric"
@@ -28,12 +28,12 @@ const reviewComponents = {
 
 const useCompleteMutation = {
   [WizardType.metric]: useCreateMetric,
-  [WizardType.collect]: dummyMutation,
+  [WizardType.collect]: useCollectPoints,
 }
 
 const useStepMutation = {
   [WizardType.metric]: dummyMutation,
-  [WizardType.collect]: useCollectPoint
+  [WizardType.collect]: dummyMutation
 }
 
 const submitText = {

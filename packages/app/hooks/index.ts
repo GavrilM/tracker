@@ -26,6 +26,7 @@ export const useMetrics = (): QueryResult<Array<Metric>> => {
 export const useCreateMetric = () => {}
 
 export const useCollectPoint = () => {}
+export const useCollectPoints = () => {}
 
 export const useCollectQuestions = (date: Date): QueryResult<Array<Metric>> => {
   return {

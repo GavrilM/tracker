@@ -1,4 +1,5 @@
 import {
+  BinaryInput,
   Label,
   MetricType,
   MonthDateInput,
@@ -71,6 +72,11 @@ export const AddMetricFlow: WizardFlow = [
     field: 'view',
     title: 'What kind of Metric?',
     subtitle: 'You can always change it later',
+    autofill: (view) => {
+      if(view.type === MetricType.streak)
+        return {limits: undefined}
+      return {}
+    },
     FormComponent: ({ onChange, defaultValue }) => {
       const tips = {
         [MetricType.average]: 'One summary number',
@@ -116,13 +122,13 @@ export const AddMetricFlow: WizardFlow = [
         }, {[field]: value}))
       }
       const handleReset = v => {
-        if(v === 'n') {
+        if(v) {
+          setReset(true)
+        } else {
           setReset(false)
           setWeekday(undefined)
           setMonthDate(undefined)
           onChange({type, base_unit})
-        } else {
-          setReset(true)
         }
       }
 
@@ -140,21 +146,8 @@ export const AddMetricFlow: WizardFlow = [
 
           {isAggregate(type) && base_unit > 1 &&
             <YStack mt={16}>
-            <RadioGroup value={reset ? 'y' : 'n'} onValueChange={handleReset}>
-              <XStack width={300} alignItems="center" space="$4">
-                <RadioGroup.Item value='n' id="reset-n">
-                  <RadioGroup.Indicator />
-                </RadioGroup.Item>
-                <Label htmlFor="reset-n">Count the last 
-                  {base_unit === 7 ? ' 7 days' : ' 30 days'}</Label>
-              </XStack>
-              <XStack width={300} alignItems="center" space="$4">
-                <RadioGroup.Item value='y' id="reset-y">
-                  <RadioGroup.Indicator />
-                </RadioGroup.Item>
-                <Label htmlFor="reset-y">Reset the count</Label>
-              </XStack>
-            </RadioGroup>
+              <BinaryInput defaultValue={reset ? 1 : 0} onChange={handleReset} yesLabel="Reset the count"
+                noLabel={`Count the last ${base_unit === 7 ? ' 7 days' : ' 30 days'}`} />
             {reset && base_unit === 7 &&
               <WeekdayInput label="every" value={weekday} 
                 onChange={handleChange('weekday', setWeekday)} />
@@ -268,13 +261,24 @@ export const AddMetricFlow: WizardFlow = [
   },
   {
     field: 'target_value',
-    title: 'Do you have an amount you want to target?',
-    subtitle: 'Also optional, but you should poop once a day',
-    forwardProps: ['limits', 'units'],
+    title: 'What value should you target?',
+    subtitle: 'You define what success looks like',
+    forwardProps: ['limits', 'units', 'view', 'question'],
     FormComponent: props => {
+      const {question, limits, units, view} = props.forwardProps
+
+      let input = <NumberInput {...props} {...limits} units={units} autofocus/>
+      if(view.type === MetricType.streak)
+        input = <BinaryInput {...props} 
+          defaultValue={props.defaultValue != undefined ? props.defaultValue : 1}/>
+
       return (
-      <NumberInput {...props} {...props.forwardProps.limits} units={props.forwardProps.units} autofocus/>
-    )}
+        <YStack>
+          <SizableText fontStyle="italic">{question}</SizableText>
+          {input}
+        </YStack>
+      )
+    }
   },
 ]
 
@@ -287,6 +291,9 @@ export function AddMetricReview(props) {
       ? `on the ${props.question_freq.monthDate}`
       : 'on the last day of the month'
   }
+  let targetStr = `Your target is to achieve ${props.target_value} ${props.units}.`
+  if(props.view.type === MetricType.streak)
+    targetStr = `Your target is to answer ${props.target_value ? 'yes': 'no'}`
   const [_, periodStrings] = getPeriod(props.view)
 
   return (
@@ -303,7 +310,7 @@ export function AddMetricReview(props) {
         <SizableText>At most {props.limits.max} ({props.limits.max_label})</SizableText>
       }
       {props.target_value != undefined
-        ? <SizableText>You should achieve {props.target_value} {props.units}.</SizableText>
+        ? <SizableText>{targetStr}</SizableText>
         : <SizableText>Measured in {props.units ? props.units : '(unitless)'}</SizableText>
       }
     </YStack>

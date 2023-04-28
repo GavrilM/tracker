@@ -71,6 +71,9 @@ const COLLECT_METRICS = gql`
         min_label
       }
       units
+      view {
+        type
+      }
       last_point {
         timestamp
       }
@@ -86,6 +89,14 @@ const COLLECT_POINT = gql`
         name
       }
       timestamp
+    }
+  }
+`
+
+const COLLECT_POINTS = gql`
+  mutation CollectPoints($data: [PointInsertInput!]!) {
+    insertManyPoints(data: $data) {
+      insertedIds
     }
   }
 `
@@ -140,11 +151,40 @@ export const useMetrics = (): QueryResult<Array<Metric>> => {
 }
 
 export const useCreateMetric = () => {
-  return useMutation(CREATE_METRIC)
+  const id = useUserId()
+  const [fn] = useMutation(CREATE_METRIC)
+  const mutation = (data) => {
+    fn({
+      variables: {
+        data: withOwnerId(data, id) 
+      }
+    })
+  }
+  return [mutation]
 }
 
 export const useCollectPoint = () => {
   return useMutation(COLLECT_POINT)
+}
+
+export const useCollectPoints = () => {
+  const id = useUserId()
+  const [fn] = useMutation(COLLECT_POINTS)
+  const mutation = (data) => {
+    const points = Object.values(data)
+      .filter(p => p != undefined)
+      .map(p => {
+      if(p)
+        return withOwnerId(p, id) 
+    })
+    console.log(points)
+    fn({
+      variables: {
+        data: points
+      }
+    })
+  }
+  return [mutation]
 }
 
 export const useCollectQuestions = (date: Date): QueryResult<Array<Metric>> => {
@@ -181,3 +221,5 @@ export const useCollectReview = (): QueryResult<CollectReview> => {
     data: result
   }
 }
+
+const withOwnerId = (o, userId) => Object.assign({owner_id: {link: userId}}, o)

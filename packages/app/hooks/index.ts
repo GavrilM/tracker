@@ -35,9 +35,15 @@ export const useCollectQuestions = (date: Date): QueryResult<Array<Metric>> => {
   }
 }
 
-export const useCollectReview = (): QueryResult<CollectReview> => {
+export const useCollectReview = (pointLookup): QueryResult<CollectReview> => {
   return {
     loading: false,
-    data: {targetsMet: [], targetsMissed: []}
+    data: {
+      targetsMet: [],
+      targetsMissed: [],
+      streaksKept: [],
+      streaksMissed: [],
+      total: 0
+    }
   }
 }

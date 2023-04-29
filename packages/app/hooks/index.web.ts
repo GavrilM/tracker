@@ -1,12 +1,11 @@
 import { useQuery, gql, useMutation } from "@apollo/client";
-import { useContext, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { CollectReview, QueryResult } from "./types/QueryResult";
 import { Metric } from "./types/Metric";
 import { useRealmApp } from "app/provider/realm";
 import { useRouter } from "solito/router";
 import { routes } from "app/navigation/web";
 import { genQuestionReview, genQuestions } from "./common";
-import { CollectDateContext } from "app/features/wizard/Contexts";
 
 const USER_DATA = gql`
   query UserData($query: UserQueryInput) {
@@ -102,14 +101,14 @@ const COLLECT_POINTS = gql`
 `
 
 const REVIEW_POINTS = gql`
-  query ReviewPoints {
-    metrics {
+  query ReviewPoints($query: MetricQueryInput!) {
+    metrics(query: $query) {
+      _id
       name
       target_value
       units
-      last_point {
-        value
-        timestamp
+      view {
+        type
       }
     }
   }
@@ -204,17 +203,24 @@ export const useCollectQuestions = (date: Date): QueryResult<Array<Metric>> => {
   }
 }
 
-export const useCollectReview = (): QueryResult<CollectReview> => {
-  const date = useContext(CollectDateContext)
+export const useCollectReview = (points): QueryResult<CollectReview> => {
+  const pointLookup = useMemo(() => {
+    const obj = {}
+    Object.keys(points).forEach(k => points[k] ? obj[k] = points[k] : null)
+    return obj
+  }, [points])
+
   const { loading, error, data } = useQuery(REVIEW_POINTS, {
-    fetchPolicy: 'network-only',
+    variables: {
+      query: {_id_in: Object.keys(pointLookup) }
+    }
   })
   if (error)
     console.log(error)
 
   let result
   if(!loading && data) {
-    result = genQuestionReview(data.metrics, date)
+    result = genQuestionReview(data.metrics, pointLookup)
   }
   return {
     loading,

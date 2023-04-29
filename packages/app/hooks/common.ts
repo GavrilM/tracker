@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { Metric } from "./types/Metric";
 import { CollectReview } from './types/QueryResult';
+import { MetricType } from '@my/ui';
 
 export function genQuestions(metrics: Array<Metric>, targetDate: Date): Array<Metric> {
   const date = moment(targetDate)
@@ -24,17 +25,29 @@ export function genQuestions(metrics: Array<Metric>, targetDate: Date): Array<Me
   })
 }
 
-export function genQuestionReview(metrics: Array<Metric>, targetDate: Date): CollectReview {
-  const date = moment(targetDate)
-  const result: CollectReview = {targetsMet: [], targetsMissed: []}
-  metrics.forEach(({ name, last_point, target_value, units }) => {
-    if(last_point && target_value
-      && date.diff(moment(last_point.timestamp), 'day')  === 0) {
-      const diff = last_point.value - target_value
-      if(diff >= 0)
-        result.targetsMet.push(`${name} by ${diff} ${units}`)
-      else
-        result.targetsMissed.push(`${name} by ${-diff} ${units}`)
+export function genQuestionReview(metrics: Array<Metric>, pointLookup): CollectReview {
+  const result: CollectReview = {
+    targetsMet: [],
+    targetsMissed: [],
+    streaksKept: [],
+    streaksMissed: [],
+    total: metrics.length
+  }
+  metrics.forEach(({ _id, name, target_value, units, view }) => {
+    const unitStr = units ? units : ''
+    if(target_value) {
+      const diff = pointLookup[_id].value - target_value
+      if(view.type === MetricType.streak) {
+        if(diff === 0)
+          result.streaksKept.push(name)
+        else
+          result.streaksMissed.push(name)
+      } else {
+        if(diff >= 0)
+          result.targetsMet.push(`${name} by ${diff} ${unitStr}`)
+        else
+          result.targetsMissed.push(`${name} by ${-diff} ${unitStr}`)
+      }
     }
   })
   return result

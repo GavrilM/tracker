@@ -1,8 +1,8 @@
-import { BinaryInput, ExpandibleSection, MetricType, NumberInput, Spinner, YStack } from "@my/ui";
+import { BinaryInput, ExpandibleSection, MetricType, NumberInput, SizableText, Spinner, YStack } from "@my/ui";
 import { WizardFlow } from "./WizardTypes";
 import { Metric } from "app/hooks/types/Metric";
 import { useCollectReview } from "app/hooks";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { CollectDateContext } from "./Contexts";
 
 export function CollectFlow(metrics: Array<Metric>): WizardFlow {
@@ -15,15 +15,18 @@ export function CollectFlow(metrics: Array<Metric>): WizardFlow {
     FormComponent: ({ onChange, defaultValue }) => {
       const date = useContext(CollectDateContext)
       const handleChange = value => {
-        onChange({
-          metric_id: {link: _id},
-          timestamp: date,
-          value,
-        })
+        if(value != undefined)
+          onChange({
+            metric_id: {link: _id},
+            timestamp: date,
+            value,
+          })
+        else
+          onChange(undefined)
       }
 
       if(view.type === MetricType.streak)
-        return <BinaryInput defaultValue={defaultValue} onChange={handleChange}/>
+        return <BinaryInput defaultValue={defaultValue?.value} onChange={handleChange}/>
 
       return (
         <NumberInput autofocus onChange={handleChange} units={units} defaultValue={defaultValue?.value}
@@ -33,19 +36,24 @@ export function CollectFlow(metrics: Array<Metric>): WizardFlow {
   }))
 } 
 
-export function CollectReview() {
-  const {loading, data} = useCollectReview()
+export function CollectReview(props) {  
+  const {loading, data} = useCollectReview(props)
 
   if(loading)
     return <Spinner />
-  const {targetsMet, targetsMissed} = data
+  const {targetsMet, targetsMissed, streaksKept, streaksMissed, total} = data
 
   return (
     <YStack>
+      <SizableText>Points collected: {total}</SizableText>
       <ExpandibleSection type="good" items={targetsMet}
         title={`${targetsMet.length} targets met`}/>
+      <ExpandibleSection type="good" items={streaksKept}
+        title={`${streaksKept.length} streaks kept`}/>
       <ExpandibleSection type="bad" items={targetsMissed}
         title={`${targetsMissed.length} targets missed`}/>
+      <ExpandibleSection type="bad" items={streaksMissed}
+        title={`${streaksMissed.length} streaks lost`}/>
     </YStack>
   )
 }

@@ -27,6 +27,9 @@ const ALL_METRICS = gql`
         min
         max
       }
+      question_freq {
+        days
+      }
       target_value
       view {
         type

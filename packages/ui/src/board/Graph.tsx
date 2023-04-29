@@ -77,7 +77,6 @@ export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, li
 }
 
 function genGraph(data: Array<CellPoint>, limits?: Limits) {
-  console.log(data, limits)
   const max = limits?.max != undefined ? limits.max : _.max(data.map(val => val.value));
   const min = limits?.min != undefined ? limits.min : _.min(data.map(val => val.value));
   const y = scaleLinear().domain([0, max]).range([GRAPH_HEIGHT, 25]);

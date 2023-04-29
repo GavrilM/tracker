@@ -5,7 +5,7 @@ import { MetricType } from '@my/ui';
 
 export function genQuestions(metrics: Array<Metric>, targetDate: Date): Array<Metric> {
   const date = moment(targetDate)
-  return metrics.filter(({ _id, question_freq, last_point }) => {
+  return metrics.filter(({ question_freq, last_point }) => {
     if(question_freq.month_date != undefined) {
       if(question_freq.month_date === 'last day'){
         const month = date.month()

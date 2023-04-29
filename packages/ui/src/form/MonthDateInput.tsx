@@ -1,14 +1,16 @@
 import { SizableText, XStack, YStack } from "tamagui";
 import { SelectInput } from "./SelectInput";
 import { range } from "lodash"
+import { ErrorText } from "./ErrorText";
 
 type MonthDateInputProps = {
   label: string,
   onChange: (string) => void
   value: string
+  errorMessage?: string
 }
 
-export function MonthDateInput({ label, onChange, value }: MonthDateInputProps) {
+export function MonthDateInput({ label, onChange, value, errorMessage }: MonthDateInputProps) {
   return (
     <XStack space ai='center' jc='center'>
       <YStack height={60} jc="center">
@@ -16,6 +18,7 @@ export function MonthDateInput({ label, onChange, value }: MonthDateInputProps) 
       </YStack>
       <SelectInput placeholder="date" width={120} value={value}
         values={range(1,32).map(ordinalSuffix).concat(['last day'])} onChange={onChange}/>
+      <ErrorText text={errorMessage}/>
     </XStack>
   )
 }

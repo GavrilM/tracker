@@ -1,10 +1,12 @@
 import { MinusCircle, PlusCircle } from '@tamagui/lucide-icons'
 import { useEffect, useState } from 'react'
 import { Input, Label, SizableText, Slider, XStack, YStack } from "tamagui"
+import { getOutlineColor } from './utils'
 
 type NumberInputProps = {
   autofocus?: boolean,
-  defaultValue?: number
+  defaultValue?: number,
+  nodefault?: boolean,
   min?: number,
   max?: number,
   minLabel?: string,
@@ -12,11 +14,13 @@ type NumberInputProps = {
   units?: string,
   validate?: (number) => boolean
   onChange: (number) => void,
+  errorMessage?: string,
 }
 
 export function NumberInput({
   autofocus,
   defaultValue,
+  nodefault,
   min,
   minLabel,
   max,
@@ -24,15 +28,20 @@ export function NumberInput({
   units,
   validate,
   onChange,
+  errorMessage
 }: NumberInputProps) {
   const isNumber = v =>  !isNaN(v) && !isNaN(parseFloat(v))
   const isBounded = min != undefined && max != undefined
   //@ts-ignore
-  let initalValue = defaultValue ? defaultValue : isBounded ? Math.round((max-min)/2+min) : undefined
+  let initalValue = defaultValue != undefined
+    ? defaultValue
+    : isBounded && !nodefault 
+      ? Math.round((max-min)/2+min)
+      : undefined
   const stepValue = !isBounded || max-min > 10 ? 1 : .5
   
   const [value, setValue] = useState(initalValue)
-  const [errorMessage, setError] = useState("")
+  const [errorMsg, setError] = useState(errorMessage || "")
   //@ts-ignore 
   const canDecrement = isNumber(value) && (min == undefined || value - stepValue >= min)
   //@ts-ignore
@@ -71,8 +80,8 @@ export function NumberInput({
 
   const sliderValue = value ? [value] : undefined
   let label = <></>
-  if(errorMessage)
-    label = <SizableText position='absolute' color="$red10" top={56}>{errorMessage}</SizableText>
+  if(errorMsg)
+    label = <SizableText position='absolute' color="$red10" top={60}>{errorMsg}</SizableText>
   else if (units)
     label = <Label>{units}</Label>
 
@@ -81,15 +90,15 @@ export function NumberInput({
   return (
     <YStack py={16} ai='center'>
       <XStack jc="center" ai="center">
-        {!errorMessage && canDecrement 
+        {!errorMsg && canDecrement 
           ? <XStack onPress={decrement} mr={16}><MinusCircle color='$gray10'/></XStack>
           : <XStack width={40}/>}
 
         <Input placeholder="#" value={value === 0 || value ? value.toString() : ''} keyboardType='numeric' onChangeText={handleChange}
           maw={80} ta="center" bc="white" color="black" bw={2} autoFocus={autofocus} 
-          focusStyle={{outlineColor: 'rgb(100,100,255)', outlineStyle: 'solid', outlineWidth:4}} />
+          focusStyle={{outlineColor: getOutlineColor(errorMsg), outlineStyle: 'solid', outlineWidth:4}} />
 
-        {!errorMessage && canIncrement 
+        {!errorMsg && canIncrement 
           ? <XStack onPress={increment} ml={16}><PlusCircle color='$gray10'/></XStack>
           : <XStack width={40}/>}
       </XStack>

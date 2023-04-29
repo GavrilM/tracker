@@ -20,6 +20,7 @@ type CellProps = {
   name: string,
   view: CellViewOptions
   limits?: Limits
+  question_freq: {days: number}
   units: string
   target_value?: number
   lastPointDate?: Date
@@ -28,12 +29,12 @@ type CellProps = {
 
 const SUMMARY_HEIGHT = 80
 
-export function Cell({ name, points, target_value, limits, units, view }: CellProps) {
+export function Cell({ name, points, target_value, limits, question_freq, units, view }: CellProps) {
   let content = <SizableText>(no data)</SizableText>
 
   if(points.length > 0) {
     if(view.base_unit > 0)
-      points = useMemo(() => formatData(points, view, target_value), [points, view])
+      points = useMemo(() => formatData(points, view, question_freq, target_value), [points, view])
 
     if(view.type !== MetricType.graph) {
       const summary = useMemo(() => getSummary(points, view), [points, view])
@@ -93,7 +94,7 @@ function getSummary(data: Array<CellPoint>, view: CellViewOptions) {
   return 0
 }
 
-function formatData(data: Array<CellPoint>, view: CellViewOptions, target) {
+function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq, target) {
   if(view.type === MetricType.lastvalue)
     return data
   
@@ -119,7 +120,9 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, target) {
   
   // streak: find first break
   // graph: bound + fill 0s
-  if(view.type === MetricType.graph || view.type === MetricType.streak) {
+  if((view.type === MetricType.graph && view.base_unit !== 0)
+    || (view.type === MetricType.graph && question_freq.days > 1)
+    || view.type === MetricType.streak) {
     const now = formatDate(Date.now())
     const dataPadded: Array<CellPoint> = []
     let i = 0

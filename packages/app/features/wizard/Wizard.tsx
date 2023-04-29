@@ -11,7 +11,7 @@ type WizardProps = {
   onStep?: (Object) => void,
   onComplete: (Object) => void,
   Review: () => React.ReactElement,
-  submitButtonText: string
+  submitButtonText: string,
 }
 
 export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: WizardProps) {
@@ -22,6 +22,7 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
   let [stepValue, setStepValue] = useState<any>()
   const [formValue, setFormValue] = useState({})
   const [autofilled, setAutofilled] = useState({})
+  const [errMsg, setErrMsg] = useState<string | undefined>()
   console.log(formValue, autofilled)
 
   const getNextStepNum = (direction) => {
@@ -41,11 +42,12 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
       setFormValue(Object.assign(formValue, {[field]: stepValue}))
     setStepValue(formValue[steps[nextStepNum].field])
     setStepNum(nextStepNum)
+    setErrMsg(undefined)
   }
   let content = <H3>Complete!</H3>
 
   if(stepNum < steps.length) {
-    const { field, title, subtitle, forwardProps, 
+    const { field, title, subtitle, forwardProps, validate,
       FormComponent, buildQuery, autofill, skippable } = steps[stepNum]
 
     let props = forwardProps ? pick(formValue, forwardProps) : {}
@@ -55,6 +57,15 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
       handleContinue()
     }
     const handleContinue = () => {
+      const error = validate(stepValue)
+      if(error) {
+        setErrMsg(error)
+        setStepValue(stepValue)
+        return
+      } else {
+        setErrMsg(undefined)
+      }
+      
       if(autofill)
         setAutofilled(Object.assign(autofilled, {[field]: autofill(stepValue)}))
       const nextStepNum = getNextStepNum(1)
@@ -77,8 +88,9 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
           subtitle={subtitle}
           onBack={handleBack}
           onSkip={skippable ? handleSkip : undefined}
-          onContinue={handleContinue}>
-          <FormComponent onChange={v => {stepValue = v}}
+          onContinue={handleContinue}
+          height={450}>
+          <FormComponent onChange={v => {stepValue = v}} errorMessage={errMsg}
             defaultValue={stepValue} forwardProps={props}/>
         </FormCard>
       </>

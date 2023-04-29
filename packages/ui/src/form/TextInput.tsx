@@ -1,13 +1,15 @@
 import { XCircle } from '@tamagui/lucide-icons';
 import { useEffect, useState } from 'react'
-import { Input, InputProps, Label, YStack, ZStack, useSafeRef } from "tamagui";
+import { Input, InputProps, Label, SizableText, YStack, ZStack, useSafeRef } from "tamagui";
+import { getLabelColor, getOutlineColor } from './utils';
+import { ErrorText } from './ErrorText';
 
 type TextInputProps = {
   autofocus?: boolean,
   defaultValue?: string,
   placeholder: string,
   onChange: (string) => void,
-  validate?: (string) => boolean,
+  errorMessage?: string,
   inputProps?: InputProps,
   width?: number
 }
@@ -17,7 +19,7 @@ export function TextInput({
   defaultValue,
   placeholder,
   onChange,
-  validate,
+  errorMessage,
   inputProps,
   width
 }: TextInputProps) {
@@ -29,9 +31,6 @@ export function TextInput({
   }
   const handleBlur = () => {
     setFocused(false)
-    if(validate && !validate(value)) {
-      // TODO: show error
-    }
   }
 
   const [isFocused, setFocused] = useState(autofocus)
@@ -49,6 +48,7 @@ export function TextInput({
   let borderStyle = {
     outlineWidth: 4,
   }
+
   if (!isFocused) {
     if (!value.length) {
       labelStyle = {
@@ -62,20 +62,24 @@ export function TextInput({
   }
   
   return (
-    <YStack onFocus={handleFocus} onPress={handleFocus} width={width}
-      height={80} bw={2} br={16} pl='$3' outlineColor="rgba(100,100,255,1)" outlineStyle="solid" {...borderStyle}>
-      <ZStack>
-        <Label {...labelStyle} color="grey">{placeholder}</Label>
-        <Input ref={inputRef} value={value} {...inputProps}
-          unstyled mt='$6' mb='$2' fos={30} pr={40}
-          onFocus={() => setFocused(true)} onBlur={handleBlur} onChangeText={handleChange}/>
-      </ZStack>
-      {value.length > 0 &&
-        <YStack onPress={e => setValue('')} 
-          style={{top: 27, right: 10, position:'absolute'}}>
-          <XCircle/>
-        </YStack>
-      }
+    <YStack>
+      <YStack onFocus={handleFocus} onPress={handleFocus} width={width}
+        height={80} bw={2} br={16} pl='$3' outlineColor={getOutlineColor(errorMessage)} outlineStyle="solid"
+        {...borderStyle}>
+        <ZStack>
+          <Label {...labelStyle} color={getLabelColor(errorMessage)}>{placeholder}</Label>
+          <Input ref={inputRef} value={value} {...inputProps}
+            unstyled mt='$6' mb='$2' fos={30} pr={40}
+            onFocus={() => setFocused(true)} onBlur={handleBlur} onChangeText={handleChange}/>
+        </ZStack>
+        {value.length > 0 &&
+          <YStack onPress={e => setValue('')} 
+            style={{top: 27, right: 10, position:'absolute'}}>
+            <XCircle/>
+          </YStack>
+        }
+      </YStack>
+      <ErrorText text={errorMessage}/>
     </YStack>
   )
 }

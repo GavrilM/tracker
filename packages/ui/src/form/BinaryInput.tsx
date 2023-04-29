@@ -1,14 +1,16 @@
-import { Label, RadioGroup, XStack } from "tamagui";
+import { Label, RadioGroup, SizableText, XStack } from "tamagui";
 import { useEffect, useState } from "react"
+import { ErrorText } from "./ErrorText";
 
 type BinaryInputProps = {
   defaultValue?: number
   yesLabel?: string
   noLabel?: string
   onChange: (number) => void
+  errorMessage?: string,
 }
 
-export function BinaryInput({ defaultValue, yesLabel, noLabel, onChange }: BinaryInputProps) {
+export function BinaryInput({ defaultValue, yesLabel, noLabel, onChange, errorMessage }: BinaryInputProps) {
   const [bit, setBit] = useState(defaultValue)
   const handleChange = v => {
     const value = parseInt(v)
@@ -32,6 +34,7 @@ export function BinaryInput({ defaultValue, yesLabel, noLabel, onChange }: Binar
         </RadioGroup.Item>
         <Label htmlFor="yes">{yesLabel ? yesLabel : "Yes"}</Label>
       </XStack>
+      <ErrorText text={errorMessage}/>
     </RadioGroup>
   )
 }

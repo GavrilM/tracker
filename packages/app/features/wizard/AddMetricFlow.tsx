@@ -1,10 +1,10 @@
 import {
   BinaryInput,
+  ErrorText,
   Label,
   MetricType,
   MonthDateInput,
   NumberInput,
-  RadioGroup, 
   SelectInput,
   SizableText,
   TextInput,
@@ -56,6 +56,7 @@ export const AddMetricFlow: WizardFlow = [
     field: 'name',
     title: 'What will we call this Metric?',
     subtitle: 'Pick something short and informative',
+    validate: value => value?.length ? null : "Name is required",
     FormComponent: props => (
       <TextInput {...props} placeholder="Metric name" autofocus/>
     )
@@ -63,7 +64,8 @@ export const AddMetricFlow: WizardFlow = [
   {
     field: 'units',
     title: 'What unit of measure?',
-    subtitle: '"Poops" instead of "number of poops"',
+    subtitle: 'Optional',
+    validate: () => null,
     FormComponent: props => (
       <TextInput {...props} placeholder="Unit" autofocus/>
     )
@@ -77,6 +79,7 @@ export const AddMetricFlow: WizardFlow = [
         return {limits: undefined}
       return {}
     },
+    validate: () => null,
     FormComponent: ({ onChange, defaultValue }) => {
       const tips = {
         [MetricType.average]: 'One summary number',
@@ -149,7 +152,7 @@ export const AddMetricFlow: WizardFlow = [
               <BinaryInput defaultValue={reset ? 1 : 0} onChange={handleReset} yesLabel="Reset the count"
                 noLabel={`Count the last ${base_unit === 7 ? ' 7 days' : ' 30 days'}`} />
             {reset && base_unit === 7 &&
-              <WeekdayInput label="every" value={weekday} 
+              <WeekdayInput label="every" value={weekday}
                 onChange={handleChange('weekday', setWeekday)} />
             }
             {reset && base_unit === 30 &&
@@ -166,6 +169,7 @@ export const AddMetricFlow: WizardFlow = [
     field: 'question',
     title: 'What\'s the right question to ask?',
     subtitle: 'Choose a good question that forces you to think about this Metric correctly',
+    validate: stepValue => stepValue?.length ? null : "Question is required",
     FormComponent: props => {
       const handleChange = v => props.onChange(v.charAt(v.length-1) !== '?' ? `${v}?` : v)
       return (
@@ -177,7 +181,12 @@ export const AddMetricFlow: WizardFlow = [
     field: 'question_freq',
     title: 'How often should ask yourself this question?',
     subtitle: 'This is how frequently you collect data for this Metric',
-    FormComponent: ({ onChange, defaultValue }) => {
+    validate: value => {
+      if(!value || (!value.month_date && !value.weekdays && !value.days))
+        return "Please choose a frequency"
+      return null
+    },
+    FormComponent: ({ onChange, defaultValue, errorMessage }) => {
       const handleChange = (fn, field) => v => {
         fn(v)
         onChange({ [field]: v })
@@ -189,13 +198,12 @@ export const AddMetricFlow: WizardFlow = [
       const [month_date, setMonthDate] = useState(defaultValue?.month_date || '1st')
       
       useEffect(() => {
-        if(!defaultValue) {
-          if(mode === 'week')
-            onChange({weekdays})
-          else if(mode === 'month')
-            onChange({month_date})
+        if(mode === 'week')
+          onChange({weekdays})
+        else if(mode === 'month')
+          onChange({month_date})
+        else
           onChange({days})
-        }
       }, [mode])
       
       return (
@@ -217,7 +225,8 @@ export const AddMetricFlow: WizardFlow = [
             {mode === 'month' &&
               <MonthDateInput label={'on the'} 
                 value={month_date} onChange={handleChange(setMonthDate, 'month_date')} />
-            } 
+            }
+          <ErrorText text={errorMessage}/>
         </YStack>
       )
     }
@@ -226,7 +235,13 @@ export const AddMetricFlow: WizardFlow = [
     field: 'limits',
     title: 'What are the minimum and maximum values?',
     subtitle: 'Optional',
-    FormComponent: ({ defaultValue, onChange }) => {
+    validate: value => {
+      if(value && value.min !=undefined && value.max != undefined
+         && value.min >= value.max)
+        return "Min must be less than max"
+      return null
+    },
+    FormComponent: ({ defaultValue, onChange, errorMessage }) => {
       const handleChange = (fn, field) => v => {
         fn(v)
         onChange(Object.assign({
@@ -236,6 +251,7 @@ export const AddMetricFlow: WizardFlow = [
           max_label
         }, { [field]: v }))
       }
+
       const [min, setMin] = useState(defaultValue?.min)
       const [min_label, setMinLabel] = useState(defaultValue?.minLabel)
       const [max, setMax] = useState(defaultValue?.max)
@@ -244,6 +260,7 @@ export const AddMetricFlow: WizardFlow = [
       return (
         <YStack ai='center'>
           <Label jc="center">On the scale of:</Label>
+          {errorMessage && <ErrorText text={errorMessage}/>}
           <XStack>
             <NumberInput defaultValue={min} onChange={handleChange(setMin, 'min')} autofocus />
             <YStack height={70} jc="center" px={16}><SizableText fow='700'>to</SizableText></YStack>
@@ -264,10 +281,11 @@ export const AddMetricFlow: WizardFlow = [
     title: 'What value should you target?',
     subtitle: 'You define what success looks like',
     forwardProps: ['limits', 'units', 'view', 'question'],
+    validate: () => null,
     FormComponent: props => {
       const {question, limits, units, view} = props.forwardProps
 
-      let input = <NumberInput {...props} {...limits} units={units} autofocus/>
+      let input = <NumberInput {...props} {...limits} units={units} autofocus nodefault/>
       if(view.type === MetricType.streak)
         input = <BinaryInput {...props} 
           defaultValue={props.defaultValue != undefined ? props.defaultValue : 1}/>
@@ -304,10 +322,12 @@ export function AddMetricReview(props) {
       <SizableText>Measure this {freqStr} by asking</SizableText>
       <SizableText>{props.question}</SizableText>
       {props.limits?.min != undefined && 
-        <SizableText>At least {props.limits.min} ({props.limits.min_label})</SizableText>
+        <SizableText>At least {props.limits.min} 
+          {props.limits.min_label && `(${props.limits.min_label})`}</SizableText>
       }
       {props.limits?.max  != undefined && 
-        <SizableText>At most {props.limits.max} ({props.limits.max_label})</SizableText>
+        <SizableText>At most {props.limits.max}
+          {props.limits.max_label && `(${props.limits.max_label})`}</SizableText>
       }
       {props.target_value != undefined
         ? <SizableText>{targetStr}</SizableText>

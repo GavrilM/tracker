@@ -12,7 +12,18 @@ export function CollectFlow(metrics: Array<Metric>): WizardFlow {
     subtitle: '',
     buildQuery: d => ({metric_id: {_id: d.metric_id.link}, timestamp: d.timestamp}),
     skippable: true,
-    FormComponent: ({ onChange, defaultValue }) => {
+    validate: value => {
+      if(value == undefined)
+        return null
+      if(view.type !== MetricType.streak) {
+        if(limits.min != undefined && value.value < limits.min)
+          return "Too small"
+        else if(limits.max != undefined && value.value > limits.max)
+          return "Too large"
+      }
+      return null
+    },
+    FormComponent: ({ onChange, defaultValue, errorMessage }) => {
       const date = useContext(CollectDateContext)
       const handleChange = value => {
         if(value != undefined)
@@ -26,10 +37,12 @@ export function CollectFlow(metrics: Array<Metric>): WizardFlow {
       }
 
       if(view.type === MetricType.streak)
-        return <BinaryInput defaultValue={defaultValue?.value} onChange={handleChange}/>
+        return <BinaryInput defaultValue={defaultValue?.value} 
+          onChange={handleChange} errorMessage={errorMessage}/>
 
       return (
-        <NumberInput autofocus onChange={handleChange} units={units} defaultValue={defaultValue?.value}
+        <NumberInput autofocus nodefault units={units}
+          onChange={handleChange} defaultValue={defaultValue?.value}  errorMessage={errorMessage}
           min={limits?.min} minLabel={limits?.min_label} max={limits?.max} maxLabel={limits?.max_label}/>
       )
     }

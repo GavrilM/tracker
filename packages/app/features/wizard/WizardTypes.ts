@@ -9,6 +9,7 @@ type WizardStepFormProps = {
   defaultValue?: any
   forwardProps: any
   date?: Date
+  errorMessage?: string
 }
 
 export type WizardStep = {
@@ -19,7 +20,8 @@ export type WizardStep = {
   buildQuery?: (any) => Object
   autofill?: (any) => Object
   skippable?: boolean
-  FormComponent: ({ onChange }: WizardStepFormProps) => React.ReactElement
+  validate: (stepValue: any) => string | null,
+  FormComponent: (WizardStepFormProps) => React.ReactElement
 }
 
 export type WizardFlow = Array<WizardStep>

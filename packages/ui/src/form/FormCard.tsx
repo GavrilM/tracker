@@ -11,6 +11,7 @@ type FormCardProps = {
   onSkip?: () => void
   onComplete?: () => void
   completeText?: string,
+  height?: number
 }
 
 export function FormCard({ 
@@ -21,7 +22,8 @@ export function FormCard({
   onBack,
   onSkip,
   onComplete,
-  completeText
+  completeText,
+  height
 }: FormCardProps) {
   const handleSubmit = () => {
     if(onComplete)
@@ -33,7 +35,7 @@ export function FormCard({
   return (
     <YStack >
       <Form onSubmit={handleSubmit}>
-        <YStack bc="$gray3" p={25} br={12} w={450} h={420}>
+        <YStack bc="$gray3" p={25} br={12} w={450} h={height || 420}>
           <SizableText fow='700' fos='$7'>{title}</SizableText>
           <SizableText mt={12} lineHeight={20}>{subtitle}</SizableText>
           <YStack f={1} my={16}>{children}</YStack>

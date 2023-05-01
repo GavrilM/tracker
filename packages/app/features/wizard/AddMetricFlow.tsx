@@ -253,9 +253,9 @@ export const AddMetricFlow: WizardFlow = [
       }
 
       const [min, setMin] = useState(defaultValue?.min)
-      const [min_label, setMinLabel] = useState(defaultValue?.minLabel)
+      const [min_label, setMinLabel] = useState(defaultValue?.min_label)
       const [max, setMax] = useState(defaultValue?.max)
-      const [max_label, setMaxLabel] = useState(defaultValue?.maxLabel)
+      const [max_label, setMaxLabel] = useState(defaultValue?.max_label)
 
       return (
         <YStack ai='center'>
@@ -309,7 +309,8 @@ export function AddMetricReview(props) {
       ? `on the ${props.question_freq.monthDate}`
       : 'on the last day of the month'
   }
-  let targetStr = `Your target is to achieve ${props.target_value} ${props.units}.`
+  let unitStr = props.units ? props.units : '(unitless)'
+  let targetStr = `Your target is to achieve ${props.target_value} ${unitStr}.`
   if(props.view.type === MetricType.streak)
     targetStr = `Your target is to answer ${props.target_value ? 'yes': 'no'}`
   const [_, periodStrings] = getPeriod(props.view)
@@ -323,15 +324,15 @@ export function AddMetricReview(props) {
       <SizableText>{props.question}</SizableText>
       {props.limits?.min != undefined && 
         <SizableText>At least {props.limits.min} 
-          {props.limits.min_label && `(${props.limits.min_label})`}</SizableText>
+          {props.limits.min_label && ` (${props.limits.min_label})`}</SizableText>
       }
       {props.limits?.max  != undefined && 
         <SizableText>At most {props.limits.max}
-          {props.limits.max_label && `(${props.limits.max_label})`}</SizableText>
+          {props.limits.max_label && ` (${props.limits.max_label})`}</SizableText>
       }
       {props.target_value != undefined
         ? <SizableText>{targetStr}</SizableText>
-        : <SizableText>Measured in {props.units ? props.units : '(unitless)'}</SizableText>
+        : <SizableText>Measured in {unitStr}</SizableText>
       }
     </YStack>
   )

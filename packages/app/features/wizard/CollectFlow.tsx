@@ -15,7 +15,7 @@ export function CollectFlow(metrics: Array<Metric>): WizardFlow {
     validate: value => {
       if(value == undefined)
         return null
-      if(view.type !== MetricType.streak) {
+      if(view.type !== MetricType.streak && limits) {
         if(limits.min != undefined && value.value < limits.min)
           return "Too small"
         else if(limits.max != undefined && value.value > limits.max)
@@ -43,7 +43,7 @@ export function CollectFlow(metrics: Array<Metric>): WizardFlow {
       return (
         <NumberInput autofocus nodefault units={units}
           onChange={handleChange} defaultValue={defaultValue?.value}  errorMessage={errorMessage}
-          min={limits?.min} minLabel={limits?.min_label} max={limits?.max} maxLabel={limits?.max_label}/>
+          {...limits}/>
       )
     }
   }))

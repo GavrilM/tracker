@@ -9,8 +9,8 @@ type NumberInputProps = {
   nodefault?: boolean,
   min?: number,
   max?: number,
-  minLabel?: string,
-  maxLabel?: string,
+  min_label?: string,
+  max_label?: string,
   units?: string,
   validate?: (number) => boolean
   onChange: (number) => void,
@@ -22,9 +22,9 @@ export function NumberInput({
   defaultValue,
   nodefault,
   min,
-  minLabel,
+  min_label,
   max,
-  maxLabel,
+  max_label,
   units,
   validate,
   onChange,
@@ -114,7 +114,7 @@ export function NumberInput({
             <Slider min={min} max={max} step={stepValue}
               defaultValue={sliderValue} value={sliderValue}
               width={250}
-              onValueChange={([v]) => setValue(v)}>
+              onValueChange={handleChange}>
               <Slider.Track>
                 <Slider.TrackActive />
               </Slider.Track>
@@ -125,8 +125,8 @@ export function NumberInput({
           </XStack>
           {/* Slider Labels */}
           <XStack width="100%" jc="space-between">
-            <SizableText>{minLabel}</SizableText>
-            <SizableText>{maxLabel}</SizableText>
+            <SizableText>{min_label}</SizableText>
+            <SizableText>{max_label}</SizableText>
           </XStack>
         </YStack>
       }

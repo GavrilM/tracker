@@ -1,7 +1,7 @@
 import { XStack, YStack, Text, styled, ColorTokens } from "tamagui"
 import { Grid, Edit3, BookOpen, LogOut } from "@tamagui/lucide-icons"
 import { Link, useLink } from "solito/link"
-import { FormButton, H1 } from "@my/ui"
+import { FormButton, H1, ScrollView, ZStack } from "@my/ui"
 import { useRealmApp } from "app/provider/realm"
 import { useApolloClient } from "@apollo/client"
 
@@ -10,6 +10,7 @@ const headerHeight = 100
 const borderWidth = 2
 const borderColor = 'rgba(255,255,255,.15)'
 const padding = 16
+const bodyHeight = `calc(100% - ${headerHeight}px)`
 
 export enum routes {
   home = '/',
@@ -47,25 +48,26 @@ export const WebNavigation = ({ children, pathname }) => {
   }
 
   return (
-    <YStack f={1}>
-      <XStack
-        ai="center"
-        jc="space-between"
-        height={headerHeight}
-        pl={width+padding}
-        pr={padding*2}
-        bbc={borderColor}
-        bbw={borderWidth}>
-        <H1>{getTitle(pathname)}</H1>
-        <XStack space>
-            <FormButton {...goalLink} type="primary">Add Goal</FormButton>
-            <FormButton {...cellLink} type="primary">Add Cell</FormButton>
-            <FormButton {...collectLink} type="save">Collect Data</FormButton>
+    <YStack f={1} width="100vw" height="100vh">
+      <ZStack f={1}>
+        <XStack
+          ai="center"
+          jc="space-between"
+          height={headerHeight}
+          pl={width+padding}
+          pr={padding * 2}
+          bbc={borderColor}
+          bbw={borderWidth}>
+          <H1>{getTitle(pathname)}</H1>
+          <XStack space>
+              <FormButton {...goalLink} type="primary">Add Goal</FormButton>
+              <FormButton {...cellLink} type="primary">Add Cell</FormButton>
+              <FormButton {...collectLink} type="save">Collect Data</FormButton>
+          </XStack>
         </XStack>
-      </XStack>
-      <XStack f={1}>
         {/* sidebar */}
-        <YStack jc="space-between" ai="center" brw={borderWidth} brc={borderColor}> 
+        <YStack jc="space-between" ai="center" brw={borderWidth} brc={borderColor} mt={headerHeight}
+          height={bodyHeight} width={width}> 
           <YStack 
             ai="center" 
             pt={width/4}
@@ -76,10 +78,13 @@ export const WebNavigation = ({ children, pathname }) => {
           </YStack>
           <XStack onPress={handleLogOut} style={{paddingBottom: 15}}><LogOut/></XStack>
         </YStack>
-        <XStack f={1} px={padding} pt={padding}>
-          {children}
-        </XStack>
-      </XStack>
+      </ZStack>
+      <ScrollView px={padding} pt={padding}
+        position="absolute" 
+        height={bodyHeight} width={`calc(100% - ${width}px)`}
+        left={width} top={headerHeight}>
+        {children}
+      </ScrollView>
     </YStack>
   )
 }

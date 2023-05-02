@@ -89,7 +89,7 @@ function getSummary(data: Array<CellPoint>, view: CellViewOptions) {
   if(view.type === MetricType.total)
     return sum
   else if(view.type === MetricType.average)
-    return sum/data.length
+    return Math.round((sum/data.length) * 10) / 10
 
   return 0
 }

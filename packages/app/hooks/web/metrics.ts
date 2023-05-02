@@ -45,6 +45,17 @@ const CREATE_METRIC = gql`
   }
 `
 
+const LIST_METRICS = gql`
+  query ListMetrics {
+    metrics {
+      name
+      view {
+        type
+      }
+    }
+  } 
+`
+
 export const useMetrics = (): QueryResult<Array<Metric>> => {
   const { loading, error, data } = useQuery(ALL_METRICS)
   if (error)
@@ -74,4 +85,14 @@ export const useCreateMetric = () => {
     })
   }
   return [mutation]
+}
+
+export const useListMetrics = (): QueryResult<Array<Metric>> => {
+  const { loading, error, data } = useQuery(LIST_METRICS)
+  if (error)
+    console.log(error)
+  return {
+    loading,
+    data: data?.metrics
+  }
 }

@@ -16,5 +16,6 @@ export { ErrorText } from './form/ErrorText'
 
 export { MetricType, CellViewOptions } from './board/CellTypes'
 export { Cell } from './board/Cell'
+export { EditItem } from './edit/EditItem'
 
 export { ExpandibleSection } from './ExpandibleSection'

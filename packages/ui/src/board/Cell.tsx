@@ -77,9 +77,9 @@ function getSummary(data: Array<CellPoint>, view: CellViewOptions) {
     return data.at(-1)?.value
   if(view.type === MetricType.streak) {
     if(view.base_unit === 7)
-      return moment().diff(data[0].timestamp, 'week')
+      return moment().diff(data[data.length - 1].timestamp, 'week')
     else if(view.base_unit === 30)
-      return moment().diff(data[0].timestamp, 'month')
+      return moment().diff(data[data.length - 1].timestamp, 'month')
     else
       return data.length
   }
@@ -134,14 +134,14 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq
     data = dataPadded
   }
   else if (view.type === MetricType.streak) {
-    data = processStreak(data, xmin, target, view.weekdays)
+    data = processStreak(data, view, xmin, target)
   }
     
   return data
 }
 
-function processStreak(data, xmin, target, weekdayOptions) {
-  const now = formatDate(Date.now())
+function processStreak(data, view, xmin, target) {
+  let now = formatDate(Date.now())
   const dataPadded: Array<CellPoint> = []
   let i = 0
   if(now.toISOString() === formatDate(data[i].timestamp).toISOString()) {
@@ -149,15 +149,28 @@ function processStreak(data, xmin, target, weekdayOptions) {
     i++
   }
   now.subtract(1, 'day')
-  if(weekdayOptions) {
-    const weekdays = new Set(weekdayOptions)
+  if(view.weekdays) {
+    const weekdays = new Set(view.weekdays)
     while(now.toISOString() >= xmin){
-      if(!weekdays.has(now.day())) {
-        now.subtract(1, 'day')
-      } else if (now.diff(moment(data[i].timestamp), 'day') < 1){
+      if(!weekdays.has(now.day())) {} 
+      else if (now.diff(formatDate(data[i].timestamp), 'day') < 1
+        && data[i].value === target){
         dataPadded.push(data[i])
         i++
-        now.subtract(1, 'day')
+      } else {
+        return dataPadded
+      }
+      now.subtract(1, 'day')      
+    }
+    return dataPadded
+  } else if (view.base_unit > 1) {
+    const inc = view.base_unit === 7 ? 'week' : 'month'
+    while(now.toISOString() >= xmin){
+      if(i < data.length && now.diff(formatDate(data[i].timestamp), inc) < 1 
+        && data[i].value === target) {
+        dataPadded.push(data[i])
+        i++
+        now = formatDate(data[i].timestamp)
       } else {
         return dataPadded
       }
@@ -165,7 +178,7 @@ function processStreak(data, xmin, target, weekdayOptions) {
     return dataPadded
   } else {
     while(now.toISOString() >= xmin){
-      if(i < data.length && now.diff(moment(data[i].timestamp), 'day') < 1) {
+      if(i < data.length && now.diff(formatDate(data[i].timestamp), 'day') < 1) {
         if(data[i].value !== target) {
           return dataPadded
         } else {

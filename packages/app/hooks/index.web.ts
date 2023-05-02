@@ -10,7 +10,6 @@ import { genQuestionReview, genQuestions } from "./common";
 const USER_DATA = gql`
   query UserData($query: UserQueryInput) {
     user(query: $query) {
-      user_id
       boards {
         _id
       }
@@ -29,12 +28,14 @@ const ALL_METRICS = gql`
       }
       question_freq {
         days
+        weekdays
       }
       target_value
       view {
         type
         base_unit
         weekday
+        weekdays
         month_date
       }
       points_default {
@@ -48,8 +49,11 @@ const ALL_METRICS = gql`
 const CREATE_METRIC = gql`
   mutation CreateMetric($data: MetricInsertInput!) {
     insertOneMetric(data: $data) {
-      _id
       name
+      view {
+        type
+        base_unit
+      }
     }
   }
 `
@@ -133,7 +137,12 @@ export const useUserId = () => {
 }
 
 export const useUserData = () => {
-  const { loading, error, data } = useQuery(USER_DATA)
+  const id = useUserId()
+  const { loading, error, data } = useQuery(USER_DATA, {
+    variables: {
+      query: {user_id: id}
+    }
+  })
   if (error)
     console.log(error)
   return {
@@ -156,9 +165,17 @@ export const useCreateMetric = () => {
   const id = useUserId()
   const [fn] = useMutation(CREATE_METRIC)
   const mutation = (data) => {
+    const metric = withOwnerId(data, id) 
     fn({
       variables: {
-        data: withOwnerId(data, id) 
+        data: metric
+      },
+      optimisticResponse: {
+        insertOneMetric: {
+          id: 'temp-id',
+          __typename: "Metric",
+          ...metric
+        }
       }
     })
   }

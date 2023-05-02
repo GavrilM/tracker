@@ -43,7 +43,7 @@ const lyPeriodStrings = {
 
 const isAggregate = t => t === MetricType.total || t === MetricType.average || t === MetricType.graph
 const isTimeBounded = t => t === MetricType.streak
-const doesReset = v => v?.weekday != undefined || v?.month_date != undefined
+const doesReset = v => v?.weekday != undefined || v?.month_date != undefined || v?.weekdays != undefined
 function getPeriod(view) {
   const uselyPeriods = view?.type === MetricType.streak || (isAggregate(view?.type) && doesReset(view))
   const periods = uselyPeriods ? lyPeriods : nPeriods 
@@ -62,22 +62,18 @@ export const AddMetricFlow: WizardFlow = [
     )
   },
   {
-    field: 'units',
-    title: 'What unit of measure?',
-    subtitle: 'Optional',
-    validate: () => null,
-    FormComponent: props => (
-      <TextInput {...props} placeholder="Unit" autofocus/>
-    )
-  },
-  {
     field: 'view',
     title: 'What kind of Metric?',
     subtitle: 'You can always change it later',
     autofill: (view) => {
-      if(view.type === MetricType.streak)
-        return {limits: undefined}
-      return {}
+      const obj = {}
+      if(view.type === MetricType.streak) {
+        if(view.weekdays)
+          obj['question_freq'] = {weekdays: view.weekdays}
+        obj['limits'] = undefined
+        obj['units'] = undefined
+      }
+      return obj
     },
     validate: () => null,
     FormComponent: ({ onChange, defaultValue }) => {
@@ -91,6 +87,7 @@ export const AddMetricFlow: WizardFlow = [
       
       const [type, setType] = useState(defaultValue?.type || MetricType.graph)
       const [weekday, setWeekday] = useState(defaultValue?.weekday)
+      const [weekdays, setWeekdays] = useState(defaultValue?.weekdays)
       const [month_date, setMonthDate] = useState(defaultValue?.month_date)
       const [reset, setReset] = useState(doesReset(defaultValue))
 
@@ -121,6 +118,7 @@ export const AddMetricFlow: WizardFlow = [
           type,
           base_unit: tempBaseUnit,
           weekday,
+          weekdays,
           month_date
         }, {[field]: value}))
       }
@@ -130,12 +128,13 @@ export const AddMetricFlow: WizardFlow = [
         } else {
           setReset(false)
           setWeekday(undefined)
+          setWeekdays(undefined)
           setMonthDate(undefined)
           onChange({type, base_unit})
         }
       }
 
-      useEffect(() => onChange({type, base_unit, weekday, month_date}), [])
+      useEffect(() => onChange({type, base_unit, weekday, weekdays, month_date}), [])
 
       return (
         <YStack>
@@ -161,9 +160,29 @@ export const AddMetricFlow: WizardFlow = [
             }
             </YStack>
           }
+
+          {type === MetricType.streak && base_unit === 1 &&
+            <YStack mt={16}>
+              <BinaryInput defaultValue={reset ? 1 : 0} onChange={handleReset} yesLabel="Only on"
+                noLabel="Every day" />
+              {reset &&
+                <WeekdayInput label="weekdays" values={weekdays} multiple
+                  onChange={handleChange('weekdays', setWeekdays)} />
+              }
+            </YStack>
+          }
         </YStack>
       )
     }
+  },
+  {
+    field: 'units',
+    title: 'What unit of measure?',
+    subtitle: 'Optional',
+    validate: () => null,
+    FormComponent: props => (
+      <TextInput {...props} placeholder="Unit" autofocus/>
+    )
   },
   {
     field: 'question',

@@ -96,14 +96,14 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
       </>
     )
   } else if (stepNum === steps.length) {
+    Object.values(autofilled).forEach(a => {
+      Object.assign(formValue, a)
+    })
     content = (
       <FormCard
         title={'Review'}
         onBack={steps.length ? backFn(false) : undefined}
         onComplete={() => {
-          Object.values(autofilled).forEach(a => {
-            Object.assign(formValue, a)
-          })
           onComplete(formValue)
           replace(routes.home)
         }}

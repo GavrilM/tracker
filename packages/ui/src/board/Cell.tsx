@@ -118,34 +118,67 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq
     data = data.filter(d => d.timestamp >= xmin)
   }
   
-  // streak: find first break
-  // graph: bound + fill 0s
-  if((view.type === MetricType.graph && view.base_unit !== 0)
-    || (view.type === MetricType.graph && question_freq.days > 1)
-    || view.type === MetricType.streak) {
-    const now = formatDate(Date.now())
-    const dataPadded: Array<CellPoint> = []
+  const now = formatDate(Date.now())
+  const dataPadded: Array<CellPoint> = []
+  if(view.type === MetricType.graph && question_freq.days === 1) {
     let i = 0
     while(now.toISOString() >= xmin){
       if(i < data.length && now.diff(moment(data[i].timestamp), 'day') < 1) {
-        if(view.type === MetricType.streak && data[i].value !== target) {
+        dataPadded.push(data[i])
+        i++
+      } else {
+        dataPadded.unshift({timestamp: now.toISOString(), value: undefined})
+      }
+      now.subtract(1, 'day')
+    }
+    data = dataPadded
+  }
+  else if (view.type === MetricType.streak) {
+    data = processStreak(data, xmin, target, view.weekdays)
+  }
+    
+  return data
+}
+
+function processStreak(data, xmin, target, weekdayOptions) {
+  const now = formatDate(Date.now())
+  const dataPadded: Array<CellPoint> = []
+  let i = 0
+  if(now.toISOString() === formatDate(data[i].timestamp).toISOString()) {
+    dataPadded.push(data[i])
+    i++
+  }
+  now.subtract(1, 'day')
+  if(weekdayOptions) {
+    const weekdays = new Set(weekdayOptions)
+    while(now.toISOString() >= xmin){
+      if(!weekdays.has(now.day())) {
+        now.subtract(1, 'day')
+      } else if (now.diff(moment(data[i].timestamp), 'day') < 1){
+        dataPadded.push(data[i])
+        i++
+        now.subtract(1, 'day')
+      } else {
+        return dataPadded
+      }
+    }
+    return dataPadded
+  } else {
+    while(now.toISOString() >= xmin){
+      if(i < data.length && now.diff(moment(data[i].timestamp), 'day') < 1) {
+        if(data[i].value !== target) {
           return dataPadded
         } else {
           dataPadded.push(data[i])
           i++
         }
       } else {
-        if(view.type === MetricType.streak && now.diff(moment(), 'day') <= -1) {
-          return dataPadded
-        } else {
-          dataPadded.unshift({timestamp: now.toISOString(), value: undefined})
-        }
+        return dataPadded
       }
       now.subtract(1, 'day')
     }
-    data = dataPadded
+    return dataPadded
   }
-  return data
 }
 
 function getLabel(view, lastPointDate) {

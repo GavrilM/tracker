@@ -3,6 +3,7 @@ import { Grid, Edit3, BookOpen, LogOut } from "@tamagui/lucide-icons"
 import { Link, useLink } from "solito/link"
 import { FormButton, H1 } from "@my/ui"
 import { useRealmApp } from "app/provider/realm"
+import { useApolloClient } from "@apollo/client"
 
 const width = 60
 const headerHeight = 100
@@ -34,6 +35,12 @@ export const WebNavigation = ({ children, pathname }) => {
   const goalLink = useLink({href: routes.addgoal})
   const cellLink = useLink({href: routes.addcell})
   const collectLink = useLink({href: routes.collect})
+
+  const client  = useApolloClient()
+  const handleLogOut = () => {
+    client.resetStore()
+    logOut()
+  }
   
   if (pathname === routes.login) {
     return <>{children}</>
@@ -67,7 +74,7 @@ export const WebNavigation = ({ children, pathname }) => {
               <NavLink href={routes.edit}><Edit3/></NavLink>
               <NavLink href={routes.notebook}><BookOpen/></NavLink>
           </YStack>
-          <XStack onPress={logOut} style={{paddingBottom: 15}}><LogOut/></XStack>
+          <XStack onPress={handleLogOut} style={{paddingBottom: 15}}><LogOut/></XStack>
         </YStack>
         <XStack f={1} px={padding} pt={padding}>
           {children}

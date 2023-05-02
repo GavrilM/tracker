@@ -10,5 +10,6 @@ export type CellViewOptions = {
   base_unit: number,
   type: MetricType,
   weekday: number,
+  weekdays: Array<number>,
   month_date: string,
 }

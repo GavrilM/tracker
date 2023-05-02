@@ -52,3 +52,5 @@ export function genQuestionReview(metrics: Array<Metric>, pointLookup): CollectR
   })
   return result
 }
+
+export const withOwnerId = (o, userId) => Object.assign({owner_id: {link: userId}}, o)

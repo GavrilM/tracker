@@ -53,6 +53,14 @@ const EDIT_METRIC = gql`
   }
 `
 
+const DELETE_METRIC = gql`
+  mutation DeleteMetric($query: MetricQueryInput!) {
+    deleteOneMetric(query: $query) {
+      name
+    }
+  }
+`
+
 const LIST_METRICS = gql`
   query ListMetrics {
     metrics {
@@ -165,3 +173,9 @@ export const useEditMetric = (_id: string) => {
 }
 
 const omitTypename = (key, value) => (key === '__typename' ? undefined : value);
+
+export const useDeleteMetric = () => {
+  return useMutation(DELETE_METRIC, {
+    refetchQueries: [LIST_METRICS]
+  })
+}

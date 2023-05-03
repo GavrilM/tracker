@@ -28,3 +28,7 @@ export const useSingleMetric = (_id: string): QueryResult<Metric> => {
 export const useEditMetric = (_id: string) => {
   return [(any) => {}]
 }
+
+export const useDeleteMetric = () => {
+  return [(any) => {}]
+}

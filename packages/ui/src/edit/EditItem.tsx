@@ -1,6 +1,7 @@
 import { Edit2, Trash } from "@tamagui/lucide-icons";
 import { Card, SizableText, XStack, YStack } from "tamagui";
 import { MetricType } from "../board/CellTypes";
+import { DangerDialog } from "../modal/DangerDialog";
 
 type EditItemProps = {
   name: string
@@ -21,7 +22,9 @@ export function EditItem({name, view, onEdit, onTrash}: EditItemProps) {
         </YStack>
         <XStack ai="center" ml="$3">
           <YStack p={12} onPress={onEdit}><Edit2 opacity={.5}/></YStack>
-          <YStack p={12} onPress={onTrash}><Trash opacity={.5}/></YStack>
+          <DangerDialog title={`Delete ${name}?`} subtitle="All data will be lost"
+            onConfirm={onTrash}
+            trigger={<YStack p={12}><Trash opacity={.5}/></YStack>}/>
         </XStack>
       </XStack>
     </Card>

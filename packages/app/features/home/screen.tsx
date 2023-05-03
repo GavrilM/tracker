@@ -9,11 +9,16 @@ import {
 } from '@my/ui'
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons'
 import { useMetrics, useUserorRedirect } from 'app/hooks'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export function HomeScreen() {
   const user = useUserorRedirect()
-  const {loading, data} = useMetrics()
+  const {loading, data, refetch} = useMetrics()
+
+  useEffect(() => {
+    if(refetch)
+      setTimeout(() => refetch(), 1500)
+  }, [data])
 
   if (loading || !user) {
     return <Spinner />

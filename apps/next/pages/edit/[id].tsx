@@ -1,0 +1,1 @@
+export { EditDetail as default } from 'app/features/edit/detail'

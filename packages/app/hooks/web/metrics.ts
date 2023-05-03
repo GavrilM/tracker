@@ -48,9 +48,37 @@ const CREATE_METRIC = gql`
 const LIST_METRICS = gql`
   query ListMetrics {
     metrics {
+      _id
       name
       view {
         type
+      }
+    }
+  } 
+`
+
+const SINGLE_METRIC = gql`
+  query ListMetrics($query: MetricQueryInput!) {
+    metric(query: $query) {
+      name
+      units
+      limits {
+        min
+        min_label
+        max
+        max_label
+      }
+      question_freq {
+        days
+        weekdays
+      }
+      target_value
+      view {
+        type
+        base_unit
+        weekday
+        weekdays
+        month_date
       }
     }
   } 
@@ -94,5 +122,20 @@ export const useListMetrics = (): QueryResult<Array<Metric>> => {
   return {
     loading,
     data: data?.metrics
+  }
+}
+
+export const useSingleMetric = (_id: string): QueryResult<Metric> => {
+  const { loading, error, data } = useQuery(SINGLE_METRIC, {
+    variables: {
+      query: {_id}
+    }
+  })
+  if (error)
+    console.log(error)
+
+  return {
+    loading,
+    data: data?.metric
   }
 }

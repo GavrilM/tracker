@@ -4,6 +4,7 @@ import { Link, useLink } from "solito/link"
 import { FormButton, H1, ScrollView, ZStack } from "@my/ui"
 import { useRealmApp } from "app/provider/realm"
 import { useApolloClient } from "@apollo/client"
+import { useNavTitle } from "app/provider/context/NavTitleContext"
 
 const width = 60
 const headerHeight = 100
@@ -32,6 +33,7 @@ const NavLink = ({ children, href }) => (
 
 export const WebNavigation = ({ children, pathname }) => {
   const { logOut } = useRealmApp()
+  const title = useNavTitle()
 
   const goalLink = useLink({href: routes.addgoal})
   const cellLink = useLink({href: routes.addcell})
@@ -58,7 +60,7 @@ export const WebNavigation = ({ children, pathname }) => {
           pr={padding * 2}
           bbc={borderColor}
           bbw={borderWidth}>
-          <H1>{getTitle(pathname)}</H1>
+          <H1>{getTitle(pathname, title)}</H1>
           <XStack space>
               <FormButton {...goalLink} type="primary">Add Goal</FormButton>
               <FormButton {...cellLink} type="primary">Add Cell</FormButton>
@@ -89,7 +91,10 @@ export const WebNavigation = ({ children, pathname }) => {
   )
 }
 
-const getTitle = (pathname: string) => {
+const getTitle = (pathname: string, title: string) => {
+  if(pathname !== routes.edit && pathname.includes(routes.edit))
+    return `Edit: ${title}`
+
   switch(pathname) {
     case routes.home:
       return 'Dashboard';

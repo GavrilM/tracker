@@ -4,6 +4,7 @@ import { NavigationProvider } from './navigation'
 import { TamaguiProvider, TamaguiProviderProps, ToastProvider, ToastViewport } from '@my/ui'
 import { useColorScheme } from 'react-native'
 import { RealmProvider } from './realm'
+import { NavTitleProvider } from './context/NavTitleContext'
 
 const APP_ID = process.env.NEXT_PUBLIC_APP_ID || (() => {throw new Error("No app id")})()
 
@@ -18,7 +19,9 @@ export function Provider({ children, ...rest }: Omit<TamaguiProviderProps, 'conf
     >
       <ToastProvider swipeDirection="horizontal" native="mobile">
         <RealmProvider appId={APP_ID}>
-          <NavigationProvider>{children}</NavigationProvider>
+          <NavTitleProvider>
+            <NavigationProvider>{children}</NavigationProvider>
+          </NavTitleProvider>
         </RealmProvider>
         <CustomToast />
         <ToastViewport left={0} right={0} top={2} />

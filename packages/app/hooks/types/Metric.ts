@@ -4,7 +4,7 @@ import { CellViewOptions } from "@my/ui"
 
 type QuestionFreq = {
   days: number,
-  weekdays: [number],
+  weekdays: Array<number>,
   month_date: string
 }
 
@@ -27,4 +27,39 @@ export type Metric = {
 
   last_point: Point
   points_default: Array<Point>
+}
+
+const dummmyPoint = {
+  owner_id: '',
+  metric_id: '',
+  timestamp: '',
+  value: 0
+}
+
+export const DummyMetric = {
+  _id: '',
+  name: '',
+  question: '',
+  question_freq: {
+    days: 0,
+    weekdays: [],
+    month_date: ''
+  },
+  limits: {
+    min: 0,
+    min_label: '',
+    max: 0,
+    max_label: '',
+  },
+  target_value: 0,
+  units: '',
+  view: {
+    base_unit: 0,
+    type: MetricType.average,
+    weekday: 0,
+    weekdays: [],
+    month_date: '',
+  },
+  last_point: dummmyPoint,
+  points_default: []
 }

@@ -7,9 +7,11 @@ type EditItemProps = {
   view: {
     type: MetricType
   }
+  onEdit: () => void
+  onTrash: () => void
 }
 
-export function EditItem({name, view}: EditItemProps) {
+export function EditItem({name, view, onEdit, onTrash}: EditItemProps) {
   return (
     <Card width="100%" p="$3">
       <XStack f={1} jc="space-between">
@@ -18,8 +20,8 @@ export function EditItem({name, view}: EditItemProps) {
           <SizableText>{view.type}</SizableText>
         </YStack>
         <XStack ai="center" ml="$3">
-          <YStack p={12}><Edit2 opacity={.5}/></YStack>
-          <YStack p={12}><Trash opacity={.5}/></YStack>
+          <YStack p={12} onPress={onEdit}><Edit2 opacity={.5}/></YStack>
+          <YStack p={12} onPress={onTrash}><Trash opacity={.5}/></YStack>
         </XStack>
       </XStack>
     </Card>

@@ -83,7 +83,6 @@ export const useCollectPoints = () => {
       if(p)
         return withOwnerId(p, id) 
     })
-    console.log(points)
     fn({
       variables: {
         data: points

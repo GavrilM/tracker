@@ -81,18 +81,18 @@ export const WebNavigation = ({ children, pathname }) => {
           <XStack onPress={handleLogOut} style={{paddingBottom: 15}}><LogOut/></XStack>
         </YStack>
       </ZStack>
-      <ScrollView px={padding} pt={padding}
+      <YStack px={padding} pt={padding}
         position="absolute" 
         height={bodyHeight} width={`calc(100% - ${width}px)`}
         left={width} top={headerHeight}>
         {children}
-      </ScrollView>
+      </YStack>
     </YStack>
   )
 }
 
 const getTitle = (pathname: string, title: string) => {
-  if(pathname !== routes.edit && pathname.includes(routes.edit))
+  if(pathname !== routes.edit && pathname?.includes(routes.edit))
     return `Edit: ${title}`
 
   switch(pathname) {

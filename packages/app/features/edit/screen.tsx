@@ -1,4 +1,4 @@
-import { YStack, Spinner, EditItem } from "@my/ui"
+import { YStack, Spinner, EditItem, ScrollView } from "@my/ui"
 import { useListMetrics, useUserorRedirect } from "app/hooks"
 import { useSetNavTitle } from "app/provider/context/NavTitleContext"
 import { useRouter } from "solito/router"
@@ -14,16 +14,14 @@ export const EditScreen = () => {
   }
 
   return (
-    <YStack f={1} jc="center" ai="center" p="$4" space>
-      <YStack space="$4" maw={600} f={1}>
-        {data.map((m,i) => (
-          <EditItem key={i} {...m} 
-            onEdit={() => {
-              setTitle(m.name)
-              push(`edit/${m._id}`)
-            }} onTrash={() => {}}/>
-        ))}
-      </YStack>
-    </YStack>
+    <ScrollView f={1} ai="center" p="$4" space>
+      {data.map((m,i) => (
+        <EditItem key={i} {...m} 
+          onEdit={() => {
+            setTitle(m.name)
+            push(`edit/${m._id}`)
+          }} onTrash={() => {}}/>
+      ))}
+    </ScrollView>
   )
 }

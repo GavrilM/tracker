@@ -14,42 +14,10 @@ import {
   YStack
 } from "@my/ui";
 import { WizardFlow } from "./WizardTypes";
-import { useEffect, useState } from "react";
-
-const nPeriods = {
-  'Overall': 0,
-  '1 day': 1,
-  '7 day': 7,
-  '30 day': 30,
-}
-const lyPeriods = {
-  'Overall': 0,
-  'Daily': 1,
-  'Weekly': 7,
-  'Monthly': 30
-}
-const nPeriodStrings = {
-  0: 'Overall',
-  1: '1 day',
-  7: '7 day',
-  30: '30 day'
-}
-const lyPeriodStrings = {
-  0: 'Overall',
-  1: 'Daily',
-  7: 'Weekly',
-  30: 'Monthly'
-}
-
-const isAggregate = t => t === MetricType.total || t === MetricType.average || t === MetricType.graph
-const isTimeBounded = t => t === MetricType.streak
-const doesReset = v => v?.weekday != undefined || v?.month_date != undefined || v?.weekdays != undefined
-function getPeriod(view) {
-  const uselyPeriods = view?.type === MetricType.streak || (isAggregate(view?.type) && doesReset(view))
-  const periods = uselyPeriods ? lyPeriods : nPeriods 
-  const periodStrings = uselyPeriods ? lyPeriodStrings : nPeriodStrings
-  return [periods, periodStrings]
-}
+import { MetricViewForm } from "app/components/form/MetricViewForm";
+import { getPeriod } from "app/components/form/utils";
+import { MetricQuestionFreqForm } from "app/components/form/MetricQuestionFreqForm";
+import { MetricLimitForm } from "app/components/form/MetricLimitForm";
 
 export const AddMetricFlow: WizardFlow = [
   {
@@ -76,104 +44,7 @@ export const AddMetricFlow: WizardFlow = [
       return obj
     },
     validate: () => null,
-    FormComponent: ({ onChange, defaultValue }) => {
-      const tips = {
-        [MetricType.average]: 'One summary number',
-        [MetricType.graph]: 'See changes over time',
-        [MetricType.lastvalue]: 'A number to beat',
-        [MetricType.streak]: 'Don\'t break the chain',
-        [MetricType.total]: 'Add it all up'
-      }
-      
-      const [type, setType] = useState(defaultValue?.type || MetricType.graph)
-      const [weekday, setWeekday] = useState(defaultValue?.weekday)
-      const [weekdays, setWeekdays] = useState(defaultValue?.weekdays)
-      const [month_date, setMonthDate] = useState(defaultValue?.month_date)
-      const [reset, setReset] = useState(doesReset(defaultValue))
-
-      const showUnit = v => v !== MetricType.lastvalue
-      const [periods, periodStrings] = getPeriod({type, weekday, month_date})
-      const periodOptions = isTimeBounded(type)
-        ? Object.keys(periods).filter(ps => ps !== 'Overall')
-        : isAggregate(type)
-        ? Object.keys(periods).filter(ps => ps !== '1 day' && ps !== 'Daily')
-        : Object.keys(periods)
-
-      const [base_unit, setBaseUnit] = useState(
-        defaultValue?.base_unit != undefined ? defaultValue.base_unit : 0)
-    
-      const handleChange = (field, fn) => value => {
-        let tempBaseUnit = base_unit
-        if(field === 'type' && isTimeBounded(value) && base_unit === 0) {
-          tempBaseUnit = 1
-          setBaseUnit(1)
-        }
-        if(field === 'type' && isAggregate(value) && base_unit === 1) {
-          tempBaseUnit = 0
-          setBaseUnit(0)
-        }
-        value = field === 'base_unit' ? periods[value]: value        
-        fn(value)
-        onChange(Object.assign({
-          type,
-          base_unit: tempBaseUnit,
-          weekday,
-          weekdays,
-          month_date
-        }, {[field]: value}))
-      }
-      const handleReset = v => {
-        if(v) {
-          setReset(true)
-        } else {
-          setReset(false)
-          setWeekday(undefined)
-          setWeekdays(undefined)
-          setMonthDate(undefined)
-          onChange({type, base_unit})
-        }
-      }
-
-      useEffect(() => onChange({type, base_unit, weekday, weekdays, month_date}), [])
-
-      return (
-        <YStack>
-          <XStack space>
-            {showUnit(type) && <SelectInput onChange={handleChange('base_unit', setBaseUnit)} placeholder="Period"
-              values={periodOptions} value={periodStrings[base_unit]} width={120}/>}
-            <SelectInput onChange={handleChange('type', setType)} placeholder="Metric type"
-              values={Object.values(MetricType)} value={type} width={160}/>
-          </XStack>
-          <SizableText ml={showUnit(type) ? 156 : 18} mt={4}>{tips[type]}</SizableText>
-
-          {isAggregate(type) && base_unit > 1 &&
-            <YStack mt={16}>
-              <BinaryInput defaultValue={reset ? 1 : 0} onChange={handleReset} yesLabel="Reset the count"
-                noLabel={`Count the last ${base_unit === 7 ? ' 7 days' : ' 30 days'}`} />
-            {reset && base_unit === 7 &&
-              <WeekdayInput label="every" value={weekday}
-                onChange={handleChange('weekday', setWeekday)} />
-            }
-            {reset && base_unit === 30 &&
-              <MonthDateInput label="every month on the" value={month_date}
-                onChange={handleChange('month_date', setMonthDate)}/>
-            }
-            </YStack>
-          }
-
-          {type === MetricType.streak && base_unit === 1 &&
-            <YStack mt={16}>
-              <BinaryInput defaultValue={reset ? 1 : 0} onChange={handleReset} yesLabel="Only on"
-                noLabel="Every day" />
-              {reset &&
-                <WeekdayInput label="weekdays" values={weekdays} multiple
-                  onChange={handleChange('weekdays', setWeekdays)} />
-              }
-            </YStack>
-          }
-        </YStack>
-      )
-    }
+    FormComponent: MetricViewForm,
   },
   {
     field: 'units',
@@ -205,50 +76,7 @@ export const AddMetricFlow: WizardFlow = [
         return "Please choose a frequency"
       return null
     },
-    FormComponent: ({ onChange, defaultValue, errorMessage }) => {
-      const handleChange = (fn, field) => v => {
-        fn(v)
-        onChange({ [field]: v })
-      }
-      const defaultMode = defaultValue?.monthDate ? 'month' : defaultValue?.weekdays ? 'week' : 'day(s)'
-      const [mode, setMode] = useState(defaultMode)
-      const [days, setDays] = useState(defaultValue?.days || 1)
-      const [weekdays, setWeekdays] = useState(defaultValue?.weekdays || [0])
-      const [month_date, setMonthDate] = useState(defaultValue?.month_date || '1st')
-      
-      useEffect(() => {
-        if(mode === 'week')
-          onChange({weekdays})
-        else if(mode === 'month')
-          onChange({month_date})
-        else
-          onChange({days})
-      }, [mode])
-      
-      return (
-        <YStack space>
-          <XStack space ai='center' jc='center'>
-            <YStack height={60} jc="center">
-              <SizableText fow='700'>Every</SizableText>
-            </YStack>
-            {mode === 'day(s)' &&
-              <NumberInput onChange={handleChange(setDays, 'days')} defaultValue={days} min={1} autofocus/>
-            }
-            <SelectInput placeholder="Period" width={100} value={mode}
-              values={['day(s)', 'week', 'month']} onChange={setMode}/>
-          </XStack>
-            {mode === 'week' &&
-              <WeekdayInput multiple label={'on'} 
-                values={weekdays} onChange={handleChange(setWeekdays, 'weekdays')}/>
-            }
-            {mode === 'month' &&
-              <MonthDateInput label={'on the'} 
-                value={month_date} onChange={handleChange(setMonthDate, 'month_date')} />
-            }
-          <ErrorText text={errorMessage}/>
-        </YStack>
-      )
-    }
+    FormComponent: MetricQuestionFreqForm
   },
   {
     field: 'limits',
@@ -260,40 +88,7 @@ export const AddMetricFlow: WizardFlow = [
         return "Min must be less than max"
       return null
     },
-    FormComponent: ({ defaultValue, onChange, errorMessage }) => {
-      const handleChange = (fn, field) => v => {
-        fn(v)
-        onChange(Object.assign({
-          min,
-          min_label,
-          max,
-          max_label
-        }, { [field]: v }))
-      }
-
-      const [min, setMin] = useState(defaultValue?.min)
-      const [min_label, setMinLabel] = useState(defaultValue?.min_label)
-      const [max, setMax] = useState(defaultValue?.max)
-      const [max_label, setMaxLabel] = useState(defaultValue?.max_label)
-
-      return (
-        <YStack ai='center'>
-          <Label jc="center">On the scale of:</Label>
-          {errorMessage && <ErrorText text={errorMessage}/>}
-          <XStack>
-            <NumberInput defaultValue={min} onChange={handleChange(setMin, 'min')} autofocus />
-            <YStack height={70} jc="center" px={16}><SizableText fow='700'>to</SizableText></YStack>
-            <NumberInput defaultValue={max} onChange={handleChange(setMax, 'max')}/>
-          </XStack>
-          <XStack space f={1}>
-            <TextInput defaultValue={min_label} placeholder="Min Label" 
-              onChange={handleChange(setMinLabel, 'min_label')} width={200}/>
-            <TextInput defaultValue={max_label} placeholder="Max Label"
-              onChange={handleChange(setMaxLabel, 'max_label')} width={200}/>
-          </XStack>
-        </YStack>
-      )
-    }
+    FormComponent: MetricLimitForm
   },
   {
     field: 'target_value',

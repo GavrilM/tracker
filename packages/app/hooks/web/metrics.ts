@@ -68,6 +68,7 @@ const SINGLE_METRIC = gql`
         max
         max_label
       }
+      question
       question_freq {
         days
         weekdays

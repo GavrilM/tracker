@@ -62,7 +62,7 @@ export function TextInput({
   }
   
   return (
-    <YStack>
+    <YStack f={1} width='100%'>
       <YStack onFocus={handleFocus} onPress={handleFocus} width={width}
         height={80} bw={2} br={16} pl='$3' outlineColor={getOutlineColor(errorMessage)} outlineStyle="solid"
         {...borderStyle}>

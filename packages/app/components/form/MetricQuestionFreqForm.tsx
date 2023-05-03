@@ -1,7 +1,7 @@
 import { ErrorText, MonthDateInput, NumberInput, SelectInput, SizableText, WeekdayInput, XStack, YStack } from "@my/ui"
 import { useEffect, useState } from "react"
 
-export const MetricQuestionFreqForm = ({ onChange, defaultValue, errorMessage }) => {
+export const MetricQuestionFreqForm = ({ onChange, defaultValue, errorMessage, autofocus }) => {
   const handleChange = (fn, field) => v => {
     fn(v)
     onChange({ [field]: v })
@@ -28,7 +28,7 @@ export const MetricQuestionFreqForm = ({ onChange, defaultValue, errorMessage })
           <SizableText fow='700'>Every</SizableText>
         </YStack>
         {mode === 'day(s)' &&
-          <NumberInput onChange={handleChange(setDays, 'days')} defaultValue={days} min={1} autofocus/>
+          <NumberInput onChange={handleChange(setDays, 'days')} defaultValue={days} min={1} autofocus={autofocus}/>
         }
         <SelectInput placeholder="Period" width={100} value={mode}
           values={['day(s)', 'week', 'month']} onChange={setMode}/>

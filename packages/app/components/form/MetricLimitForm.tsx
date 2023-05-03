@@ -1,7 +1,7 @@
 import { ErrorText, Label, NumberInput, SizableText, TextInput, XStack, YStack } from "@my/ui"
 import { useState } from "react"
 
-export const MetricLimitForm = ({ defaultValue, onChange, errorMessage }) => {
+export const MetricLimitForm = ({ defaultValue, onChange, errorMessage, autofocus }) => {
   const handleChange = (fn, field) => v => {
     fn(v)
     onChange(Object.assign({
@@ -22,7 +22,7 @@ export const MetricLimitForm = ({ defaultValue, onChange, errorMessage }) => {
       <Label jc="center">On the scale of:</Label>
       {errorMessage && <ErrorText text={errorMessage}/>}
       <XStack>
-        <NumberInput defaultValue={min} onChange={handleChange(setMin, 'min')} autofocus />
+        <NumberInput defaultValue={min} onChange={handleChange(setMin, 'min')} autofocus={autofocus} />
         <YStack height={70} jc="center" px={16}><SizableText fow='700'>to</SizableText></YStack>
         <NumberInput defaultValue={max} onChange={handleChange(setMax, 'max')}/>
       </XStack>

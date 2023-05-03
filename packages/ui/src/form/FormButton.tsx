@@ -5,16 +5,16 @@ export const FormButton = styled(Button, {
   variants: {
     type: {
       primary: {
-        backgroundColor: '$blue10Light'
+        backgroundColor: '$blue10'
       },
       secondary: {
-        backgroundColor: '$gray10Light'
+        backgroundColor: '$gray10'
       },
       save: {
-        backgroundColor: '$green10Light'
+        backgroundColor: '$green10'
       },
       danger: {
-        backgroundColor: '$red1Dark'
+        backgroundColor: '$red10'
       },
       discourage: {
         backgroundColor: 'white',

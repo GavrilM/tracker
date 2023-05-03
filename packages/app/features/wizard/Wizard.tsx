@@ -91,7 +91,7 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
           onContinue={handleContinue}
           height={450}>
           <FormComponent onChange={v => {stepValue = v}} errorMessage={errMsg}
-            defaultValue={stepValue} forwardProps={props}/>
+            defaultValue={stepValue} forwardProps={props} autofocus/>
         </FormCard>
       </>
     )

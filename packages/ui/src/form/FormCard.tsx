@@ -5,13 +5,14 @@ import { FormButton } from "./FormButton";
 type FormCardProps = {
   title: string,
   subtitle?: string,
-  children: React.ReactNode,
+  children: React.ReactNode
   onContinue?: () => void
   onBack?: () => void
   onSkip?: () => void
   onComplete?: () => void
   completeText?: string,
-  height?: number
+  height?: number | string
+  center?: boolean
 }
 
 export function FormCard({ 
@@ -23,7 +24,8 @@ export function FormCard({
   onSkip,
   onComplete,
   completeText,
-  height
+  height,
+  center
 }: FormCardProps) {
   const handleSubmit = () => {
     if(onComplete)
@@ -36,9 +38,9 @@ export function FormCard({
     <YStack >
       <Form onSubmit={handleSubmit}>
         <YStack bc="$gray3" p={25} br={12} w={450} h={height || 420}>
-          <SizableText fow='700' fos='$7'>{title}</SizableText>
+          <SizableText fow='700' fos='$7' textAlign={center ? 'center' : "auto"}>{title}</SizableText>
           <SizableText mt={12} lineHeight={20}>{subtitle}</SizableText>
-          <YStack f={1} my={16}>{children}</YStack>
+          <YStack f={1} my={16} ai={center ? 'center' : 'flex-start'}>{children}</YStack>
           <XStack space fd="row-reverse">
             {onComplete && 
                 <FormButton type="save" icon={CheckCircle} onPress={onComplete}>{completeText || 'Save'}</FormButton>}

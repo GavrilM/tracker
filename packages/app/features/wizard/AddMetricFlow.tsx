@@ -26,7 +26,7 @@ export const AddMetricFlow: WizardFlow = [
     subtitle: 'Pick something short and informative',
     validate: value => value?.length ? null : "Name is required",
     FormComponent: props => (
-      <TextInput {...props} placeholder="Metric name" autofocus/>
+      <TextInput {...props} placeholder="Metric name"/>
     )
   },
   {
@@ -52,7 +52,7 @@ export const AddMetricFlow: WizardFlow = [
     subtitle: 'Optional',
     validate: () => null,
     FormComponent: props => (
-      <TextInput {...props} placeholder="Unit" autofocus/>
+      <TextInput {...props} placeholder="Unit"/>
     )
   },
   {
@@ -63,7 +63,7 @@ export const AddMetricFlow: WizardFlow = [
     FormComponent: props => {
       const handleChange = v => props.onChange(v.charAt(v.length-1) !== '?' ? `${v}?` : v)
       return (
-        <TextInput {...props} onChange={handleChange} placeholder="Question" autofocus/>
+        <TextInput {...props} onChange={handleChange} placeholder="Question"/>
       )
     }
   },
@@ -99,7 +99,7 @@ export const AddMetricFlow: WizardFlow = [
     FormComponent: props => {
       const {question, limits, units, view} = props.forwardProps
 
-      let input = <NumberInput {...props} {...limits} units={units} autofocus nodefault/>
+      let input = <NumberInput {...props} {...limits} units={units} nodefault/>
       if(view.type === MetricType.streak)
         input = <BinaryInput {...props} 
           defaultValue={props.defaultValue != undefined ? props.defaultValue : 1}/>

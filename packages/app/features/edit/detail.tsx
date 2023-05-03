@@ -7,6 +7,7 @@ import { pick } from "lodash"
 import { useSetNavTitle } from 'app/provider/context/NavTitleContext';
 import { useSetNavAction } from 'app/provider/context/NavActionContext';
 import { useRouter } from 'solito/router';
+import { useEditMetric } from 'app/hooks';
 
 const { useParam } = createParam()
 
@@ -27,25 +28,26 @@ export function EditDetail() {
   const { back } = useRouter()
 
   const {loading, data} = useSingleMetric(id || '')
+  const [mutation] = useEditMetric(id || '')
   
-  let [formValue, setFormValue] = useState(data)
+  let [formValue, setFormValue] = useState<any>()
   const [errMsg, setErrMsg] = useState('')
   const [errField, setErrField] = useState('')
-
+  
   useEffect(() => {
+    setFormValue(Object.assign({}, data))
     if(data?.name) {
       setTitle(data.name)
-      setNavAction({
-        save: () => {},
-        close: back
-      })
     }
+    setNavAction({
+      save: back,
+      close: back
+    })
   }, [data])
 
-  if (loading || !id) {
+  if (loading || !id || !formValue?.name) {
     return <Spinner />
   }
-  formValue = Object.assign({}, data)
 
   const formFields = AddMetricFlow.map(({field, forwardProps, FormComponent, validate}, i) => {
     const handleChange = v => {
@@ -54,9 +56,18 @@ export function EditDetail() {
         setErrMsg(errStr)
         setErrField(field)
       } else {
-        setFormValue(Object.assign(formValue, {[field]: v}))
+        const newValue = Object.assign(formValue, {[field]: v})
+        setFormValue(newValue)
         setErrMsg('')
         setErrField('')
+        setTitle(newValue.name)
+        setNavAction({
+          save: () => {
+            mutation(newValue)
+            back()
+          },
+          close: back
+        })
       }
     }
 

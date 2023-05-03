@@ -40,7 +40,7 @@ export function FormCard({
         <YStack bc="$gray3" p={25} br={12} w={450} h={height || 420}>
           <SizableText fow='700' fos='$7' textAlign={center ? 'center' : "auto"}>{title}</SizableText>
           <SizableText mt={12} lineHeight={20}>{subtitle}</SizableText>
-          <YStack f={1} my={16} ai={center ? 'center' : 'flex-start'}>{children}</YStack>
+          <YStack f={1} my={16} ai='center'>{children}</YStack>
           <XStack space fd="row-reverse">
             {onComplete && 
                 <FormButton type="save" icon={CheckCircle} onPress={onComplete}>{completeText || 'Save'}</FormButton>}

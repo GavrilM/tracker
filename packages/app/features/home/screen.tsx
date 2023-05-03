@@ -1,6 +1,7 @@
 import {
   Button,
   Cell,
+  ScrollView,
   Sheet,
   Spinner,
   XStack,
@@ -26,9 +27,11 @@ export function HomeScreen() {
 
   
   return (
-    <XStack f={1} flexWrap='wrap' ac="flex-start">
-      {list}
-    </XStack>
+    <ScrollView>
+      <XStack f={1} flexWrap='wrap' ac="flex-start">
+        {list}
+      </XStack>
+    </ScrollView>
   )
 }
 

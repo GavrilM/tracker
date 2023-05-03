@@ -45,6 +45,14 @@ const CREATE_METRIC = gql`
   }
 `
 
+const EDIT_METRIC = gql`
+  mutation EditMetric($query: MetricQueryInput!, $set: MetricUpdateInput!) {
+    updateOneMetric(query: $query, set: $set) {
+      name
+    }
+  }
+`
+
 const LIST_METRICS = gql`
   query ListMetrics {
     metrics {
@@ -140,3 +148,20 @@ export const useSingleMetric = (_id: string): QueryResult<Metric> => {
     data: data?.metric
   }
 }
+
+export const useEditMetric = (_id: string) => {
+  const [fn] = useMutation(EDIT_METRIC)
+  const mutation = (data) => {
+    const set = JSON.parse(JSON.stringify(data), omitTypename)
+    console.log(_id, set)
+    fn({
+      variables: {
+        query: {_id},
+        set
+      },
+    })
+  }
+  return [mutation]
+}
+
+const omitTypename = (key, value) => (key === '__typename' ? undefined : value);

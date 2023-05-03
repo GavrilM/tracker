@@ -1,3 +1,3 @@
 import { createContext } from "react";
 
-export const CollectDateContext = createContext(new Date())
+export const CollectDateContext = createContext((new Date()).toISOString())

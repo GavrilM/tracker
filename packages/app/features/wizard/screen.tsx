@@ -41,7 +41,7 @@ const submitText = {
   [WizardType.collect]: "Save and Exit"
 }
 
-const getCurrentDate = () => moment(moment().format('YYYYMMDD')).toDate()
+const getCurrentDate = () => moment(moment().format('YYYYMMDD')).toISOString()
 
 export const WizardScreen = ({ wizardType }: WizardScreenProps) => {
   let data: Array<Metric> = [],

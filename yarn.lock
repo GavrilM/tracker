@@ -5451,6 +5451,7 @@ __metadata:
     "@tamagui/themes": ^1.13.1
     "@types/react": ^18.0.27
     "@types/react-native": ^0.71.3
+    bson: ^5.2.0
     expo-constants: ^14.2.1
     expo-linking: ^3.2.3
     graphql: ^16.6.0
@@ -6110,6 +6111,13 @@ __metadata:
   dependencies:
     buffer: ^5.6.0
   checksum: f357d12c5679c8eb029a62e410ad40fb862b7b91f0fc12a3399fb3668e14aecaa63205ffeeee48735a01d393171743607dcd527eb8c058b6f2bd294079ee4125
+  languageName: node
+  linkType: hard
+
+"bson@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "bson@npm:5.2.0"
+  checksum: 1297f8776a05fe3c03b5a1c73210389bc3e596ee6f1e772b76c021fff5537d0c91e523462ba196a8a839246613a87cffbd6486d387a849c7de7cde64d1af7812
   languageName: node
   linkType: hard
 

@@ -48,8 +48,11 @@ const COLLECT_POINT = gql`
 `
 
 const COLLECT_POINTS = gql`
-  mutation CollectPoints($data: [PointInsertInput!]!) {
-    insertManyPoints(data: $data) {
+  mutation CollectPoints($points: [PointInsertInput!]!, $notes: [NoteInsertInput!]!) {
+    insertManyPoints(data: $points) {
+      insertedIds
+    }
+    insertManyNotes(data: $notes) {
       insertedIds
     }
   }
@@ -76,23 +79,28 @@ export const useCollectPoint = () => {
 export const useCollectPoints = () => {
   const id = useUserId()
   const [fn] = useMutation(COLLECT_POINTS)
-  const mutation = (data) => {
+  const mutation = (data: Array<any>) => {
+    const notes: object[] = []
     const points = Object.values(data)
       .filter(p => p != undefined)
       .map(p => {
-      if(p)
-        return withOwnerId(p, id) 
+      if(p.note) {
+        notes.push(withOwnerId(p.note, id))
+        p.note = undefined
+      }
+      return withOwnerId(p, id)
     })
     fn({
       variables: {
-        data: points
+        points,
+        notes
       }
     })
   }
   return [mutation]
 }
 
-export const useCollectQuestions = (date: Date): QueryResult<Array<Metric>> => {
+export const useCollectQuestions = (date: string): QueryResult<Array<Metric>> => {
   const { loading, error, data } = useQuery(COLLECT_METRICS, {
     fetchPolicy: 'network-only',
   })

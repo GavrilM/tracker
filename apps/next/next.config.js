@@ -81,6 +81,10 @@ module.exports = function () {
       scrollRestoration: true,
       legacyBrowsers: false,
     },
+    webpack(config) {
+      config.experiments = { ...config.experiments, topLevelAwait: true }
+      return config
+    },
   }
 
   for (const plugin of plugins) {

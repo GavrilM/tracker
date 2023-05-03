@@ -1,9 +1,10 @@
-import { BinaryInput, ExpandibleSection, MetricType, NumberInput, SizableText, Spinner, YStack } from "@my/ui";
+import { BinaryInput, ExpandibleSection, MetricType, NumberInput, SizableText, Spinner, TextArea, YStack } from "@my/ui";
 import { WizardFlow } from "./WizardTypes";
 import { Metric } from "app/hooks/types/Metric";
 import { useCollectReview } from "app/hooks";
-import { useContext } from "react";
+import { useContext, useMemo, useState } from "react";
 import { CollectDateContext } from "./Contexts";
+import { ObjectId } from "bson"
 
 export function CollectFlow(metrics: Array<Metric>): WizardFlow {
   return metrics.map(({_id, question, limits, units, view}) => ({
@@ -25,25 +26,52 @@ export function CollectFlow(metrics: Array<Metric>): WizardFlow {
     },
     FormComponent: ({ onChange, defaultValue, errorMessage }) => {
       const date = useContext(CollectDateContext)
-      const handleChange = value => {
-        if(value != undefined)
-          onChange({
-            metric_id: {link: _id},
-            timestamp: date,
-            value,
-          })
+      const [text, setText] = useState(defaultValue?.note?.text)
+      const [value, setValue] = useState(defaultValue?.value)
+      const point_id = useMemo(() => new ObjectId(), [])
+      const handleChange = v => {
+        const obj = {
+          _id: point_id,
+          metric_id: {link: _id},
+          timestamp: date,
+          value
+        }
+        const note = {
+          timestamp: date,
+          metric_id: {link: _id},
+          point_id: {link: point_id},
+          text
+        } 
+        obj['note'] = text ? note : undefined
+        if(typeof v === 'number') {
+          obj['value'] = v
+          onChange(obj)
+          setValue(v)
+        } 
+        else if (typeof v === 'string') {
+          note['text'] = v
+          obj['note'] = note
+          onChange(obj)
+          setText(v)
+        }        
         else
           onChange(undefined)
       }
 
+      let input = (
+        <NumberInput autofocus nodefault units={units} {...limits}
+          onChange={handleChange} defaultValue={value} errorMessage={errorMessage}/>
+      )
       if(view.type === MetricType.streak)
-        return <BinaryInput defaultValue={defaultValue?.value} 
+        input = <BinaryInput defaultValue={value} 
           onChange={handleChange} errorMessage={errorMessage}/>
 
       return (
-        <NumberInput autofocus nodefault units={units}
-          onChange={handleChange} defaultValue={defaultValue?.value}  errorMessage={errorMessage}
-          {...limits}/>
+        <YStack f={1} ai='center' space>
+          {input}
+          <TextArea size="$5" placeholder="Add note..." 
+            onChangeText={handleChange} defaultValue={text}/>
+        </YStack>
       )
     }
   }))

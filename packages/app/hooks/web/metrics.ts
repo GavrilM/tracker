@@ -102,11 +102,12 @@ const SINGLE_METRIC = gql`
 `
 
 export const useMetrics = (): QueryResult<Array<Metric>> => {
-  const { loading, error, data } = useQuery(ALL_METRICS)
+  const { loading, error, data, refetch } = useQuery(ALL_METRICS)
   if (error)
     console.log(error)
   return {
     loading,
+    refetch,
     data: data?.metrics
   }
 }

@@ -36,7 +36,8 @@ export function Cell({ name, points, target_value, limits, question_freq, units,
     if(view.base_unit > 0)
       points = useMemo(() => formatData(points, view, question_freq, target_value), [points, view])
 
-    if(view.type !== MetricType.graph) {
+    if(points.length === 0 && view.type !== MetricType.streak){}
+    else if(view.type !== MetricType.graph) {
       const summary = useMemo(() => getSummary(points, view), [points, view])
       content = (
         <>
@@ -83,7 +84,7 @@ function getSummary(data: Array<CellPoint>, view: CellViewOptions) {
     else
       return data.length
   }
-  
+
   let sum = 0
   data.forEach(p => {sum += (p.value || 0)})
   if(view.type === MetricType.total)
@@ -99,7 +100,7 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq
     return data
   
   // average or total: bound
-  let xmin = formatDate(data[0].timestamp).toISOString()
+  let xmin = formatDate(data[data.length - 1].timestamp).toISOString()
   if(view.base_unit && view.type !== MetricType.streak) { 
     const now = moment()
     let diff = view.base_unit
@@ -120,18 +121,22 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq
   
   const now = formatDate(Date.now())
   const dataPadded: Array<CellPoint> = []
-  if(view.type === MetricType.graph && question_freq.days === 1) {
-    let i = 0
-    while(now.toISOString() >= xmin){
-      if(i < data.length && now.diff(moment(data[i].timestamp), 'day') < 1) {
-        dataPadded.push(data[i])
-        i++
-      } else {
-        dataPadded.unshift({timestamp: now.toISOString(), value: undefined})
+  if(view.type === MetricType.graph) {
+    data.push({timestamp: xmin, value: undefined})
+    data.unshift({timestamp: (new Date()).toISOString(), value: undefined})
+    if(question_freq.days === 1) {
+      let i = 0
+      while(now.toISOString() >= xmin){
+        if(i < data.length && now.diff(moment(data[i].timestamp), 'day') < 1) {
+          dataPadded.push(data[i])
+          i++
+        } else {
+          dataPadded.unshift({timestamp: now.toISOString(), value: undefined})
+        }
+        now.subtract(1, 'day')
       }
-      now.subtract(1, 'day')
+      data = dataPadded
     }
-    data = dataPadded
   }
   else if (view.type === MetricType.streak) {
     data = processStreak(data, view, xmin, target)

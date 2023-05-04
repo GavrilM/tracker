@@ -48,6 +48,14 @@ const COLLECT_POINT = gql`
 `
 
 const COLLECT_POINTS = gql`
+  mutation CollectPoints($points: [PointInsertInput!]!) {
+    insertManyPoints(data: $points) {
+      insertedIds
+    }
+  }
+`
+
+const COLLECT_POINTS_NOTES = gql`
   mutation CollectPoints($points: [PointInsertInput!]!, $notes: [NoteInsertInput!]!) {
     insertManyPoints(data: $points) {
       insertedIds
@@ -78,7 +86,8 @@ export const useCollectPoint = () => {
 
 export const useCollectPoints = () => {
   const id = useUserId()
-  const [fn] = useMutation(COLLECT_POINTS)
+  const [submitPts] = useMutation(COLLECT_POINTS)
+  const [submitPtsNts] = useMutation(COLLECT_POINTS_NOTES)
   const mutation = (data: Array<any>) => {
     const notes: object[] = []
     const points = Object.values(data)
@@ -90,12 +99,20 @@ export const useCollectPoints = () => {
       }
       return withOwnerId(p, id)
     })
-    fn({
-      variables: {
-        points,
-        notes
-      }
-    })
+
+    if(notes.length)
+      submitPts({
+        variables: {
+          points
+        }
+      })
+    else
+      submitPtsNts({
+        variables: {
+          points,
+          notes
+        }
+      })
   }
   return [mutation]
 }

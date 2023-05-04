@@ -26,7 +26,7 @@ export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, li
   const y = scaleLinear().domain([0, graph.max]).range([height, 25])
   const targetY = y(target)
   // @ts-ignore
-  const targetColor = graph.last.value >= target ? '#0A7600' : '#850000'
+  const targetColor = graph.last?.value >= target ? '#0A7600' : '#850000'
 
   return (
     <XStack pl={FONT_SIZE}>

@@ -5,10 +5,7 @@ import { MetricType } from '@my/ui';
 
 export function genQuestions(metrics: Array<Metric>, targetDate: string): Array<Metric> {
   const date = formatDate(targetDate)
-  return metrics.filter(({ question_freq, last_point }) => {
-    if(!last_point?.timestamp)
-      return true
-    
+  return metrics.filter(({ question_freq, last_point }) => {    
     const lastPointDate = formatDate(last_point?.timestamp)
     if(date.toISOString() === lastPointDate.toISOString())
       return false

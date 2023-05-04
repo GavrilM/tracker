@@ -101,16 +101,16 @@ export const useCollectPoints = () => {
     })
 
     if(notes.length)
-      submitPts({
-        variables: {
-          points
-        }
-      })
-    else
       submitPtsNts({
         variables: {
           points,
           notes
+        }
+      })
+    else
+      submitPts({
+        variables: {
+          points
         }
       })
   }

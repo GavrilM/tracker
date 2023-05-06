@@ -86,12 +86,14 @@ export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
     setSelectedId('')
   }
   
-  
+  const pan = useRef(new Animated.ValueXY()).current;
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (e, state) => {
         const {position, scrollTop} = gridLayout.current
+        pan.x.setValue(state.moveX - CELL_WIDTH + 32)
+        pan.y.setValue(state.moveY - CELL_WIDTH + scrollTop)
         const x = state.moveX - position.left
         const y = state.moveY - position.top 
         const c = Math.max(Math.floor(x / CELL_WIDTH), 0)
@@ -175,6 +177,15 @@ export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
   return (
     <ScrollView {...panResponder.panHandlers} f={1} ref={scrollView}
       onLayout={handleLayout} onScroll={handleScroll} scrollEventThrottle={25}>
+      <ZStack zIndex={100} position="absolute" pointerEvents="none">
+        {selectedId.length > 0 && <Animated.View
+          style={{
+            transform: [{translateX: pan.x}, {translateY: pan.y}, {rotateZ: '10deg'}],
+            opacity: .9,
+          }}>
+            <XStack><Cell {...data[selectedId]} points={[]} /></XStack>
+          </Animated.View>}
+      </ZStack>
       <YStack f={1}>
         {grid}
       </YStack>

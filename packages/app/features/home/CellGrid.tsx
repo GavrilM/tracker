@@ -13,6 +13,10 @@ const FillerCell = (props) => (
   <Card {...props} size="$4" theme="alt1"
     bordered width={225} height={225} mr="$4" mb="$4"/>)
 
+const SCROLL_AREA_SIZE = 150
+const SCROLL_RATE = 40
+const SCROLL_INC = Math.round(CELL_WIDTH/2) 
+
 type Coord = [number, number]
 
 type CellGridProps = {
@@ -20,11 +24,14 @@ type CellGridProps = {
   data: {[id: string] : Metric}
 }
 
+let scrollLock = true
+let scrollDir = 0
+
 export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
   // TODO: change query to not load default_points
   const scrollView = useRef(null)
   const gridLayout = useRef({
-    position: {top: 0, left: 0},
+    position: {top: 0, left: 0, height: 0},
     scrollTop: 0
   })
   const pressEvents = useRef(new EventEmitter()).current
@@ -37,15 +44,31 @@ export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
   const [lastLayout, setLastLayout] = useState([['']])
   useEffect(() => {
     setTempLayout(genInitalLayout(rowLen, Object.keys(data), cellLayouts))
+    scrollLock = false
   }, [rowLen])
 
   const handleLayout = ({nativeEvent}) => {
     gridLayout.current.position = nativeEvent.layout
     setRowLen(Math.floor((nativeEvent.layout.width - 16) / CELL_WIDTH))
   }
+
+
   const handleScroll = ({nativeEvent}) => {
     gridLayout.current.scrollTop = nativeEvent.contentOffset.y
   }
+  const scroll = () =>
+    setTimeout(() => {
+      const {scrollTop} = gridLayout.current
+      scrollLock = false
+      // @ts-ignore
+      scrollView.current?.scrollTo({
+        y: scrollTop + SCROLL_INC * scrollDir,
+        animated: true
+      })
+      if(selectedId)
+        scroll()
+    }, SCROLL_RATE)
+
 
   const onCellPressIn = (e, [r,c]) => {
     const id = tempLayout[r][c]
@@ -63,19 +86,27 @@ export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
     setSelectedId('')
   }
   
+  
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (e, state) => {
         const {position, scrollTop} = gridLayout.current
         const x = state.moveX - position.left
-        const y = state.moveY - position.top + scrollTop
-        const c = Math.floor(x / CELL_WIDTH)
-        const r = Math.floor(y / CELL_WIDTH)
+        const y = state.moveY - position.top 
+        const c = Math.max(Math.floor(x / CELL_WIDTH), 0)
+        const r = Math.max(Math.floor((y + scrollTop) / CELL_WIDTH), 0)
         pressEvents.emit('hovered', [r,c])
+        if(y < SCROLL_AREA_SIZE)
+          pressEvents.emit('scroll.up')
+        else if(y > position.height - SCROLL_AREA_SIZE)
+          pressEvents.emit('scroll.down')
+        else
+          pressEvents.emit('scroll.stop')
       },
       onPanResponderRelease: () => {
         pressEvents.emit('release')
+        pressEvents.emit('scroll.stop')
       },
     }),
   ).current; 
@@ -94,6 +125,27 @@ export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
     pressEvents.removeAllListeners('release')
     pressEvents.addListener('release', onCellPressOut)
   }, [tempLayout, selectedId])
+  useEffect(() => {
+    pressEvents.removeAllListeners('scroll.up')
+    pressEvents.removeAllListeners('scroll.down')
+    pressEvents.addListener('scroll.up', () => {
+      scrollDir = -1
+      if(!scrollLock) {
+        scrollLock = true
+        scroll()
+      }
+    })
+    pressEvents.addListener('scroll.down', () => {
+      scrollDir = 1
+      if(!scrollLock) {
+        scrollLock = true
+        scroll()
+      }
+    })
+  }, [selectedId])
+  useEffect(() => {
+    pressEvents.addListener('scroll.stop', () => {scrollDir = 0})
+  }, [])
 
 
   const grid = tempLayout.map((row, r) => {
@@ -129,6 +181,9 @@ export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
     </ScrollView>
   )
 }
+
+
+// Layout functions
 
 const genLayoutPreview = (layout: string[][], target: Coord, rowLen: number) => {
   const newLayout = cloneDeep(layout)
@@ -195,3 +250,5 @@ const genMatrix = (strs, rowLen) => {
 const getIndex = ([r,c]: Coord, rowLen) => r*rowLen + c
 
 const getCoord = (i, rowLen): Coord => [Math.floor(i/rowLen), i % rowLen]
+
+const clipped = (x,l,h) => Math.min(Math.max(x, l), h)

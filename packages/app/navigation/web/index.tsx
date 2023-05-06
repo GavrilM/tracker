@@ -96,9 +96,9 @@ export const WebNavigation = ({ children, pathname }) => {
           <XStack onPress={handleLogOut} style={{paddingBottom: 15}}><LogOut/></XStack>
         </YStack>
       </ZStack>
-      <YStack px={padding} pt={padding}
+      <YStack mx={padding} mt={padding}
         position="absolute" 
-        height={bodyHeight} width={`calc(100% - ${width}px)`}
+        height={`calc(100% - ${headerHeight + 2 * padding}px)`} width={`calc(100% - ${width + 2 * padding}px)`}
         left={width} top={headerHeight}>
         {children}
       </YStack>

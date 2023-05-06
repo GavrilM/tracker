@@ -95,7 +95,7 @@ function genGraph(data: Array<CellPoint>, limits?: Limits) {
     max,
     min,
   // @ts-ignore
-    last: data[data.findLastIndex(p => p.value)],
+    last: data[data.findIndex(p => p.value)],
     curve: curvedLine!,
   };
 };

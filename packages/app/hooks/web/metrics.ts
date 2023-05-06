@@ -7,6 +7,7 @@ import { QueryResult } from "../types/QueryResult"
 const ALL_METRICS = gql`
   query AllMetrics {
     metrics {
+      _id
       name
       units
       limits {

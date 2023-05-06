@@ -1,6 +1,7 @@
-import { Card, H2, H3, SizableText, XStack, YStack } from "tamagui";
+import { Card, H2, H3, SizableText, XStack, YStack, ZStack } from "tamagui";
 import moment from 'moment'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
+import { Animated, PanResponder } from 'react-native'
 import { CellViewOptions, MetricType } from "./CellTypes";
 import { Weekday } from "../form/WeekdayInput";
 import { Graph } from "./Graph";
@@ -30,7 +31,7 @@ type CellProps = {
 const SUMMARY_HEIGHT = 80
 
 export function Cell({ name, points, target_value, limits, question_freq, units, view }: CellProps) {
-  let content = <SizableText>(no data)</SizableText>
+  let content = <SizableText selectable={false}>(no data)</SizableText>
 
   if(points.length > 0) {
     if(view.base_unit > 0)
@@ -61,14 +62,14 @@ export function Cell({ name, points, target_value, limits, question_freq, units,
     
   return (
     <Card size="$4" bordered width={225} height={225} theme="alt1"
-      mr="$4" mb="$4" ai="center" jc='space-between' py={16}>
-      <SizableText fow='700' color='rgba(255,255,255, .9)'>{name}</SizableText>
+      mr="$4" mb="$4" ai="center" jc='space-between' py={16} pointerEvents="none">
+      <SizableText fow='700' color='rgba(255,255,255, .9)' selectable={false}>{name}</SizableText>
 
       <XStack f={1} ai='center'>
         {content}
       </XStack>
 
-      <SizableText>{getLabel(view, points.at(-1)?.timestamp)}</SizableText>
+      <SizableText selectable={false}>{getLabel(view, points.at(-1)?.timestamp)}</SizableText>
     </Card>
   )
 }

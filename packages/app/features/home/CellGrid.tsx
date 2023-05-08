@@ -70,7 +70,8 @@ export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
     }, SCROLL_RATE)
 
 
-  const onCellPressIn = (e, [r,c]) => {
+  const onCellPressIn = ({ nativeEvent }, [r,c]) => {
+    const {scrollTop} = gridLayout.current
     const id = tempLayout[r][c]
     if(id) {
       setSelectedId(id)
@@ -79,6 +80,8 @@ export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
       setLastLayout(newLayout)
       setTempLayout(newLayout)
       setHoverCoord([r,c])
+      pan.x.setValue(nativeEvent.clientX - CELL_WIDTH + 32)
+      pan.y.setValue(nativeEvent.clientY - CELL_WIDTH + scrollTop)
     }
   }
   const onCellPressOut = () => {
@@ -116,13 +119,13 @@ export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
   useEffect(() => {
     pressEvents.removeAllListeners('hovered')
     pressEvents.addListener('hovered', ([r,c]) => {
-      if(r !== hoverCoord[0] || c !== hoverCoord[1]) {
+      if(selectedId && (r !== hoverCoord[0] || c !== hoverCoord[1])) {
         setHoverCoord([r,c])
         const newLayout = genLayoutPreview(lastLayout, [r,c], rowLen)
         setTempLayout(newLayout)
       }
     })
-  }, [hoverCoord, lastLayout, rowLen])
+  }, [hoverCoord, lastLayout, rowLen, selectedId])
   useEffect(() => {
     pressEvents.removeAllListeners('release')
     pressEvents.addListener('release', onCellPressOut)
@@ -262,4 +265,4 @@ const getIndex = ([r,c]: Coord, rowLen) => r*rowLen + c
 
 const getCoord = (i, rowLen): Coord => [Math.floor(i/rowLen), i % rowLen]
 
-const clipped = (x,l,h) => Math.min(Math.max(x, l), h)
+const clipped = (x,low, high) => Math.min(Math.max(x, low), high)

@@ -56,7 +56,7 @@ export function genQuestionReview(metrics: Array<Metric>, pointLookup): CollectR
   return result
 }
 
-export const withOwnerId = (o, userId): object => Object.assign({owner_id: {link: userId}}, o)
+export const withOwnerId = (o, userId): any => Object.assign({owner_id: {link: userId}}, o)
 
 function formatDate(date) {
   return moment(moment(date).format('YYYYMMDD'))

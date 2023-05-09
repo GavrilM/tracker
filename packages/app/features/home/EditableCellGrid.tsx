@@ -6,6 +6,8 @@ import { Animated, PanResponder } from "react-native"
 import { cloneDeep } from "@apollo/client/utilities";
 import { EventEmitter } from 'events'
 import { CELL_WIDTH, genInitalLayout } from "./utils";
+import { useSaveLayout } from "app/hooks";
+import { NavActionState, useSetNavAction } from "app/provider/context/NavActionContext";
 
 const FILLER = 'filler'
 const FillerCell = (props) => (
@@ -27,7 +29,9 @@ let scrollLock = true
 let scrollDir = 0
 
 export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) => {
-  // TODO: change query to not load default_points
+  const [saveLayout] = useSaveLayout()
+  const setNavAction = useSetNavAction()
+
   const scrollView = useRef(null)
   const gridLayout = useRef({
     position: {top: 0, left: 0, height: 0},
@@ -45,6 +49,14 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
     setTempLayout(genInitalLayout(rowLen, Object.keys(data), cellLayouts))
     scrollLock = false
   }, [rowLen])
+  useEffect(() => {
+    setNavAction({
+      save: () => {
+        saveLayout(rowLen, tempLayout)
+        setNavAction({state: NavActionState.None})
+      }
+    })
+  }, [rowLen, tempLayout])
 
   const handleLayout = ({nativeEvent}) => {
     gridLayout.current.position = nativeEvent.layout

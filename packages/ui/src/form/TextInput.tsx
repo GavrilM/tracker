@@ -75,7 +75,7 @@ export function TextInput({
         {value.length > 0 &&
           <YStack onPress={e => setValue('')} 
             style={{top: 27, right: 10, position:'absolute'}}>
-            <XCircle/>
+            <XCircle size='$2.5'/>
           </YStack>
         }
       </YStack>

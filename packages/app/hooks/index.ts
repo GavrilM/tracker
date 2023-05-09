@@ -8,3 +8,4 @@ export {
   useDeleteMetric
 } from './native/metrics'
 export { useCollectPoints, useCollectQuestions, useCollectReview } from './native/collect'
+export { useSaveLayout } from './native/boards'

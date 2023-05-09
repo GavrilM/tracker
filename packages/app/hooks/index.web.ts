@@ -8,3 +8,4 @@ export {
   useDeleteMetric
 } from './web/metrics'
 export { useCollectPoints, useCollectQuestions, useCollectReview } from './web/collect'
+export { useSaveLayout } from './web/boards'

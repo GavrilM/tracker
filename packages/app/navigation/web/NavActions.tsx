@@ -2,6 +2,7 @@ import { FormButton, XStack } from "@my/ui"
 import { routes } from "."
 import { NavActionState, useNavAction, useSetNavAction } from "app/provider/context/NavActionContext"
 import { useLink } from "solito/link"
+import { XCircle } from "@tamagui/lucide-icons"
 
 type NavActionProps = {
   pathname: string
@@ -38,21 +39,21 @@ export const NavActions = ({ pathname }: NavActionProps) => {
   } else if(pathname !== routes.edit && pathname?.includes(routes.edit)) {
     return (
       <XStack space>
-        <FormButton onPress={close} type="danger">Exit without saving</FormButton>
+        <FormButton onPress={close} type="secondary" icon={<XCircle/>}>Exit without saving</FormButton>
         <FormButton onPress={save} type="primary">Save changes</FormButton>
       </XStack>
     )
   } else if(pathname === routes.collect) {
     return (
       <XStack space>
-        <FormButton onPress={close} type="danger">Exit without saving</FormButton>
+        <FormButton onPress={close} type="secondary" icon={<XCircle/>}>Exit without saving</FormButton>
         <FormButton onPress={save} type="save">Save and exit</FormButton>
       </XStack>
     )
   } else if(pathname === routes.addcell) {
     return (
       <XStack space>
-        <FormButton onPress={close} type="danger">Exit without saving</FormButton>
+        <FormButton onPress={close} type="secondary" icon={<XCircle/>}>Exit without saving</FormButton>
       </XStack>
     )
   }

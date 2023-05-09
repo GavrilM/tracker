@@ -1,11 +1,12 @@
 import { XStack, YStack } from "tamagui"
-import { Grid, Edit3, BookOpen, LogOut } from "@tamagui/lucide-icons"
+import { Grid, Edit3, BookOpen, LogOut, RefreshCw } from "@tamagui/lucide-icons"
 import { Link } from "solito/link"
-import { H1, ZStack } from "@my/ui"
+import { Button, H1, ZStack } from "@my/ui"
 import { useRealmApp } from "app/provider/realm"
 import { useApolloClient } from "@apollo/client"
 import { useNavTitle } from "app/provider/context/NavTitleContext"
 import { NavActions } from "./NavActions"
+import { useNavAction } from "app/provider/context/NavActionContext"
 
 const width = 60
 const headerHeight = 100
@@ -35,6 +36,7 @@ const NavLink = ({ children, href }) => (
 export const WebNavigation = ({ children, pathname }) => {
   const { logOut } = useRealmApp()
   const title = useNavTitle()
+  const { refresh } = useNavAction()
 
   const client  = useApolloClient()
   const handleLogOut = () => {
@@ -57,7 +59,13 @@ export const WebNavigation = ({ children, pathname }) => {
           pr={padding * 2}
           bbc={borderColor}
           bbw={borderWidth}>
-          <H1>{getTitle(pathname, title)}</H1>
+          <XStack>
+            <H1>{getTitle(pathname, title)}</H1>
+            {pathname === routes.home && 
+              <Button p={12} ai="center" ml={16} mt={8} onPress={refresh}>
+                <RefreshCw size="$1"/></Button>
+            }
+          </XStack>
           <NavActions pathname={pathname}/>
         </XStack>
         {/* sidebar */}

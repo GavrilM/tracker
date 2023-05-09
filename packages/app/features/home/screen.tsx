@@ -8,7 +8,7 @@ import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons'
 import { useMetrics, useUserorRedirect } from 'app/hooks'
 import React, { useEffect, useState } from 'react'
 import { CellGrid } from './CellGrid'
-import { NavActionState, useNavAction } from 'app/provider/context/NavActionContext'
+import { NavActionState, useNavAction, useSetNavAction } from 'app/provider/context/NavActionContext'
 import { EditableCellGrid } from './EditableCellGrid'
 import { useDashboard } from 'app/provider/context/DashboardContext'
 
@@ -16,12 +16,15 @@ export function HomeScreen() {
   const user = useUserorRedirect()
   const { layouts } = useDashboard()
   const { state } = useNavAction()
+  const setNavAction = useSetNavAction()
   const {loading, data, refetch} = useMetrics()
 
   useEffect(() => {
-    if(refetch)
+    if(refetch) {
       setTimeout(() => refetch(), 1500)
-  }, [data])
+      setNavAction({refresh: () => refetch()})
+    }
+  }, [refetch])
 
   if (loading || !user || !data) {
     return <Spinner />

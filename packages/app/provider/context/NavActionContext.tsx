@@ -9,6 +9,7 @@ export enum NavActionState {
 const dummy = {
   save: () => {},
   close: () => {},
+  refresh: () => {},
   state: NavActionState.None
 }
 
@@ -16,11 +17,7 @@ const ActionContext = createContext({actions: dummy, setActions: f => {}})
 
 export function NavActionProvider({children}) {
   const { back } = useRouter()
-  const [actions, setActions] = useState({
-    save: () => {},
-    close: () => back(),
-    state: NavActionState.None
-  })
+  const [actions, setActions] = useState(Object.assign({close: back}, dummy))
   return (
     <ActionContext.Provider value={{actions, setActions}}>
       {children}

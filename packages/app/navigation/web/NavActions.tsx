@@ -1,6 +1,6 @@
 import { FormButton, XStack } from "@my/ui"
 import { routes } from "."
-import { useNavAction } from "app/provider/context/NavActionContext"
+import { NavActionState, useNavAction, useSetNavAction } from "app/provider/context/NavActionContext"
 import { useLink } from "solito/link"
 
 type NavActionProps = {
@@ -10,18 +10,29 @@ type NavActionProps = {
 }
 
 export const NavActions = ({ pathname }: NavActionProps) => {
-  const {save, close} = useNavAction()
+  const {save, close, state} = useNavAction()
+  const setNavAction = useSetNavAction()
 
   const goalLink = useLink({href: routes.addgoal})
   const cellLink = useLink({href: routes.addcell})
   const collectLink = useLink({href: routes.collect})
-  console.log(save,close)
+
   if(pathname === routes.home) {
+    if(state === NavActionState.Editing)
+      return (
+        <XStack space>
+          <FormButton onPress={() => setNavAction({state: NavActionState.None})}
+            type="danger">Exit without saving</FormButton>
+          <FormButton onPress={save} type="primary">Save layout</FormButton>
+        </XStack>
+      )
     return (
       <XStack space>
-          <FormButton {...goalLink} type="primary">Add Goal</FormButton>
-          <FormButton {...cellLink} type="primary">Add Cell</FormButton>
-          <FormButton {...collectLink} type="save">Collect Data</FormButton>
+        <FormButton onPress={() => setNavAction({state: NavActionState.Editing})}
+          type="primary">Move</FormButton>
+        <FormButton {...goalLink} type="primary">Add Goal</FormButton>
+        <FormButton {...cellLink} type="primary">Add Cell</FormButton>
+        <FormButton {...collectLink} type="save">Collect Data</FormButton>
       </XStack>
     )
   } else if(pathname !== routes.edit && pathname?.includes(routes.edit)) {

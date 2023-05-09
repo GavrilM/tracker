@@ -4,11 +4,12 @@ export type Dashboard = {
   _id: string
   name: string
   metricIds: Array<string>,
-  layouts?: BoardLayouts
+  layouts: BoardLayouts | null
 }
 
-export const DummyDashboard = {
+export const DummyDashboard: Dashboard = {
   _id: '',
   name: '',
-  metricIds: ['']
+  metricIds: [''],
+  layouts: null
 }

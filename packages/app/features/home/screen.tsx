@@ -1,18 +1,21 @@
 import {
   Button,
-  Cell,
-  ScrollView,
   Sheet,
   Spinner,
-  XStack,
   useToast,
 } from '@my/ui'
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons'
 import { useMetrics, useUserorRedirect } from 'app/hooks'
 import React, { useEffect, useState } from 'react'
+import { CellGrid } from './CellGrid'
+import { NavActionState, useNavAction } from 'app/provider/context/NavActionContext'
+import { EditableCellGrid } from './EditableCellGrid'
+import { useDashboard } from 'app/provider/context/DashboardContext'
 
 export function HomeScreen() {
   const user = useUserorRedirect()
+  const { layouts } = useDashboard()
+  const { state } = useNavAction()
   const {loading, data, refetch} = useMetrics()
 
   useEffect(() => {
@@ -20,24 +23,17 @@ export function HomeScreen() {
       setTimeout(() => refetch(), 1500)
   }, [data])
 
-  if (loading || !user) {
+  if (loading || !user || !data) {
     return <Spinner />
   }
 
-  let list = data.map((m, i) => {
-    return (
-      <Cell key={i} {...m} points={m.points_default} />
-    )
-  })
+  const dataMap = {}
+  data.forEach(d => dataMap[d._id] = d)
 
-  
-  return (
-    <ScrollView>
-      <XStack f={1} flexWrap='wrap' ac="flex-start">
-        {list}
-      </XStack>
-    </ScrollView>
-  )
+  if(state === NavActionState.Editing)
+    return <EditableCellGrid data={dataMap} cellLayouts={layouts}/>
+
+  return <CellGrid data={dataMap} cellLayouts={layouts}/>
 }
 
 function SheetDemo() {

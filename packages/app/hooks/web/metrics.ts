@@ -6,6 +6,7 @@ import { QueryResult } from "../types/QueryResult"
 import { useDashboard, useSetDashboard } from "app/provider/context/DashboardContext"
 import { ObjectId } from "bson"
 import { BoardLayouts } from "../types/Dashboard"
+import { useEffect } from "react"
 
 const INITIAL_METRICS = gql`
   query InitalMetrics {
@@ -15,7 +16,7 @@ const INITIAL_METRICS = gql`
         name
         layouts {
           row_len
-          grid
+          grid 
         }
         metrics {
           _id
@@ -128,20 +129,22 @@ export const useMetrics = (): QueryResult<Array<Metric>> => {
   if (error)
     console.log(error)
 
-  if(data?.user.initial_board) {
-    const {_id, name, metrics, layouts} = data.user.initial_board
-    const layoutMap: BoardLayouts = {}
-    if(layouts)
-      layouts.forEach(l => layoutMap[l['row_len']] = JSON.parse(l['grid']))
+  useEffect(() => {
+    if(data?.user.initial_board) {
+      const {_id, name, metrics, layouts} = data.user.initial_board
+      const layoutMap: BoardLayouts = {}
+      if(layouts)
+        layouts.forEach(l => layoutMap[l['row_len']] = JSON.parse(l['grid']))
+  
+      setDashboard({
+        _id,
+        name,
+        metricIds: metrics.map(m => m._id),
+        layouts: layoutMap
+      })
+    }
+  }, [data])
 
-    setDashboard({
-      _id,
-      name,
-      metricIds: metrics.map(m => m._id),
-      layouts: layoutMap
-    })
-  }
-  console.log(data)
   return {
     loading,
     refetch,
@@ -203,7 +206,6 @@ export const useEditMetric = (_id: string) => {
   const [fn] = useMutation(EDIT_METRIC)
   const mutation = (data) => {
     const set = JSON.parse(JSON.stringify(data), omitTypename)
-    console.log(_id, set)
     fn({
       variables: {
         query: {_id},

@@ -1,9 +1,15 @@
 import { createContext, useContext, useState } from "react";
 import { useRouter } from "solito/router";
 
+export enum NavActionState {
+  None,
+  Editing
+}
+
 const dummy = {
   save: () => {},
   close: () => {},
+  state: NavActionState.None
 }
 
 const ActionContext = createContext({actions: dummy, setActions: f => {}})
@@ -12,7 +18,8 @@ export function NavActionProvider({children}) {
   const { back } = useRouter()
   const [actions, setActions] = useState({
     save: () => {},
-    close: () => back()
+    close: () => back(),
+    state: NavActionState.None
   })
   return (
     <ActionContext.Provider value={{actions, setActions}}>
@@ -23,7 +30,7 @@ export function NavActionProvider({children}) {
 
 export const useSetNavAction = () => {
   const {actions, setActions} = useContext(ActionContext)
-  return (obj) => setActions(Object.assign(actions, obj))
+  return (obj) => {setActions(Object.assign({}, actions, obj))}
 }
 
 export const useNavAction = () => {

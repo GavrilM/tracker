@@ -11,7 +11,10 @@ type GraphProps = {
   bottomPadding: number,
   leftPadding: number,
   data?: any
-  target?: number
+  target?: {
+    value: number,
+    direction: string,
+  },
   limits?: Limits
   yunits: string
 }
@@ -24,9 +27,10 @@ const axisLineColor = '#646464'
 export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, limits, bottomPadding, leftPadding, yunits }: GraphProps) {
   const graph = useMemo(() => genGraph(data, limits), [data, limits])
   const y = scaleLinear().domain([0, graph.max]).range([height, 25])
-  const targetY = y(target)
+  const targetY = y(target?.value)
+  const dir = target?.direction === "at least" ? 1 : -1
   // @ts-ignore
-  const targetColor = graph.last?.value >= target ? '#0A7600' : '#850000'
+  const targetColor = dir*graph.last?.value >= dir*target?.value ? '#0A7600' : '#850000'
 
   return (
     <XStack pl={FONT_SIZE}>
@@ -54,7 +58,7 @@ export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, li
               strokeWidth="1"
             />
             <Text fontFamily='Inter' fontSize={13} x={leftPadding} y={targetY - 2} fill={targetColor}>
-              {target}
+              {target.value}
             </Text>
           </>}
           <Line

@@ -30,7 +30,10 @@ const INITIAL_METRICS = gql`
             days
             weekdays
           }
-          target_value
+          target {
+            value
+            direction
+          }
           view {
             type
             base_unit
@@ -111,7 +114,10 @@ const SINGLE_METRIC = gql`
         days
         weekdays
       }
-      target_value
+      target {
+        direction
+        value
+      }
       view {
         type
         base_unit

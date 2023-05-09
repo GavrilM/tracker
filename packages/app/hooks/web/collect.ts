@@ -71,7 +71,10 @@ const REVIEW_POINTS = gql`
     metrics(query: $query) {
       _id
       name
-      target_value
+      target {
+        value
+        direction
+      }
       units
       view {
         type

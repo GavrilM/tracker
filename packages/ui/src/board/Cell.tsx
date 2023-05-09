@@ -23,19 +23,22 @@ type CellProps = {
   limits?: Limits
   question_freq: {days: number}
   units: string
-  target_value?: number
+  target: {
+    value: number,
+    direction: string,
+  },
   lastPointDate?: Date
   points: Array<CellPoint>
 }
 
 const SUMMARY_HEIGHT = 80
 
-export function Cell({ name, points, target_value, limits, question_freq, units, view }: CellProps) {
+export function Cell({ name, points, target, limits, question_freq, units, view }: CellProps) {
   let content = <SizableText selectable={false}>(no data)</SizableText>
 
   if(points.length > 0) {
     if(view.base_unit > 0)
-      points = useMemo(() => formatData(points, view, question_freq, target_value), [points, view])
+      points = useMemo(() => formatData(points, view, question_freq, target?.value), [points, view])
 
     if(points.length === 0 && view.type !== MetricType.streak){}
     else if(view.type !== MetricType.graph) {
@@ -54,7 +57,7 @@ export function Cell({ name, points, target_value, limits, question_freq, units,
       )
     } else {
       content = (
-        <Graph target={target_value} data={points} yunits={units} limits={limits}
+        <Graph target={target} data={points} yunits={units} limits={limits}
           bottomPadding={20} leftPadding={0}/>
       )
     }

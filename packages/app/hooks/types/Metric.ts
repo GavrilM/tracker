@@ -2,6 +2,11 @@ import { MetricType } from "@my/ui"
 import { Point } from "./Point"
 import { CellViewOptions } from "@my/ui"
 
+export enum TargetDirection {
+  AtLeast = 'at least',
+  AtMost = 'at most'
+}
+
 type QuestionFreq = {
   days: number,
   weekdays: Array<number>,
@@ -21,7 +26,10 @@ export type Metric = {
   question: string,
   question_freq: QuestionFreq
   limits: Limits
-  target_value: number
+  target: {
+    value: number
+    direction: TargetDirection
+  }
   units: string
   view: CellViewOptions
 
@@ -51,7 +59,10 @@ export const DummyMetric = {
     max: 0,
     max_label: '',
   },
-  target_value: 0,
+  target: {
+    value: 0,
+    direction: TargetDirection.AtLeast
+  },
   units: '',
   view: {
     base_unit: 0,

@@ -18,6 +18,7 @@ import { MetricViewForm } from "app/components/form/MetricViewForm";
 import { getPeriod } from "app/components/form/utils";
 import { MetricQuestionFreqForm } from "app/components/form/MetricQuestionFreqForm";
 import { MetricLimitForm } from "app/components/form/MetricLimitForm";
+import { MetricTargetForm } from "app/components/form/MetricTargetForm";
 
 export const AddMetricFlow: WizardFlow = [
   {
@@ -91,26 +92,12 @@ export const AddMetricFlow: WizardFlow = [
     FormComponent: MetricLimitForm
   },
   {
-    field: 'target_value',
+    field: 'target',
     title: 'What value should you target?',
-    subtitle: 'You define what success looks like',
+    subtitle: 'You define what success looks like; optional',
     forwardProps: ['limits', 'units', 'view', 'question'],
     validate: () => null,
-    FormComponent: props => {
-      const {question, limits, units, view} = props.forwardProps
-
-      let input = <NumberInput {...props} {...limits} units={units} nodefault/>
-      if(view.type === MetricType.streak)
-        input = <BinaryInput {...props} 
-          defaultValue={props.defaultValue != undefined ? props.defaultValue : 1}/>
-
-      return (
-        <YStack>
-          <SizableText fontStyle="italic">{question}</SizableText>
-          {input}
-        </YStack>
-      )
-    }
+    FormComponent: MetricTargetForm
   },
 ]
 
@@ -124,9 +111,9 @@ export function AddMetricReview(props) {
       : 'on the last day of the month'
   }
   let unitStr = props.units ? props.units : '(unitless)'
-  let targetStr = `Your target is to achieve ${props.target_value} ${unitStr}.`
+  let targetStr = `Your target is to achieve ${props.target.direction} ${props.target.value} ${unitStr}.`
   if(props.view.type === MetricType.streak)
-    targetStr = `Your target is to answer ${props.target_value ? 'yes': 'no'}`
+    targetStr = `Your target is to answer ${props.target ? 'yes': 'no'}`
   const [_, periodStrings] = getPeriod(props.view)
 
   return (
@@ -144,7 +131,7 @@ export function AddMetricReview(props) {
         <SizableText>At most {props.limits.max}
           {props.limits.max_label && ` (${props.limits.max_label})`}</SizableText>
       }
-      {props.target_value != undefined
+      {props.target != undefined
         ? <SizableText>{targetStr}</SizableText>
         : <SizableText>Measured in {unitStr}</SizableText>
       }

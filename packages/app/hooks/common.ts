@@ -36,10 +36,10 @@ export function genQuestionReview(metrics: Array<Metric>, pointLookup): CollectR
     streaksMissed: [],
     total: metrics.length
   }
-  metrics.forEach(({ _id, name, target_value, units, view }) => {
+  metrics.forEach(({ _id, name, target, units, view }) => {
     const unitStr = units ? units : ''
-    if(target_value) {
-      const diff = pointLookup[_id].value - target_value
+    if(target) {
+      const diff = pointLookup[_id].value - target.value
       if(view.type === MetricType.streak) {
         if(diff === 0)
           result.streaksKept.push(name)

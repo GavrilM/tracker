@@ -3,45 +3,65 @@ import { Metric } from "../types/Metric"
 import { useUserId } from "./user"
 import { withOwnerId } from "../common"
 import { QueryResult } from "../types/QueryResult"
+import { useDashboard, useSetDashboard } from "app/provider/context/DashboardContext"
+import { ObjectId } from "bson"
+import { BoardLayouts } from "../types/Dashboard"
 
-const ALL_METRICS = gql`
-  query AllMetrics {
-    metrics {
-      _id
-      name
-      units
-      limits {
-        min
-        max
-      }
-      question_freq {
-        days
-        weekdays
-      }
-      target_value
-      view {
-        type
-        base_unit
-        weekday
-        weekdays
-        month_date
-      }
-      points_default {
-        timestamp
-        value
+const INITIAL_METRICS = gql`
+  query InitalMetrics {
+    user {
+      initial_board {
+        _id
+        name
+        layouts {
+          row_len
+          grid
+        }
+        metrics {
+          _id
+          name
+          units
+          limits {
+            min
+            max
+          }
+          question_freq {
+            days
+            weekdays
+          }
+          target_value
+          view {
+            type
+            base_unit
+            weekday
+            weekdays
+            month_date
+          }
+          points_default {
+            timestamp
+            value
+          }
+        }
       }
     }
   }
 `
 
 const CREATE_METRIC = gql`
-  mutation CreateMetric($data: MetricInsertInput!) {
-    insertOneMetric(data: $data) {
+  mutation CreateMetric(
+    $metric: MetricInsertInput!,
+    $boardQuery: BoardQueryInput!,
+    $boardUpdate: BoardUpdateInput!)
+  {
+    insertOneMetric(data: $metric) {
       name
       view {
         type
         base_unit
       }
+    }
+    updateOneBoard(query: $boardQuery, set: $boardUpdate) {
+      _id
     }
   }
 `
@@ -103,28 +123,48 @@ const SINGLE_METRIC = gql`
 `
 
 export const useMetrics = (): QueryResult<Array<Metric>> => {
-  const { loading, error, data, refetch } = useQuery(ALL_METRICS)
+  const setDashboard = useSetDashboard()
+  const { loading, error, data, refetch } = useQuery(INITIAL_METRICS)
   if (error)
     console.log(error)
+
+  if(data?.user.initial_board) {
+    const {_id, name, metrics, layouts} = data.user.initial_board
+    const layoutMap: BoardLayouts = {}
+    if(layouts)
+      layouts.forEach(l => layoutMap[l['row_len']] = JSON.parse(l['grid']))
+
+    setDashboard({
+      _id,
+      name,
+      metricIds: metrics.map(m => m._id),
+      layouts: layoutMap
+    })
+  }
+  console.log(data)
   return {
     loading,
     refetch,
-    data: data?.metrics
+    data: data?.user.initial_board.metrics,
   }
 }
 
 export const useCreateMetric = () => {
   const id = useUserId()
+  const { _id, metricIds } = useDashboard()
   const [fn] = useMutation(CREATE_METRIC)
   const mutation = (data) => {
-    const metric = withOwnerId(data, id) 
+    const metric = withOwnerId(data, id)
+    metric._id = new ObjectId()
+    metricIds.push(metric._id)
     fn({
       variables: {
-        data: metric
+        metric,
+        boardQuery: {_id},
+        boardUpdate: { metrics: {link: metricIds} }
       },
       optimisticResponse: {
         insertOneMetric: {
-          id: 'temp-id',
           __typename: "Metric",
           ...metric
         }

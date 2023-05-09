@@ -65,8 +65,7 @@ export function EditDetail() {
           save: () => {
             mutation(newValue)
             back()
-          },
-          close: back
+          }
         })
       }
     }

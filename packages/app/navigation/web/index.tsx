@@ -1,11 +1,11 @@
-import { XStack, YStack, Text, styled, ColorTokens } from "tamagui"
+import { XStack, YStack } from "tamagui"
 import { Grid, Edit3, BookOpen, LogOut } from "@tamagui/lucide-icons"
-import { Link, useLink } from "solito/link"
-import { FormButton, H1, ScrollView, ZStack } from "@my/ui"
+import { Link } from "solito/link"
+import { H1, ZStack } from "@my/ui"
 import { useRealmApp } from "app/provider/realm"
 import { useApolloClient } from "@apollo/client"
 import { useNavTitle } from "app/provider/context/NavTitleContext"
-import { useNavAction } from "app/provider/context/NavActionContext"
+import { NavActions } from "./NavActions"
 
 const width = 60
 const headerHeight = 100
@@ -35,11 +35,6 @@ const NavLink = ({ children, href }) => (
 export const WebNavigation = ({ children, pathname }) => {
   const { logOut } = useRealmApp()
   const title = useNavTitle()
-  const {save, close} = useNavAction()
-
-  const goalLink = useLink({href: routes.addgoal})
-  const cellLink = useLink({href: routes.addcell})
-  const collectLink = useLink({href: routes.collect})
 
   const client  = useApolloClient()
   const handleLogOut = () => {
@@ -50,23 +45,6 @@ export const WebNavigation = ({ children, pathname }) => {
   if (pathname === routes.login) {
     return <>{children}</>
   }
-
-  let actions = <></>
-  if(pathname === routes.home) {
-    actions = (
-      <XStack space>
-          <FormButton {...goalLink} type="primary">Add Goal</FormButton>
-          <FormButton {...cellLink} type="primary">Add Cell</FormButton>
-          <FormButton {...collectLink} type="save">Collect Data</FormButton>
-      </XStack>
-    )
-  } else if(pathname !== routes.edit && pathname?.includes(routes.edit))
-    actions = (
-      <XStack space>
-        <FormButton onPress={close} type="danger">Exit without saving</FormButton>
-        <FormButton onPress={save} type="primary">Save changes</FormButton>
-      </XStack>
-    )
 
   return (
     <YStack f={1} width="100vw" height="100vh">
@@ -80,7 +58,7 @@ export const WebNavigation = ({ children, pathname }) => {
           bbc={borderColor}
           bbw={borderWidth}>
           <H1>{getTitle(pathname, title)}</H1>
-          {actions}
+          <NavActions pathname={pathname}/>
         </XStack>
         {/* sidebar */}
         <YStack jc="space-between" ai="center" brw={borderWidth} brc={borderColor} mt={headerHeight}

@@ -1,10 +1,12 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { WizardFlow } from "./WizardTypes"
 import { FormCard, H1, H3 } from "@my/ui"
 import { pick } from "lodash"
 import { useUserId } from "app/hooks"
 import { useRouter } from "solito/router"
 import { routes } from "app/navigation/web"
+import { useSetNavAction } from "app/provider/context/NavActionContext"
+import { EventEmitter } from "events"
 
 type WizardProps = {
   steps: WizardFlow
@@ -16,14 +18,31 @@ type WizardProps = {
 
 export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: WizardProps) {
   const userId = useUserId()
-  const { replace } = useRouter()
+  const { replace, back } = useRouter()
+  const saveEvents = useRef(new EventEmitter()).current
+  const setNavAction = useSetNavAction()
   
   const [stepNum, setStepNum] = useState(0)
   let [stepValue, setStepValue] = useState<any>()
+  let [stepField, setStepField] = useState('')
   const [formValue, setFormValue] = useState({})
   const [autofilled, setAutofilled] = useState({})
   const [errMsg, setErrMsg] = useState<string | undefined>()
   console.log(formValue, autofilled)
+
+  useEffect(() => {
+    setNavAction({ save: () => {
+      saveEvents.emit('saveForm')
+      back()
+    }})
+  }, [])
+
+  saveEvents.removeAllListeners('saveForm')
+  saveEvents.addListener('saveForm', () => {
+    const saveValue = Object.assign(formValue, {[stepField]: stepValue})
+    onComplete(saveValue)
+    saveEvents.removeAllListeners('saveForm')
+  })
 
   const getNextStepNum = (direction) => {
     const skipFields = new Set()
@@ -41,6 +60,7 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
     if(field)
       setFormValue(Object.assign(formValue, {[field]: stepValue}))
     setStepValue(formValue[steps[nextStepNum].field])
+    setStepField(field)
     setStepNum(nextStepNum)
     setErrMsg(undefined)
   }
@@ -51,6 +71,7 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
       FormComponent, buildQuery, autofill, skippable } = steps[stepNum]
 
     let props = forwardProps ? pick(formValue, forwardProps) : {}
+    stepField = field
 
     const handleSkip = () => {
       stepValue = undefined
@@ -71,7 +92,9 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
       const nextStepNum = getNextStepNum(1)
       setFormValue(Object.assign(formValue, {[field]: stepValue}))
       setStepNum(nextStepNum)
-      setStepValue(formValue[steps[nextStepNum]?.field])
+      const nextField = steps[nextStepNum]?.field
+      setStepValue(formValue[nextField])
+      setStepField(nextField)
       if(stepValue && onStep)
         onStep({variables: {
           query: buildQuery ? buildQuery(stepValue) : undefined,

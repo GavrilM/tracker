@@ -34,6 +34,7 @@ const INITIAL_METRICS = gql`
             value
             direction
           }
+          category
           view {
             type
             base_unit
@@ -118,6 +119,7 @@ const SINGLE_METRIC = gql`
         direction
         value
       }
+      category
       view {
         type
         base_unit

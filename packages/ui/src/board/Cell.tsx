@@ -1,8 +1,7 @@
-import { Card, H2, H3, SizableText, XStack, YStack, ZStack } from "tamagui";
+import { Card, SizableText, XStack, YStack } from "tamagui";
 import moment from 'moment'
-import { useMemo, useRef } from 'react'
-import { Animated, PanResponder } from 'react-native'
-import { CellViewOptions, MetricType } from "./CellTypes";
+import { useMemo } from 'react'
+import { CellCategories, CellViewOptions, MetricType } from "./CellTypes";
 import { Weekday } from "../form/WeekdayInput";
 import { Graph } from "./Graph";
 import _ from "lodash"
@@ -23,6 +22,7 @@ type CellProps = {
   limits?: Limits
   question_freq: {days: number}
   units: string
+  category: CellCategories
   target: {
     value: number,
     direction: string,
@@ -33,7 +33,8 @@ type CellProps = {
 
 const SUMMARY_HEIGHT = 80
 
-export function Cell({ name, points, target, limits, question_freq, units, view }: CellProps) {
+export function Cell({ name, points, target, limits, question_freq, category, units, view }: CellProps) {
+  console.log(category)
   let content = <SizableText selectable={false}>(no data)</SizableText>
 
   if(points.length > 0) {
@@ -64,7 +65,7 @@ export function Cell({ name, points, target, limits, question_freq, units, view 
   }
     
   return (
-    <Card size="$4" bordered width={225} height={225} theme="alt1"
+    <Card size="$4" bordered width={225} height={225} theme="alt1" bc={getCategoryColor(category)}
       mr="$4" mb="$4" ai="center" jc='space-between' py={16} pointerEvents="none">
       <SizableText fow='700' color='rgba(255,255,255, .9)' selectable={false}>{name}</SizableText>
 
@@ -252,6 +253,31 @@ function getStreakUnits(value, view) {
   if(value === 1)
     return str
   return str + 's'
+}
+
+function getCategoryColor(category: CellCategories) {
+  switch(category) {
+    case CellCategories.physical:
+      return '$orange2'
+    case CellCategories.emotional:
+      return '$yellow3'
+    case CellCategories.relationships:
+      return '$red2'
+    case CellCategories.finances:
+      return '$green2'
+    case CellCategories.work:
+      return '$blue2'
+    case CellCategories.community:
+      return '$pink2'
+    case CellCategories.learning:
+      return '$purple2'
+    case CellCategories.creativity:
+      return '#527614'
+    case CellCategories.spirituality:
+      return '#053D37'
+    case CellCategories.responsibility:
+      return '#540727'
+  }
 }
 
 function formatDate(date) {

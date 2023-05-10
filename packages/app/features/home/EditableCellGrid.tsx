@@ -87,6 +87,7 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
     if(id) {
       setSelectedId(id)
       const newLayout = cloneDeep(tempLayout)
+      newLayout.push(newLayout[0].map(() => ''))
       newLayout[r][c] = FILLER
       setLastLayout(newLayout)
       setTempLayout(newLayout)
@@ -211,6 +212,8 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
 // Layout functions
 
 const genLayoutPreview = (layout: string[][], target: Coord, rowLen: number) => {
+  if(target[0] >= layout.length || target[1] >= rowLen)
+    return layout
   const newLayout = cloneDeep(layout)
   let fillerCoord: Coord = [rowLen - 1, rowLen - 1]
   layout.forEach((row, r) => row.forEach((col, c) => {

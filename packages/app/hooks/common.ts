@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { Metric } from "./types/Metric";
+import { Metric, TargetDirection } from "./types/Metric";
 import { CollectReview } from './types/QueryResult';
 import { MetricType } from '@my/ui';
 
@@ -39,7 +39,8 @@ export function genQuestionReview(metrics: Array<Metric>, pointLookup): CollectR
   metrics.forEach(({ _id, name, target, units, view }) => {
     const unitStr = units ? units : ''
     if(target) {
-      const diff = pointLookup[_id].value - target.value
+      const dir = target?.direction === TargetDirection.AtLeast ? 1 : -1
+      const diff = dir*(pointLookup[_id].value - target.value)
       if(view.type === MetricType.streak) {
         if(diff === 0)
           result.streaksKept.push(name)

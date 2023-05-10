@@ -34,7 +34,6 @@ type CellProps = {
 const SUMMARY_HEIGHT = 80
 
 export function Cell({ name, points, target, limits, question_freq, category, units, view }: CellProps) {
-  console.log(category)
   let content = <SizableText selectable={false}>(no data)</SizableText>
 
   if(points.length > 0) {

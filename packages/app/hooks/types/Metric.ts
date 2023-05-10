@@ -1,4 +1,4 @@
-import { MetricType } from "@my/ui"
+import { CellCategories, MetricType } from "@my/ui"
 import { Point } from "./Point"
 import { CellViewOptions } from "@my/ui"
 
@@ -30,6 +30,7 @@ export type Metric = {
     value: number
     direction: TargetDirection
   }
+  category: CellCategories
   units: string
   view: CellViewOptions
 
@@ -63,6 +64,7 @@ export const DummyMetric = {
     value: 0,
     direction: TargetDirection.AtLeast
   },
+  category: CellCategories.work,
   units: '',
   view: {
     base_unit: 0,

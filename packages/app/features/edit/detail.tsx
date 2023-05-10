@@ -18,7 +18,8 @@ const formTitles = [
   'Question',
   'Ask Frequency',
   'Limits',
-  'Target Value'
+  'Target Value',
+  'Category',
 ]
 
 export function EditDetail() {

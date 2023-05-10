@@ -1,16 +1,10 @@
 import {
-  BinaryInput,
-  ErrorText,
-  Label,
+  CellCategories,
   MetricType,
-  MonthDateInput,
-  NumberInput,
   SelectInput,
   SizableText,
   TextInput,
-  Weekday, 
-  WeekdayInput, 
-  XStack,
+  Weekday,
   YStack
 } from "@my/ui";
 import { WizardFlow } from "./WizardTypes";
@@ -99,6 +93,20 @@ export const AddMetricFlow: WizardFlow = [
     validate: () => null,
     FormComponent: MetricTargetForm
   },
+  {
+    field: 'category',
+    title: 'What category does this Metric fall under?',
+    subtitle: 'optional',
+    validate: stepValue => stepValue?.length ? null : "Question is required",
+    FormComponent: ({ defaultValue, onChange}) => {
+      const handleChange = v => onChange(`_${v}`)
+      return (
+        <SelectInput placeholder="Pick a category" value={defaultValue?.substring(1)}
+          onChange={handleChange} width={175}
+          values={Object.values(CellCategories).map(c => c.substring(1))}/>
+      )
+    }
+  },
 ]
 
 export function AddMetricReview(props) {
@@ -111,7 +119,7 @@ export function AddMetricReview(props) {
       : 'on the last day of the month'
   }
   let unitStr = props.units ? props.units : '(unitless)'
-  let targetStr = `Your target is to achieve ${props.target.direction} ${props.target.value} ${unitStr}.`
+  let targetStr = `Your target is to achieve ${props.target?.direction} ${props.target?.value} ${unitStr}.`
   if(props.view.type === MetricType.streak)
     targetStr = `Your target is to answer ${props.target ? 'yes': 'no'}`
   const [_, periodStrings] = getPeriod(props.view)
@@ -134,6 +142,10 @@ export function AddMetricReview(props) {
       {props.target != undefined
         ? <SizableText>{targetStr}</SizableText>
         : <SizableText>Measured in {unitStr}</SizableText>
+      }
+      {
+        props.category && 
+          <SizableText>Category: {props.category}</SizableText>
       }
     </YStack>
   )

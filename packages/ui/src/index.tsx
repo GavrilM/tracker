@@ -14,7 +14,7 @@ export { MonthDateInput } from './form/MonthDateInput'
 export { BinaryInput } from './form/BinaryInput'
 export { ErrorText } from './form/ErrorText'
 
-export { MetricType, CellViewOptions } from './board/CellTypes'
+export { MetricType, CellViewOptions, CellCategories } from './board/CellTypes'
 export { Cell } from './board/Cell'
 export { EditItem } from './edit/EditItem'
 

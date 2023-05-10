@@ -257,15 +257,15 @@ function getStreakUnits(value, view) {
 function getCategoryColor(category: CellCategories) {
   switch(category) {
     case CellCategories.physical:
-      return '$orange2'
+      return '$orange3'
     case CellCategories.emotional:
-      return '$yellow3'
+      return '$yellow5'
     case CellCategories.relationships:
       return '$red2'
     case CellCategories.finances:
       return '$green3'
     case CellCategories.work:
-      return '$blue2'
+      return '$blue3'
     case CellCategories.community:
       return '$pink3'
     case CellCategories.learning:

@@ -263,19 +263,19 @@ function getCategoryColor(category: CellCategories) {
     case CellCategories.relationships:
       return '$red2'
     case CellCategories.finances:
-      return '$green2'
+      return '$green3'
     case CellCategories.work:
       return '$blue2'
     case CellCategories.community:
-      return '$pink2'
+      return '$pink3'
     case CellCategories.learning:
-      return '$purple2'
+      return '$purple3'
     case CellCategories.creativity:
-      return '#527614'
+      return '#00352F'
     case CellCategories.spirituality:
-      return '#053D37'
+      return '#372D00'
     case CellCategories.responsibility:
-      return '#540727'
+      return '#3D001D'
   }
 }
 

@@ -31,10 +31,13 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
   console.log(formValue, autofilled)
 
   useEffect(() => {
-    setNavAction({ save: () => {
-      saveEvents.emit('saveForm')
-      back()
-    }})
+    setNavAction({ 
+      close: back,
+      save: () => {
+        saveEvents.emit('saveForm')
+        back()
+      }
+    })
   }, [])
 
   saveEvents.removeAllListeners('saveForm')

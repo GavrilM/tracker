@@ -8,7 +8,6 @@ export const genInitalLayout = (rowLen, ids: Array<string>, cellLayouts: BoardLa
 
   let layout
   if(cellLayouts && cellLayouts[rowLen]) {
-    console.log(ids)
     const idSet = new Set(ids)
     layout = cellLayouts[rowLen]
     layout.forEach((row, r) => row.forEach(

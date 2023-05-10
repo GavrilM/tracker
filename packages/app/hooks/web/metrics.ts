@@ -80,9 +80,9 @@ const EDIT_METRIC = gql`
 `
 
 const DELETE_METRIC = gql`
-  mutation DeleteMetric($query: MetricQueryInput!) {
-    deleteOneMetric(query: $query) {
-      name
+  mutation DeleteMetric($id: String!) {
+    deleteMetric(input: $id) {
+      status
     }
   }
 `

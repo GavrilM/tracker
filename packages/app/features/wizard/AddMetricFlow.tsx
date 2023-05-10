@@ -97,7 +97,7 @@ export const AddMetricFlow: WizardFlow = [
     field: 'category',
     title: 'What category does this Metric fall under?',
     subtitle: 'optional',
-    validate: stepValue => stepValue?.length ? null : "Question is required",
+    validate: stepValue => null,
     FormComponent: ({ defaultValue, onChange}) => {
       const handleChange = v => onChange(`_${v}`)
       return (

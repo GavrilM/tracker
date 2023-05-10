@@ -14,7 +14,8 @@ export const useSaveLayout = () => {
   const [fn] = useMutation(SAVE_LAYOUT)
   return [
     (rowLen: number, layout: Array<Array<string>>) => {
-      layout.pop()
+      while(layout.at(-1)?.every(i => i === ''))
+        layout.pop()
       const newLayouts = layouts ? layouts : {}
       newLayouts[rowLen] = layout
       fn({

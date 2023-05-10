@@ -24,7 +24,7 @@ export const EditScreen = () => {
           }} 
           onTrash={() => deleteMetric({
             variables: {
-              query: {_id: m._id}
+              id: m._id
             }
           })}/>
       ))}

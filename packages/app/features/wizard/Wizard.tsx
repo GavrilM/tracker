@@ -89,7 +89,6 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
       } else {
         setErrMsg(undefined)
       }
-      
       if(autofill)
         setAutofilled(Object.assign(autofilled, {[field]: autofill(stepValue)}))
       const nextStepNum = getNextStepNum(1)

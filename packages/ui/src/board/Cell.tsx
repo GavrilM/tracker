@@ -108,7 +108,7 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq
   if(view.base_unit && view.type !== MetricType.streak) { 
     const now = moment()
     let diff = view.base_unit
-    if(view.weekday) {
+    if(view.weekday != undefined) {
       diff = (((now.day() - view.weekday) % 7) + 7) % 7
     } else if(view.month_date) {
       const date = view.month_date === 'last day'
@@ -217,7 +217,7 @@ function getLabel(view, lastPointDate) {
     case MetricType.average:
     case MetricType.total:
       const daysSince = (((today.day() - view.weekday) % 7) + 7) % 7
-      if(view.weekday) {
+      if(view.weekday != undefined) {
         if(daysSince === 0)
           return "since today"
         else if (daysSince === 1)

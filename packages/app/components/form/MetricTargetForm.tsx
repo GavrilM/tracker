@@ -1,6 +1,6 @@
 import { BinaryInput, ErrorText, MetricType, NumberInput, SelectInput, SizableText, YStack } from "@my/ui"
 import { TargetDirection } from "app/hooks/types/Metric"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export const MetricTargetForm = ({ onChange, defaultValue, errorMessage, autofocus, forwardProps }) => {
   const {question, limits, units, view} = forwardProps
@@ -17,6 +17,11 @@ export const MetricTargetForm = ({ onChange, defaultValue, errorMessage, autofoc
 
   const [direction, setDirection] = useState(defaultValue?.direction || TargetDirection.AtLeast)
   const [value, setValue] = useState(defaultValue?.value)
+
+  useEffect(() => {
+    if(view.type === MetricType.streak)
+      onChange({value: 1})
+  }, [])
 
   let input = (
     <YStack f={1} ai="center">

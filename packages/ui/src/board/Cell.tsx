@@ -42,10 +42,11 @@ export function Cell({ name, points, target, limits, question_freq, category, un
 
     if(points.length === 0 && view.type !== MetricType.streak){}
     else if(view.type !== MetricType.graph) {
-      const summary = useMemo(() => getSummary(points, view), [points, view])
+      const summary = useMemo(() => getSummary(points, view)?.toString(), [points, view])
+      const fos = summary ? summary.length > 3 ? SUMMARY_HEIGHT*(1 - summary.length*.1) : SUMMARY_HEIGHT : 0
       content = (
         <>
-          <SizableText fontSize={SUMMARY_HEIGHT} fow='700' color='white'>
+          <SizableText fontSize={fos} fow='700' color='white'>
             {summary}
           </SizableText>
           <YStack height={SUMMARY_HEIGHT} jc='flex-end' pb={4}>
@@ -153,7 +154,8 @@ function processStreak(data, view, xmin, target) {
   let now = formatDate(Date.now())
   const dataPadded: Array<CellPoint> = []
   let i = 0
-  if(now.toISOString() === formatDate(data[i].timestamp).toISOString()) {
+  if(now.toISOString() === formatDate(data[i].timestamp).toISOString() 
+    && data[i].value === target) {
     dataPadded.push(data[i])
     i++
   }

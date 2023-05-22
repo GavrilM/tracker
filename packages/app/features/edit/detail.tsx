@@ -58,6 +58,9 @@ export function EditDetail() {
         setErrField(field)
       } else {
         const newValue = Object.assign(formValue, {[field]: v})
+        if(field === 'view' && v.weekdays) {
+          newValue['question_freq'] = {weekdays: v.weekdays}
+        }
         setFormValue(newValue)
         setErrMsg('')
         setErrField('')

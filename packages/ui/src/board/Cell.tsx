@@ -43,7 +43,7 @@ export function Cell({ name, points, target, limits, question_freq, category, un
     if(points.length === 0 && view.type !== MetricType.streak){}
     else if(view.type !== MetricType.graph) {
       const summary = useMemo(() => getSummary(points, view)?.toString(), [points, view])
-      const fos = summary ? summary.length > 3 ? SUMMARY_HEIGHT*(1 - summary.length*.1) : SUMMARY_HEIGHT : 0
+      const fos = summary ? summary.length > 3 ? SUMMARY_HEIGHT*(1 - summary.length*.08) : SUMMARY_HEIGHT : 0
       content = (
         <>
           <SizableText fontSize={fos} fow='700' color='white'>

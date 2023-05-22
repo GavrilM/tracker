@@ -259,25 +259,25 @@ function getStreakUnits(value, view) {
 function getCategoryColor(category: CellCategories) {
   switch(category) {
     case CellCategories.physical:
-      return '$orange3'
+      return '#3D2119'
     case CellCategories.emotional:
-      return '$yellow5'
+      return '#403005'
     case CellCategories.relationships:
-      return '$red2'
+      return '#3E2129'
     case CellCategories.finances:
-      return '$green3'
+      return '#2C3422'
     case CellCategories.work:
-      return '$blue3'
+      return '#2B2D43'
     case CellCategories.community:
-      return '$pink3'
+      return '#42293A'
     case CellCategories.learning:
-      return '$purple3'
+      return '#342B3F'
     case CellCategories.creativity:
-      return '#00352F'
+      return '#1C3339'
     case CellCategories.spirituality:
-      return '#373B00'
+      return '#373219'
     case CellCategories.responsibility:
-      return '#3D001D'
+      return '#29352F'
   }
 }
 

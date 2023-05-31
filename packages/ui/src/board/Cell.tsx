@@ -127,8 +127,6 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq
   const now = formatDate(Date.now())
   const dataPadded: Array<CellPoint> = []
   if(view.type === MetricType.graph) {
-    data.push({timestamp: xmin, value: undefined})
-    data.unshift({timestamp: (new Date()).toISOString(), value: undefined})
     if(question_freq.days === 1) {
       let i = 0
       while(now.toISOString() >= xmin){
@@ -141,6 +139,10 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq
         now.subtract(1, 'day')
       }
       data = dataPadded
+      if(data.length) {
+        data.push({timestamp: xmin, value: undefined})
+        data.unshift({timestamp: (new Date()).toISOString(), value: undefined})
+      }
     }
   }
   else if (view.type === MetricType.streak) {

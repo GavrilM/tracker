@@ -10,6 +10,7 @@ type FormCardProps = {
   onBack?: () => void
   onSkip?: () => void
   onComplete?: () => void
+  disableContinue?: boolean
   completeText?: string,
   height?: number | string
   center?: boolean
@@ -23,6 +24,7 @@ export function FormCard({
   onBack,
   onSkip,
   onComplete,
+  disableContinue,
   completeText,
   height,
   center
@@ -44,10 +46,15 @@ export function FormCard({
           <XStack space fd="row-reverse">
             {onComplete && 
                 <FormButton type="save" icon={CheckCircle} onPress={onComplete}>{completeText || 'Save'}</FormButton>}
-            {onContinue && 
+            {onContinue && !disableContinue &&
               <Form.Trigger asChild>
-                <FormButton type="primary" icon={ArrowRightCircle} onPress={onContinue}>Continue</FormButton>
-              </Form.Trigger>}
+                <FormButton type="primary" icon={ArrowRightCircle}
+                  onPress={onContinue}>Continue</FormButton>
+              </Form.Trigger>
+            }
+            {onContinue && disableContinue &&
+              <FormButton type="disabled" icon={ArrowRightCircle} disabled>Continue</FormButton>
+            }
             {onSkip && <FormButton type="discourage" icon={CornerUpRight} onPress={onSkip}>Skip</FormButton>}
             {onBack && <FormButton type="secondary" icon={ArrowLeftCircle} onPress={onBack}>Back</FormButton>}
           </XStack>

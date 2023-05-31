@@ -62,7 +62,7 @@ export const WizardScreen = ({ wizardType }: WizardScreenProps) => {
   let content = <Spinner />
   if(!loading)
     content = (
-      <Wizard steps={steps} onStep={stepFn} onComplete={completeFn}
+      <Wizard steps={steps} onStep={stepFn} onComplete={completeFn} requireValue={wizardType === WizardType.collect}
           Review={reviewComponents[wizardType]} submitButtonText={submitText[wizardType]}/>
     )
   

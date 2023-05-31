@@ -20,6 +20,9 @@ export const FormButton = styled(Button, {
         backgroundColor: 'white',
         borderColor: '$gray1Dark',
         color: '$gray1Dark'
+      },
+      disabled: {
+        backgroundColor: '$gray6'
       }
     }
   }

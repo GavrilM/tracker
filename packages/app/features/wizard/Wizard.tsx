@@ -14,9 +14,10 @@ type WizardProps = {
   onComplete: (Object) => void,
   Review: () => React.ReactElement,
   submitButtonText: string,
+  requireValue: boolean,
 }
 
-export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: WizardProps) {
+export function Wizard({ steps, onStep, onComplete, Review, submitButtonText, requireValue }: WizardProps) {
   const userId = useUserId()
   const { replace, back } = useRouter()
   const saveEvents = useRef(new EventEmitter()).current
@@ -114,6 +115,7 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText }: 
           onBack={handleBack}
           onSkip={skippable ? handleSkip : undefined}
           onContinue={handleContinue}
+          disableContinue={requireValue && stepValue === undefined}
           height={450}>
           <FormComponent onChange={v => {stepValue = v}} errorMessage={errMsg}
             defaultValue={stepValue} forwardProps={props} autofocus/>

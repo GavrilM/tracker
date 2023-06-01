@@ -278,7 +278,7 @@ function getCategoryColor(category: CellCategories) {
       return '#1C3339'
     case CellCategories.spirituality:
       return '#373219'
-    case CellCategories.responsibility:
+    case CellCategories.character:
       return '#29352F'
   }
 }

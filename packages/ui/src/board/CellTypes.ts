@@ -21,7 +21,7 @@ export enum CellCategories {
   work = "_Work",
   finances = "_Finances",
   community = "_Community",
-  responsibility = "_Responsibility",
+  character = "_Character",
   learning = "_Learning",
   creativity = "_Creativity",
   spirituality = "_Spirituality",

@@ -29,8 +29,13 @@ export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, li
   const y = scaleLinear().domain([0, graph.max]).range([height, 25])
   const targetY = y(target?.value)
   const dir = target?.direction === "at least" ? 1 : -1
+  let targetColor = '#850000'
+  let lineColor = target ? '#E43F3F' : '#d7d7d7'
   // @ts-ignore
-  const targetColor = dir*graph.last?.value >= dir*target?.value ? '#0A7600' : '#850000'
+  if(dir*graph.last?.value >= dir*target?.value) {
+    targetColor = '#0A7600'
+    lineColor = '#53C041'
+  }
 
   return (
     <XStack pl={FONT_SIZE}>
@@ -73,7 +78,8 @@ export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, li
             {limits?.max != undefined ? limits.max : graph.max}
           </Text>
           <Path d={graph.curve} strokeWidth="4" fillOpacity={0}
-            stroke={'#d7d7d7'} strokeLinecap='round'/>
+            stroke={lineColor} strokeLinecap='round'/>
+            {/* '#89FBA9' : 'FFB0B0' */}
         </G>
       </Svg>
     </XStack>

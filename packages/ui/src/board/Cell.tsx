@@ -42,11 +42,14 @@ export function Cell({ name, points, target, limits, question_freq, category, un
 
     if(points.length === 0 && view.type !== MetricType.streak){}
     else if(view.type !== MetricType.graph) {
-      const summary = useMemo(() => getSummary(points, view)?.toString(), [points, view])
-      const fos = summary ? summary.length > 3 ? SUMMARY_HEIGHT*(1 - summary.length*.08) : SUMMARY_HEIGHT : 0
+      const summary = useMemo(() => getSummary(points, view), [points, view])
+      const summaryStr = summary?.toString()
+      const fos = summaryStr ? summaryStr.length > 3 ? SUMMARY_HEIGHT*(1 - summaryStr.length*.08) : SUMMARY_HEIGHT : 0
+      const dir = target?.direction === "at least" ? 1 : -1
+      const color = target ? dir*summary >= dir*target?.value ? '#53C041' : '#E43F3F' : 'white'
       content = (
         <>
-          <SizableText fontSize={fos} fow='700' color='white'>
+          <SizableText fontSize={fos} fow='700' color={color}>
             {summary}
           </SizableText>
           <YStack height={SUMMARY_HEIGHT} jc='flex-end' pb={4}>
@@ -80,7 +83,7 @@ export function Cell({ name, points, target, limits, question_freq, category, un
 
 function getSummary(data: Array<CellPoint>, view: CellViewOptions) {
   if(view.type === MetricType.lastvalue)
-    return data.at(-1)?.value
+    return data.at(-1)?.value || 0
   if(view.type === MetricType.streak) {
     if(view.base_unit === 7)
       return moment().diff(data[data.length - 1].timestamp, 'week')

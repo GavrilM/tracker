@@ -137,6 +137,7 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText, re
           setStepField('')
           setFormValue({})
           setAutofilled({})
+          replace(routes.home)
         }}
         completeText={submitButtonText}>
         <Review {...formValue} />

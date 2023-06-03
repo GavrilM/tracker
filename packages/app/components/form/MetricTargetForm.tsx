@@ -6,7 +6,7 @@ export const MetricTargetForm = ({ onChange, defaultValue, errorMessage, autofoc
   const {question, limits, units, view} = forwardProps
   const handleChange = (fn, field) => v => {
     fn(v)
-    if(value == undefined || (field === 'value' && v === undefined))
+    if(field === 'value' && v === undefined)
       onChange(undefined)
     else
       onChange(Object.assign({

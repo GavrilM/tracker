@@ -163,7 +163,9 @@ export const useMetrics = (): QueryResult<Array<Metric>> => {
 export const useCreateMetric = () => {
   const id = useUserId()
   const { _id, metricIds } = useDashboard()
-  const [fn] = useMutation(CREATE_METRIC)
+  const [fn] = useMutation(CREATE_METRIC, {
+    refetchQueries: [INITIAL_METRICS]
+  })
   const mutation = (data) => {
     const metric = withOwnerId(data, id)
     metric._id = new ObjectId()

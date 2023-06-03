@@ -10,6 +10,7 @@ import { CollectDateContext } from "./Contexts"
 
 type WizardScreenProps = {
   wizardType: WizardType,
+  onComplete?: () => void,
   wizardTypes?: Array<WizardType>,
   icons?: Array<React.ReactNode>
 }
@@ -43,7 +44,7 @@ const submitText = {
 
 const getCurrentDate = () => moment(moment().format('YYYYMMDD')).toISOString()
 
-export const WizardScreen = ({ wizardType }: WizardScreenProps) => {
+export const WizardScreen = ({ wizardType, onComplete }: WizardScreenProps) => {
   let data: Array<Metric> = [],
     loading = true,
     date = getCurrentDate()
@@ -59,15 +60,22 @@ export const WizardScreen = ({ wizardType }: WizardScreenProps) => {
   const [stepFn] = useStepMutation[wizardType]()
   const steps: WizardFlow = wizards[wizardType](data)
 
+  const complete = v => {
+    completeFn(v)
+    if(onComplete)
+      onComplete()
+  }
+
   let content = <Spinner />
   if(!loading)
     content = (
-      <Wizard steps={steps} onStep={stepFn} onComplete={completeFn} requireValue={wizardType === WizardType.collect}
-          Review={reviewComponents[wizardType]} submitButtonText={submitText[wizardType]}/>
+      <Wizard steps={steps} onStep={stepFn} requireValue={wizardType === WizardType.collect}
+          Review={reviewComponents[wizardType]} submitButtonText={submitText[wizardType]}
+          onComplete={complete} />
     )
   
   return (
-    <YStack f={1} jc="center" ai="center" p="$4">
+    <YStack f={1} ai="center" p="$4">
       <YStack space="$4" maw={600}>
         <CollectDateContext.Provider value={date}>
           {content}

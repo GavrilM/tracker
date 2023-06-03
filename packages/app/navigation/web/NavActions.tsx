@@ -6,16 +6,15 @@ import { XCircle } from "@tamagui/lucide-icons"
 
 type NavActionProps = {
   pathname: string
+  onSheetOpen: () => void
   saveText?: string
   exitText?: string
 }
 
-export const NavActions = ({ pathname }: NavActionProps) => {
+export const NavActions = ({ pathname, onSheetOpen }: NavActionProps) => {
   const {save, close, state} = useNavAction()
   const setNavAction = useSetNavAction()
 
-  const goalLink = useLink({href: routes.addgoal})
-  const cellLink = useLink({href: routes.addcell})
   const collectLink = useLink({href: routes.collect})
 
   if(pathname === routes.home) {
@@ -31,8 +30,8 @@ export const NavActions = ({ pathname }: NavActionProps) => {
       <XStack space>
         <FormButton onPress={() => setNavAction({state: NavActionState.Editing})}
           type="primary">Move</FormButton>
-        <FormButton {...goalLink} type="primary">Add Goal</FormButton>
-        <FormButton {...cellLink} type="primary">Add Cell</FormButton>
+        {/* <FormButton type="primary">Add Goal</FormButton> */}
+        <FormButton onPress={onSheetOpen} type="primary">Add Cell</FormButton>
         <FormButton {...collectLink} type="save">Collect Data</FormButton>
       </XStack>
     )
@@ -48,12 +47,6 @@ export const NavActions = ({ pathname }: NavActionProps) => {
       <XStack space>
         <FormButton onPress={close} type="secondary" icon={<XCircle/>}>Exit without saving</FormButton>
         <FormButton onPress={save} type="save">Save and exit</FormButton>
-      </XStack>
-    )
-  } else if(pathname === routes.addcell) {
-    return (
-      <XStack space>
-        <FormButton onPress={close} type="secondary" icon={<XCircle/>}>Exit without saving</FormButton>
       </XStack>
     )
   }

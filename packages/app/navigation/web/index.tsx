@@ -7,6 +7,8 @@ import { useApolloClient } from "@apollo/client"
 import { useNavTitle } from "app/provider/context/NavTitleContext"
 import { NavActions } from "./NavActions"
 import { useNavAction } from "app/provider/context/NavActionContext"
+import { AddSheet } from "app/features/wizard/AddSheet"
+import { useState } from "react"
 
 const width = 60
 const headerHeight = 100
@@ -43,12 +45,15 @@ export const WebNavigation = ({ children, pathname }) => {
     client.resetStore()
     logOut()
   }
-  
+
+  const [sheetOpen, setSheetOpen] = useState(false)
+
   if (pathname === routes.login) {
     return <>{children}</>
   }
 
   return (
+    <>
     <YStack f={1} width="100vw" height="100vh">
       <ZStack f={1}>
         <XStack zIndex={2}
@@ -66,7 +71,7 @@ export const WebNavigation = ({ children, pathname }) => {
                 <RefreshCw size="$1"/></Button>
             }
           </XStack>
-          <NavActions pathname={pathname}/>
+          <NavActions pathname={pathname} onSheetOpen={() => setSheetOpen(true)}/>
         </XStack>
         {/* sidebar */}
         <YStack jc="space-between" ai="center" brw={borderWidth} brc={borderColor} mt={headerHeight}
@@ -89,6 +94,9 @@ export const WebNavigation = ({ children, pathname }) => {
         {children}
       </YStack>
     </YStack>
+    
+    <AddSheet isOpen={sheetOpen} onClose={() => setSheetOpen(false)}/>
+    </>
   )
 }
 

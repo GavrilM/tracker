@@ -12,7 +12,9 @@ export const genInitalLayout = (rowLen, ids: Array<string>, cellLayouts: BoardLa
     layout = cellLayouts[rowLen]
     layout.forEach((row, r) => row.forEach(
       (id, c) => idSet.has(id) ? idSet.delete(id) : layout[r][c] = ''))
-    layout.push(...genMatrix(new Array(...idSet), rowLen))
+    while(layout.at(-1)?.every(i => i === '')) //remove empty rows
+      layout.pop()
+    layout.push(...genMatrix(new Array(...idSet), rowLen)) //add nonlayout cells
   } else {
     layout = genMatrix(ids, rowLen)
   }

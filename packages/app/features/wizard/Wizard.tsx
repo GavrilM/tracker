@@ -132,7 +132,11 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText, re
         onBack={steps.length ? backFn(false) : undefined}
         onComplete={() => {
           onComplete(formValue)
-          replace(routes.home)
+          setStepNum(0)
+          setStepValue(undefined)
+          setStepField('')
+          setFormValue({})
+          setAutofilled({})
         }}
         completeText={submitButtonText}>
         <Review {...formValue} />

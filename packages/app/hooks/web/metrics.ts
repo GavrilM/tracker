@@ -156,7 +156,7 @@ export const useMetrics = (): QueryResult<Array<Metric>> => {
   return {
     loading,
     refetch,
-    data: data?.user.initial_board.metrics,
+    data: data?.user.initial_board?.metrics,
   }
 }
 

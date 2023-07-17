@@ -3,13 +3,13 @@ import { getOutlineColor } from "./utils";
 import { ErrorText } from "./ErrorText";
 
 export enum Weekday {
-  Sunday, 
   Monday,
   Tuesday,
   Wednesday,
   Thursday,
   Friday,
-  Saturday
+  Saturday,
+  Sunday, 
 }
 
 type WeekdayInputProps = {

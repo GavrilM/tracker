@@ -76,7 +76,7 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
         y: scrollTop + SCROLL_INC * scrollDir,
         animated: true
       })
-      if(selectedId)
+      if(selectedId && scrollDir)
         scroll()
     }, SCROLL_RATE)
 
@@ -87,7 +87,6 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
     if(id) {
       setSelectedId(id)
       const newLayout = cloneDeep(tempLayout)
-      newLayout.push(newLayout[0].map(() => ''))
       newLayout[r][c] = FILLER
       setLastLayout(newLayout)
       setTempLayout(newLayout)

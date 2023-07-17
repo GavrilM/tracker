@@ -38,7 +38,7 @@ export function Cell({ name, points, target, limits, question_freq, category, un
 
   if(points.length > 0) {
     if(view.base_unit > 0)
-      points = useMemo(() => formatData(points, view, question_freq, target?.value), [points, view])
+      points = formatData(points, view, question_freq, target?.value)
 
     if(points.length === 0 && view.type !== MetricType.streak){}
     else if(view.type !== MetricType.graph) {
@@ -46,7 +46,7 @@ export function Cell({ name, points, target, limits, question_freq, category, un
       const summaryStr = summary?.toString()
       const fos = summaryStr ? summaryStr.length > 3 ? SUMMARY_HEIGHT*(1 - summaryStr.length*.08) : SUMMARY_HEIGHT : 0
       const dir = target?.direction === "at least" ? 1 : -1
-      const color = target ? dir*summary >= dir*target?.value ? '#53C041' : '#E43F3F' : 'white'
+      const color = target && view.type !== MetricType.streak ? dir*summary >= dir*target?.value ? '#53C041' : '#E43F3F' : 'white'
       content = (
         <>
           <SizableText fontSize={fos} fow='700' color={color}>
@@ -113,7 +113,7 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq
     const now = moment()
     let diff = view.base_unit
     if(view.weekday != undefined) {
-      diff = (((now.day() - view.weekday) % 7) + 7) % 7
+      diff = (((now.isoWeekday() - 1 - view.weekday) % 7) + 7) % 7
     } else if(view.month_date) {
       const date = view.month_date === 'last day'
         ? 1
@@ -223,7 +223,7 @@ function getLabel(view, lastPointDate) {
         : `last ${view.base_unit} days`
     case MetricType.average:
     case MetricType.total:
-      const daysSince = (((today.day() - view.weekday) % 7) + 7) % 7
+      const daysSince = (((today.isoWeekday() - 1 - view.weekday) % 7) + 7) % 7
       if(view.weekday != undefined) {
         if(daysSince === 0)
           return "since today"

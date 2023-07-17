@@ -25,7 +25,10 @@ const INITIAL_METRICS = gql`
           limits {
             min
             max
+            min_label
+            max_label
           }
+          question
           question_freq {
             days
             weekdays
@@ -45,6 +48,9 @@ const INITIAL_METRICS = gql`
           points_default {
             timestamp
             value
+          }
+          last_point {
+            timestamp
           }
         }
       }

@@ -2,7 +2,7 @@ import { Metric } from "../types/Metric"
 import { CollectReview, QueryResult } from "../types/QueryResult"
 
 export const useCollectPoint = () => {}
-export const useCollectPoints = () => {}
+export const useCollectPoints = () => [(any) => {}]
 
 export const useCollectQuestions = (date: string): QueryResult<Array<Metric>> => {
   return {

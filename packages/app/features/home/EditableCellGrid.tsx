@@ -1,4 +1,4 @@
-import { Card, Cell, ScrollView, Spinner, XStack, YStack, ZStack } from "@my/ui"
+import { CELL_SIZE, Card, EditCell, ScrollView, XStack, YStack, ZStack } from "@my/ui"
 import { BoardLayouts } from "app/hooks/types/Dashboard";
 import { Metric } from "app/hooks/types/Metric";
 import { useEffect, useRef, useState } from "react";
@@ -12,7 +12,7 @@ import { NavActionState, useSetNavAction } from "app/provider/context/NavActionC
 const FILLER = 'filler'
 const FillerCell = (props) => (
   <Card {...props} size="$4" theme="alt1"
-    bordered width={225} height={225} mr="$4" mb="$4"/>)
+    bordered width={CELL_SIZE} height={CELL_SIZE} mr="$4" mb="$4"/>)
 
 const SCROLL_AREA_SIZE = 150
 const SCROLL_RATE = 40
@@ -175,7 +175,7 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
       if(data[id])
         return (
           <XStack key={c} {...props}>
-            <Cell {...data[id]} points={[]} />
+            <EditCell {...data[id]}/>
           </XStack>
         )
       else //empty space
@@ -197,7 +197,7 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
             transform: [{translateX: pan.x}, {translateY: pan.y}, {rotateZ: '10deg'}],
             opacity: .9,
           }}>
-            <XStack><Cell {...data[selectedId]} points={[]} /></XStack>
+            <XStack><EditCell {...data[selectedId]} /></XStack>
           </Animated.View>}
       </ZStack>
       <YStack f={1}>

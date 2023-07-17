@@ -5,8 +5,8 @@ import { useCollectPoints, useCollectQuestions, useCreateMetric } from "app/hook
 import { CollectFlow, CollectReview } from "./CollectFlow"
 import { Wizard } from "./Wizard"
 import { Metric } from "app/hooks/types/Metric"
-import moment from "moment"
 import { CollectDateContext } from "./Contexts"
+import { getCurrentDate } from "app/hooks/common"
 
 type WizardScreenProps = {
   wizardType: WizardType,
@@ -41,8 +41,6 @@ const submitText = {
   [WizardType.metric]: "Create Cell",
   [WizardType.collect]: "Save and Exit"
 }
-
-const getCurrentDate = () => moment(moment().format('YYYYMMDD')).toISOString()
 
 export const WizardScreen = ({ wizardType, onComplete }: WizardScreenProps) => {
   let data: Array<Metric> = [],

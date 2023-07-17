@@ -2,7 +2,7 @@ import { FormButton, XStack } from "@my/ui"
 import { routes } from "."
 import { NavActionState, useNavAction, useSetNavAction } from "app/provider/context/NavActionContext"
 import { useLink } from "solito/link"
-import { XCircle } from "@tamagui/lucide-icons"
+import { CheckCircle, XCircle } from "@tamagui/lucide-icons"
 
 type NavActionProps = {
   pathname: string
@@ -32,7 +32,7 @@ export const NavActions = ({ pathname, onSheetOpen }: NavActionProps) => {
           type="primary">Move</FormButton>
         {/* <FormButton type="primary">Add Goal</FormButton> */}
         <FormButton onPress={onSheetOpen} type="primary">Add Cell</FormButton>
-        <FormButton {...collectLink} type="save">Collect Data</FormButton>
+        <FormButton {...collectLink} type="save" icon={CheckCircle}>Collect Data</FormButton>
       </XStack>
     )
   } else if(pathname !== routes.edit && pathname?.includes(routes.edit)) {
@@ -45,8 +45,8 @@ export const NavActions = ({ pathname, onSheetOpen }: NavActionProps) => {
   } else if(pathname === routes.collect) {
     return (
       <XStack space>
-        <FormButton onPress={close} type="secondary" icon={<XCircle/>}>Exit without saving</FormButton>
-        <FormButton onPress={save} type="save">Save and exit</FormButton>
+        <FormButton onPress={close} type="secondary" icon={XCircle}>Exit without saving</FormButton>
+        <FormButton onPress={save} type="save" icon={CheckCircle}>Save and exit</FormButton>
       </XStack>
     )
   }

@@ -59,6 +59,8 @@ export function genQuestionReview(metrics: Array<Metric>, pointLookup): CollectR
 
 export const withOwnerId = (o, userId): any => Object.assign({owner_id: {link: userId}}, o)
 
-function formatDate(date) {
+export const getCurrentDate = () => moment(moment().format('YYYYMMDD')).toISOString()
+
+export function formatDate(date) {
   return moment(moment(date).format('YYYYMMDD'))
 }

@@ -21,7 +21,7 @@ export const AddMetricFlow: WizardFlow = [
     subtitle: 'Pick something short and informative',
     validate: value => value?.length ? null : "Name is required",
     FormComponent: props => (
-      <TextInput {...props} placeholder="Metric name"/>
+      <TextInput {...props} placeholder="Metric name" autofocus/>
     )
   },
   {

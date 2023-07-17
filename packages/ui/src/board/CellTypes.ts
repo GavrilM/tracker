@@ -26,3 +26,5 @@ export enum CellCategories {
   creativity = "_Creativity",
   spirituality = "_Spirituality",
 }
+
+export const CELL_SIZE = 225

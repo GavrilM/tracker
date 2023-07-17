@@ -15,8 +15,11 @@ export function AddSheet({ isOpen, onClose }: AddSheetProps) {
       onOpenChange={o => o ? null : onClose()}
       dismissOnSnapToBottom
       zIndex={100_000}
-      animation="bouncy"
-    >
+      animationConfig={{
+        type: 'spring',
+        damping: 40,
+        stiffness: 450,
+      }}>
       <Sheet.Overlay />
       <Sheet.Handle />
       <Sheet.Frame>

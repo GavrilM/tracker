@@ -1,10 +1,11 @@
-import { Card, SizableText, XStack, YStack } from "tamagui";
+import { Button, Card, SizableText, XStack, YStack } from "tamagui";
 import moment from 'moment'
 import { useMemo } from 'react'
-import { CellCategories, CellViewOptions, MetricType } from "./CellTypes";
+import { CELL_SIZE, CellCategories, CellViewOptions, MetricType } from "./CellTypes";
 import { Weekday } from "../form/WeekdayInput";
 import { Graph } from "./Graph";
 import _ from "lodash"
+import { CheckCircle } from "@tamagui/lucide-icons";
 
 export type CellPoint = {
   timestamp: string,
@@ -27,13 +28,15 @@ type CellProps = {
     value: number,
     direction: string,
   },
+  collectable?: boolean
+  onCollect: () => void
   lastPointDate?: Date
   points: Array<CellPoint>
 }
 
 const SUMMARY_HEIGHT = 80
 
-export function Cell({ name, points, target, limits, question_freq, category, units, view }: CellProps) {
+export function Cell({ name, points, target, limits, question_freq, category, units, view, collectable, onCollect }: CellProps) {
   let content = <SizableText selectable={false}>(no data)</SizableText>
 
   if(points.length > 0) {
@@ -68,15 +71,23 @@ export function Cell({ name, points, target, limits, question_freq, category, un
   }
     
   return (
-    <Card size="$4" bordered width={225} height={225} theme="alt1" bc={getCategoryColor(category)}
-      mr="$4" mb="$4" ai="center" jc='space-between' py={16} pointerEvents="none">
-      <SizableText fow='700' color='rgba(255,255,255, .9)' selectable={false}>{name}</SizableText>
+    <Card size="$4" bordered width={CELL_SIZE} height={CELL_SIZE} theme="alt1" bc={getCategoryColor(category)}
+      mr="$4" mb="$4" py={16} pb={0}>
+      <YStack f={1} ai="center" jc='space-between' pointerEvents="none" >
+        <SizableText fow='700' color='rgba(255,255,255, .9)' selectable={false}>{name}</SizableText>
 
-      <XStack f={1} ai='center'>
-        {content}
-      </XStack>
+        <XStack f={1} ai='center'>
+          {content}
+        </XStack>
 
-      <SizableText selectable={false}>{getLabel(view, points.at(-1)?.timestamp)}</SizableText>
+        <SizableText selectable={false}>{getLabel(view, points.at(-1)?.timestamp)}</SizableText>
+      </YStack>
+      {collectable 
+        ? <Button height={40} bc="rgba(224,224,224,.1)" hoverStyle={{bc: '$green10'}}
+            onPress={onCollect}>
+            <CheckCircle color="rgba(225,225,225,.7)"/>
+          </Button>
+        : <XStack height={20}/>}
     </Card>
   )
 }

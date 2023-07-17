@@ -19,7 +19,7 @@ type GraphProps = {
   yunits: string
 }
 
-const GRAPH_HEIGHT = 120
+const GRAPH_HEIGHT = 110
 const GRAPH_WIDTH = 180
 const FONT_SIZE = 14
 const axisLineColor = '#646464'

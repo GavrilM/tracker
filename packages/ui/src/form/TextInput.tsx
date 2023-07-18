@@ -42,8 +42,8 @@ export function TextInput({
   })
   // TODO: replace with theme colors
   let labelStyle = {
-    mt: '$-2',
-    fos: '$2.5'
+    mt: '$-.5',
+    size: '$2.5'
   }
   let borderStyle = {
     outlineWidth: 4,
@@ -52,8 +52,8 @@ export function TextInput({
   if (!isFocused) {
     if (!value.length) {
       labelStyle = {
-        mt: '$3.5',
-        fos: '$9'
+        mt: '$-2',
+        size: '$9'
       }
     }
     borderStyle = {

@@ -65,7 +65,7 @@ export function DangerDialog({ trigger, title, subtitle, onConfirm }: DangerDial
           <YStack alignItems="flex-end" marginTop="$2">
             <XStack space>
             <Dialog.Close displayWhenAdapted asChild>
-              <Button theme="gray_Button" aria-label="Close">
+              <Button aria-label="Close">
                 No
               </Button>
             </Dialog.Close>

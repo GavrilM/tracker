@@ -1,13 +1,11 @@
 import { X } from '@tamagui/lucide-icons'
 import {
-  Adapt,
+  AlertDialog,
   Button,
-  Dialog,
-  Sheet,
-  Unspaced,
   XStack,
   YStack,
 } from 'tamagui'
+import { FormButton } from '../form/FormButton'
 
 type DangerDialogProps = {
   trigger: React.ReactElement,
@@ -18,30 +16,20 @@ type DangerDialogProps = {
 
 export function DangerDialog({ trigger, title, subtitle, onConfirm }: DangerDialogProps) {
   return (
-    <Dialog modal>
-      <Dialog.Trigger asChild>
+    <AlertDialog native>
+      <AlertDialog.Trigger asChild>
         {trigger}
-      </Dialog.Trigger>
+      </AlertDialog.Trigger>
 
-      <Adapt when="sm" platform="touch">
-        <Sheet zIndex={200000} modal dismissOnSnapToBottom>
-          <Sheet.Frame padding="$4" space>
-            <Adapt.Contents />
-          </Sheet.Frame>
-          <Sheet.Overlay />
-        </Sheet>
-      </Adapt>
-
-      <Dialog.Portal>
-        <Dialog.Overlay
+      <AlertDialog.Portal zIndex={200_000}>
+        <AlertDialog.Overlay
           key="overlay"
           animation="quick"
           opacity={0.5}
           enterStyle={{ opacity: 0 }}
           exitStyle={{ opacity: 0 }}
         />
-
-        <Dialog.Content
+        <AlertDialog.Content
           bordered
           elevate
           key="content"
@@ -55,42 +43,28 @@ export function DangerDialog({ trigger, title, subtitle, onConfirm }: DangerDial
           ]}
           enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
           exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
-          space
+          x={0}
+          scale={1}
+          opacity={1}
+          y={0}
         >
-          <Dialog.Title color="$red9" mr={30}>{title}</Dialog.Title>
-          <Dialog.Description color="$red11">
-            {subtitle}
-          </Dialog.Description>
-          
-          <YStack alignItems="flex-end" marginTop="$2">
-            <XStack space>
-            <Dialog.Close displayWhenAdapted asChild>
-              <Button aria-label="Close">
-                No
-              </Button>
-            </Dialog.Close>
-            <Dialog.Close displayWhenAdapted asChild>
-              <Button theme="red_Button" aria-label="Close" onPress={onConfirm}>
-                Yes
-              </Button>
-            </Dialog.Close>
+          <YStack space>
+            <AlertDialog.Title>{title}</AlertDialog.Title>
+            <AlertDialog.Description>
+              {subtitle}
+            </AlertDialog.Description>
+
+            <XStack space="$3" justifyContent="flex-end">
+              <AlertDialog.Cancel asChild>
+                <Button>No</Button>
+              </AlertDialog.Cancel>
+              <AlertDialog.Action asChild>
+                <FormButton type="danger" onPress={onConfirm}>Yes, delete</FormButton>
+              </AlertDialog.Action>
             </XStack>
           </YStack>
-
-          <Unspaced>
-            <Dialog.Close asChild>
-              <Button
-                position="absolute"
-                top="$3"
-                right="$3"
-                size="$2"
-                circular
-                icon={X}
-              />
-            </Dialog.Close>
-          </Unspaced>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog>
+        </AlertDialog.Content>
+      </AlertDialog.Portal>
+    </AlertDialog>
   )
 }

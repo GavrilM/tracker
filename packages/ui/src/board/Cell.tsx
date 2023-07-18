@@ -1,7 +1,7 @@
 import { Button, Card, SizableText, XStack, YStack } from "tamagui";
 import moment from 'moment'
 import { useMemo } from 'react'
-import { CELL_SIZE, CellCategories, CellViewOptions, MetricType } from "./CellTypes";
+import { CELL_SIZE, CellCategories, CellViewOptions, MetricType, getCategoryColor } from "./CellTypes";
 import { Weekday } from "../form/WeekdayInput";
 import { Graph } from "./Graph";
 import _ from "lodash"
@@ -270,31 +270,6 @@ function getStreakUnits(value, view) {
   if(value === 1)
     return str
   return str + 's'
-}
-
-function getCategoryColor(category: CellCategories) {
-  switch(category) {
-    case CellCategories.physical:
-      return '#3D2119'
-    case CellCategories.emotional:
-      return '#403005'
-    case CellCategories.relationships:
-      return '#3E2129'
-    case CellCategories.finances:
-      return '#2C3422'
-    case CellCategories.work:
-      return '#2B2D43'
-    case CellCategories.community:
-      return '#42293A'
-    case CellCategories.learning:
-      return '#342B3F'
-    case CellCategories.creativity:
-      return '#1C3339'
-    case CellCategories.spirituality:
-      return '#373219'
-    case CellCategories.character:
-      return '#29352F'
-  }
 }
 
 function formatDate(date) {

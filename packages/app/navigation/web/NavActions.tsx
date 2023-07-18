@@ -22,14 +22,14 @@ export const NavActions = ({ pathname, onSheetOpen }: NavActionProps) => {
       return (
         <XStack space>
           <FormButton onPress={() => setNavAction({state: NavActionState.None})}
-            type="danger">Exit without saving</FormButton>
+            type="secondary">Exit without saving</FormButton>
           <FormButton onPress={save} type="primary">Save layout</FormButton>
         </XStack>
       )
     return (
       <XStack space>
         <FormButton onPress={() => setNavAction({state: NavActionState.Editing})}
-          type="primary">Move</FormButton>
+          type="primary">Edit</FormButton>
         {/* <FormButton type="primary">Add Goal</FormButton> */}
         <FormButton onPress={onSheetOpen} type="primary">Add Cell</FormButton>
         <FormButton {...collectLink} type="save" icon={CheckCircle}>Collect Data</FormButton>

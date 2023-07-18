@@ -92,21 +92,7 @@ export const AddMetricFlow: WizardFlow = [
     forwardProps: ['limits', 'units', 'view', 'question'],
     validate: () => null,
     FormComponent: MetricTargetForm
-  },
-  {
-    field: 'category',
-    title: 'What category does this Metric fall under?',
-    subtitle: 'optional',
-    validate: stepValue => null,
-    FormComponent: ({ defaultValue, onChange}) => {
-      const handleChange = v => onChange(`_${v}`)
-      return (
-        <SelectInput placeholder="Pick a category" value={defaultValue?.substring(1)}
-          onChange={handleChange} width={200}
-          values={Object.values(CellCategories).map(c => c.substring(1))}/>
-      )
-    }
-  },
+  }
 ]
 
 export function AddMetricReview(props) {

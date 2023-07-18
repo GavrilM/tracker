@@ -29,9 +29,14 @@ export function CollectSheet({ isOpen, onClose, flow }: CollectSheetProps) {
       setStepValue(v)
   }
 
+  const handleExit = () => {
+    setStepValue(undefined)
+    onClose()
+  }
+
   const handleComplete = () => {
     onComplete({[field]: stepValue})
-    onClose()
+    handleExit()
   }
 
   return (
@@ -48,7 +53,7 @@ export function CollectSheet({ isOpen, onClose, flow }: CollectSheetProps) {
       <Sheet.Handle />
       <Sheet.Frame>
         <XStack jc="flex-end" p="$4">
-          <FormButton onPress={onClose} type="secondary" icon={XCircle}>Exit without saving</FormButton>
+          <FormButton onPress={handleExit} type="secondary" icon={XCircle}>Exit without saving</FormButton>
         </XStack>
         <YStack ai="center">
           <FormCard

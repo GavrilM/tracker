@@ -9,7 +9,7 @@ import { BoardLayouts } from "../types/Dashboard"
 import { useEffect } from "react"
 
 const INITIAL_METRICS = gql`
-  query InitalMetrics {
+  query InitialMetrics {
     user {
       initial_board {
         _id
@@ -219,7 +219,9 @@ export const useSingleMetric = (_id: string): QueryResult<Metric> => {
 }
 
 export const useEditMetric = (_id: string) => {
-  const [fn] = useMutation(EDIT_METRIC)
+  const [fn] = useMutation(EDIT_METRIC, {
+    refetchQueries: ['InitialMetrics']
+  })
   const mutation = (data) => {
     const set = JSON.parse(JSON.stringify(data), omitTypename)
     fn({
@@ -236,6 +238,6 @@ const omitTypename = (key, value) => (key === '__typename' ? undefined : value);
 
 export const useDeleteMetric = () => {
   return useMutation(DELETE_METRIC, {
-    refetchQueries: [LIST_METRICS]
+    refetchQueries: ['InitialMetrics']
   })
 }

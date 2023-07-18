@@ -8,6 +8,7 @@ import { EventEmitter } from 'events'
 import { CELL_WIDTH, genInitalLayout } from "./utils";
 import { useSaveLayout } from "app/hooks";
 import { NavActionState, useSetNavAction } from "app/provider/context/NavActionContext";
+import { EditSheet } from "./EditSheet";
 
 const FILLER = 'filler'
 const FillerCell = (props) => (
@@ -38,6 +39,9 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
     scrollTop: 0
   })
   const pressEvents = useRef(new EventEmitter()).current
+
+  const [editSheetMetric, setEditSheetMetric] = useState<Metric | undefined>()
+  const [colorSheetOpen, setColorSheetOpen] = useState(false)
 
   const [rowLen, setRowLen] = useState(0)
   const [selectedId, setSelectedId] = useState('')
@@ -168,14 +172,15 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
     const cells = row.map((id, c) => {
       const props = {
         onPressIn: e => onCellPressIn(e,[r,c]),
-        onPressOut: e => onCellPressOut()
+        onPressOut: onCellPressOut
       }
       if(id === FILLER)
         return <FillerCell key={c} {...props}/>
       if(data[id])
         return (
-          <XStack key={c} {...props}>
-            <EditCell {...data[id]}/>
+          <XStack key={c}>
+            <EditCell {...data[id]} {...props} 
+              onEdit={() => setEditSheetMetric(data[id])}/>
           </XStack>
         )
       else //empty space
@@ -189,21 +194,28 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
   })
   
   return (
-    <ScrollView {...panResponder.panHandlers} f={1} ref={scrollView}
-      onLayout={handleLayout} onScroll={handleScroll} scrollEventThrottle={25}>
-      <ZStack zIndex={100} position="absolute" pointerEvents="none">
-        {selectedId.length > 0 && <Animated.View
-          style={{
-            transform: [{translateX: pan.x}, {translateY: pan.y}, {rotateZ: '10deg'}],
-            opacity: .9,
-          }}>
-            <XStack><EditCell {...data[selectedId]} /></XStack>
-          </Animated.View>}
-      </ZStack>
-      <YStack f={1}>
-        {grid}
-      </YStack>
-    </ScrollView>
+    <>
+      <ScrollView {...panResponder.panHandlers} f={1} ref={scrollView}
+        onLayout={handleLayout} onScroll={handleScroll} scrollEventThrottle={25}>
+        <ZStack zIndex={100} position="absolute">
+          {selectedId.length > 0 && <Animated.View
+            style={{
+              transform: [{translateX: pan.x}, {translateY: pan.y}, {rotateZ: '10deg'}],
+              opacity: .9,
+            }}>
+              <XStack>
+                <EditCell {...data[selectedId]} 
+                  onPressIn={e => {}} onPressOut={onCellPressOut}/>
+                </XStack>
+            </Animated.View>}
+        </ZStack>
+        <YStack f={1}>
+          {grid}
+        </YStack>
+      </ScrollView>
+      <EditSheet isOpen={editSheetMetric != undefined} metric={editSheetMetric} 
+        onClose={() => setEditSheetMetric(undefined)}/>
+    </>
   )
 }
 

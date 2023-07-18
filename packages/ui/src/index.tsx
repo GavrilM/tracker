@@ -18,5 +18,6 @@ export { MetricType, CellViewOptions, CellCategories, CELL_SIZE } from './board/
 export { Cell } from './board/Cell'
 export { EditCell } from './board/EditCell'
 export { EditItem } from './edit/EditItem'
+export { DangerDialog } from './modal/DangerDialog'
 
 export { ExpandibleSection } from './ExpandibleSection'

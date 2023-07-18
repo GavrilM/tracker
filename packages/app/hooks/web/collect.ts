@@ -90,10 +90,10 @@ export const useCollectPoint = () => {
 export const useCollectPoints = () => {
   const id = useUserId()
   const [submitPts] = useMutation(COLLECT_POINTS, {
-    refetchQueries: ['InitalMetrics']
+    refetchQueries: ['InitialMetrics']
   })
   const [submitPtsNts] = useMutation(COLLECT_POINTS_NOTES, {
-    refetchQueries: ['InitalMetrics']
+    refetchQueries: ['InitialMetrics']
   })
   const mutation = (data: Array<any>) => {
     const notes: object[] = []

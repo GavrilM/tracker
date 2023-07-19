@@ -19,10 +19,11 @@ export enum CellCategories {
   orange = "orange",
   yellow = "yellow",
   green = "green",
-  blue = "blue",
   indigo = "indigo",
+  blue = "blue",
   purple = "purple",
   pink = "pink",
+  default = "default"
 }
 
 export const CELL_SIZE = 225

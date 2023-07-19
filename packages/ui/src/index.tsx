@@ -14,9 +14,9 @@ export { MonthDateInput } from './form/MonthDateInput'
 export { BinaryInput } from './form/BinaryInput'
 export { ErrorText } from './form/ErrorText'
 
-export { MetricType, CellViewOptions, CellCategories, CELL_SIZE } from './board/CellTypes'
+export { MetricType, CellViewOptions, CellCategories, CELL_SIZE, getCategoryColor } from './board/CellTypes'
 export { Cell } from './board/Cell'
-export { EditCell } from './board/EditCell'
+export { ColorPicker } from './board/ColorPicker'
 export { EditItem } from './edit/EditItem'
 export { DangerDialog } from './modal/DangerDialog'
 

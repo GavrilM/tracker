@@ -18,6 +18,10 @@ const INITIAL_METRICS = gql`
           row_len
           grid 
         }
+        colors {
+          id
+          color
+        }
         metrics {
           _id
           name
@@ -37,7 +41,6 @@ const INITIAL_METRICS = gql`
             value
             direction
           }
-          category
           view {
             type
             base_unit
@@ -125,7 +128,6 @@ const SINGLE_METRIC = gql`
         direction
         value
       }
-      category
       view {
         type
         base_unit
@@ -145,16 +147,20 @@ export const useMetrics = (): QueryResult<Array<Metric>> => {
 
   useEffect(() => {
     if(data?.user.initial_board) {
-      const {_id, name, metrics, layouts} = data.user.initial_board
+      const {_id, name, metrics, layouts, colors} = data.user.initial_board
       const layoutMap: BoardLayouts = {}
+      const colorMap = {}
       if(layouts)
         layouts.forEach(l => layoutMap[l['row_len']] = JSON.parse(l['grid']))
+      if(colors)
+        colors.forEach(c => colorMap[c['id']] = c['color'])
   
       setDashboard({
         _id,
         name,
         metricIds: metrics.map(m => m._id),
-        layouts: layoutMap
+        layouts: layoutMap,
+        colors: colorMap
       })
     }
   }, [data])

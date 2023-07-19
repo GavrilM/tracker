@@ -14,7 +14,7 @@ import { useDashboard } from 'app/provider/context/DashboardContext'
 
 export function HomeScreen() {
   const user = useUserorRedirect()
-  const { layouts } = useDashboard()
+  const { layouts, colors } = useDashboard()
   const { state } = useNavAction()
   const setNavAction = useSetNavAction()
   const {loading, data, refetch} = useMetrics()
@@ -34,7 +34,7 @@ export function HomeScreen() {
   data.forEach(d => dataMap[d._id] = d)
 
   if(state === NavActionState.Editing)
-    return <EditableCellGrid data={dataMap} cellLayouts={layouts}/>
+    return <EditableCellGrid data={dataMap} cellLayouts={layouts} cellColors={colors || {}}/>
 
-  return <CellGrid data={dataMap} cellLayouts={layouts}/>
+  return <CellGrid data={dataMap} cellLayouts={layouts} cellColors={colors || {}}/>
 }

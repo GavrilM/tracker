@@ -1,5 +1,5 @@
 import { Cell, ScrollView, XStack, YStack } from "@my/ui"
-import { BoardLayouts } from "app/hooks/types/Dashboard"
+import { BoardColors, BoardLayouts } from "app/hooks/types/Dashboard"
 import { Metric } from "app/hooks/types/Metric"
 import { useMemo, useState } from "react"
 import { CELL_WIDTH, genInitalLayout } from "./utils"
@@ -9,11 +9,12 @@ import { CollectFlow } from "../wizard/CollectFlow"
 import { WizardFlow } from "../wizard/WizardTypes"
 
 type CellGridProps = {
+  cellColors: BoardColors
   cellLayouts: BoardLayouts | null
   data: {[id: string] : Metric}
 }
 
-export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
+export const CellGrid = ({ cellColors, cellLayouts, data }: CellGridProps) => {
   const [rowLen, setRowLen] = useState(0)
   const [sheetFlow, setSheetFlow] = useState<WizardFlow | undefined>()
 
@@ -32,7 +33,7 @@ export const CellGrid = ({ cellLayouts, data }: CellGridProps) => {
         return (
           <XStack key={c}>
             <Cell {...data[id]} points={data[id].points_default} 
-              collectable={collectables.has(id)} 
+              collectable={collectables.has(id)} category={cellColors[id]}
               onCollect={() => setSheetFlow(CollectFlow([data[id]]))}/>
           </XStack>
         )

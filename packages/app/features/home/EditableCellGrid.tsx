@@ -1,5 +1,5 @@
-import { CELL_SIZE, Card, EditCell, ScrollView, XStack, YStack, ZStack } from "@my/ui"
-import { BoardLayouts } from "app/hooks/types/Dashboard";
+import { CELL_SIZE, Card, CellCategories, ScrollView, XStack, YStack, ZStack } from "@my/ui"
+import { BoardColors, BoardLayouts } from "app/hooks/types/Dashboard";
 import { Metric } from "app/hooks/types/Metric";
 import { useEffect, useRef, useState } from "react";
 import { Animated, PanResponder } from "react-native"
@@ -9,6 +9,7 @@ import { CELL_WIDTH, genInitalLayout } from "./utils";
 import { useSaveLayout } from "app/hooks";
 import { NavActionState, useSetNavAction } from "app/provider/context/NavActionContext";
 import { EditSheet } from "./EditSheet";
+import { EditCell } from "./EditCell";
 
 const FILLER = 'filler'
 const FillerCell = (props) => (
@@ -22,6 +23,7 @@ const SCROLL_INC = Math.round(CELL_WIDTH/2)
 type Coord = [number, number]
 
 type EditableCellGridProps = {
+  cellColors: BoardColors
   cellLayouts: BoardLayouts | null
   data: {[id: string] : Metric}
 }
@@ -29,7 +31,7 @@ type EditableCellGridProps = {
 let scrollLock = true
 let scrollDir = 0
 
-export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) => {
+export const EditableCellGrid = ({ cellColors, cellLayouts, data }: EditableCellGridProps) => {
   const [saveLayout] = useSaveLayout()
   const setNavAction = useSetNavAction()
 
@@ -41,7 +43,7 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
   const pressEvents = useRef(new EventEmitter()).current
 
   const [editSheetMetric, setEditSheetMetric] = useState<Metric | undefined>()
-  const [colorSheetOpen, setColorSheetOpen] = useState(false)
+  const [colorMap, setColorMap] = useState(cellColors)
 
   const [rowLen, setRowLen] = useState(0)
   const [selectedId, setSelectedId] = useState('')
@@ -56,11 +58,11 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
   useEffect(() => {
     setNavAction({
       save: () => {
-        saveLayout(rowLen, tempLayout)
+        saveLayout(rowLen, tempLayout, colorMap)
         setNavAction({state: NavActionState.None})
       }
     })
-  }, [rowLen, tempLayout])
+  }, [rowLen, tempLayout, colorMap])
 
   const handleLayout = ({nativeEvent}) => {
     gridLayout.current.position = nativeEvent.layout
@@ -176,13 +178,16 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
       }
       if(id === FILLER)
         return <FillerCell key={c} {...props}/>
-      if(data[id])
+      if(data[id]) {
+        const category = colorMap[id] || CellCategories.default
         return (
           <XStack key={c}>
-            <EditCell {...data[id]} {...props} 
-              onEdit={() => setEditSheetMetric(data[id])}/>
+            <EditCell name={data[id].name} category={category} {...props} 
+              onEdit={() => setEditSheetMetric(data[id])}
+              onColor={color => setColorMap({...colorMap, [id]: color})}/>
           </XStack>
         )
+      }
       else //empty space
         return <XStack key={c} {...props} width={225} height={225} opacity={0} mr="$4" mb="$4"/>
     })
@@ -204,8 +209,9 @@ export const EditableCellGrid = ({ cellLayouts, data }: EditableCellGridProps) =
               opacity: .9,
             }}>
               <XStack>
-                <EditCell {...data[selectedId]} 
-                  onPressIn={e => {}} onPressOut={onCellPressOut}/>
+                <EditCell {...data[selectedId]}
+                  onPressOut={onCellPressOut}
+                  onPressIn={e => {}} onColor={e => {}}/>
                 </XStack>
             </Animated.View>}
         </ZStack>

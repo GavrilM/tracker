@@ -129,10 +129,6 @@ export function AddMetricReview(props) {
         ? <SizableText>{targetStr}</SizableText>
         : <SizableText>Measured in {unitStr}</SizableText>
       }
-      {
-        props.category && 
-          <SizableText>Category: {props.category.substring(1)}</SizableText>
-      }
     </YStack>
   )
 }

@@ -64,7 +64,7 @@ export const DummyMetric = {
     value: 0,
     direction: TargetDirection.AtLeast
   },
-  category: CellCategories.work,
+  category: CellCategories.default,
   units: '',
   view: {
     base_unit: 0,

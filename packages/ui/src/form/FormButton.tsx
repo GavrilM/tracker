@@ -17,12 +17,10 @@ export const FormButton = styled(Button, {
         backgroundColor: '$red10'
       },
       discourage: {
-        backgroundColor: 'white',
-        borderColor: '$gray1Dark',
-        color: '$gray1Dark'
+        borderColor: '$gray8',
       },
       disabled: {
-        backgroundColor: '$gray6'
+        opacity: .5
       }
     }
   }

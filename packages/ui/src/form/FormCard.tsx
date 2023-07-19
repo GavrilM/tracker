@@ -45,15 +45,12 @@ export function FormCard({
           <YStack f={1} my={16} ai='center'>{children}</YStack>
           <XStack space fd="row-reverse">
             {onComplete && 
-                <FormButton type="save" icon={CheckCircle} onPress={onComplete}>{completeText || 'Save'}</FormButton>}
-            {onContinue && !disableContinue &&
-              <Form.Trigger asChild>
-                <FormButton type="primary" icon={ArrowRightCircle}
+              <FormButton type="save" icon={CheckCircle} onPress={onComplete}>{completeText || 'Save'}</FormButton>}
+            {onContinue &&
+              <Form.Trigger disabled={disableContinue}>
+                <FormButton type={disableContinue ? "disabled" : "primary"} icon={ArrowRightCircle} 
                   onPress={onContinue}>Continue</FormButton>
               </Form.Trigger>
-            }
-            {onContinue && disableContinue &&
-              <FormButton type="disabled" icon={ArrowRightCircle} disabled>Continue</FormButton>
             }
             {onSkip && <FormButton type="discourage" icon={CornerUpRight} onPress={onSkip}>Skip</FormButton>}
             {onBack && <FormButton type="secondary" icon={ArrowLeftCircle} onPress={onBack}>Back</FormButton>}

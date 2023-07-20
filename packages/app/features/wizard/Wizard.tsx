@@ -116,7 +116,7 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText, re
           onSkip={skippable ? handleSkip : undefined}
           onContinue={handleContinue}
           disableContinue={requireValue && stepValue === undefined}
-          height={450}>
+          height={480}>
           <FormComponent onChange={v => setStepValue(v)} errorMessage={errMsg}
             defaultValue={stepValue} forwardProps={props} autofocus/>
         </FormCard>
@@ -126,9 +126,13 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText, re
     Object.values(autofilled).forEach(a => {
       Object.assign(formValue, a)
     })
+    const numPoints = Object.values(formValue)
+      .filter(p => p != undefined).length
     content = (
+    <>
+      <H1 ta="center" opacity={0}>Step</H1>
       <FormCard
-        title={'Review'}
+        title={`${numPoints} points collected`}
         onBack={steps.length ? backFn(false) : undefined}
         onComplete={() => {
           onComplete(formValue)
@@ -139,9 +143,11 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText, re
           setAutofilled({})
           replace(routes.home)
         }}
-        completeText={submitButtonText}>
+        completeText={submitButtonText}
+        height={480}>
         <Review {...formValue} />
       </FormCard>
+    </>
     )
   }
 

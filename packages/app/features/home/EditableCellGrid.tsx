@@ -10,6 +10,7 @@ import { useSaveLayout } from "app/hooks";
 import { NavActionState, useSetNavAction } from "app/provider/context/NavActionContext";
 import { EditSheet } from "./EditSheet";
 import { EditCell } from "./EditCell";
+import { useDashboard } from "app/provider/context/DashboardContext";
 
 const FILLER = 'filler'
 const FillerCell = (props) => (
@@ -33,6 +34,7 @@ let scrollDir = 0
 
 export const EditableCellGrid = ({ cellColors, cellLayouts, data }: EditableCellGridProps) => {
   const [saveLayout] = useSaveLayout()
+  const board = useDashboard()
   const setNavAction = useSetNavAction()
 
   const scrollView = useRef(null)
@@ -58,6 +60,7 @@ export const EditableCellGrid = ({ cellColors, cellLayouts, data }: EditableCell
   useEffect(() => {
     setNavAction({
       save: () => {
+        board.colors = colorMap
         saveLayout(rowLen, tempLayout, colorMap)
         setNavAction({state: NavActionState.None})
       }

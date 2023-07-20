@@ -115,8 +115,8 @@ export function NumberInput({
               defaultValue={sliderValue} value={sliderValue}
               width={250}
               onValueChange={handleChange}>
-              <Slider.Track bc="$gray10" height="$1">
-                <Slider.TrackActive />
+              <Slider.Track bc={value != undefined ? "$blue10" : "$gray8"} height="$1">
+                <Slider.TrackActive bc={value != undefined ? "$blue6" : "$gray4"}/>
               </Slider.Track>
               <Slider.Thumb index={0} circular />
             </Slider>

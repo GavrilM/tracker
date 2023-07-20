@@ -1,4 +1,4 @@
-import { BinaryInput, ExpandibleSection, MetricType, NumberInput, SizableText, Spinner, TextArea, YStack } from "@my/ui";
+import { BinaryInput, ExpandibleSection, MetricType, NumberInput, SizableText, Spinner, TextArea, XStack, YStack } from "@my/ui";
 import { WizardFlow } from "./WizardTypes";
 import { Metric } from "app/hooks/types/Metric";
 import { useCollectReview } from "app/hooks";
@@ -75,26 +75,32 @@ export function CollectFlow(metrics: Array<Metric>): WizardFlow {
       )
     }
   }))
-} 
+}
+
+const ReviewItem = ({name, value}) => (
+  <XStack mt={8} f={1} jc="space-between" bbc="rgba(255,255,255,.2)" bbw={1}>
+    <SizableText fow='700'>{name}</SizableText>
+    <SizableText>{value}</SizableText>
+  </XStack>
+)
 
 export function CollectReview(props) {  
   const {loading, data} = useCollectReview(props)
 
   if(loading)
     return <Spinner />
-  const {targetsMet, targetsMissed, streaksKept, streaksMissed, total} = data
+  const {targetsMet, targetsMissed, streaksKept, streaksMissed} = data
 
+  const missed = targetsMissed.map(([n, v]) => <ReviewItem name={n} value={v}/>)
+  streaksMissed.forEach(s => missed.push(<ReviewItem name={s} value={'streak lost'}/>))
+  const met = targetsMet.map(([n, v]) => <ReviewItem name={n} value={v}/>)
+  streaksKept.forEach(s => met.push(<ReviewItem name={s} value={'streak kept'}/>))
   return (
-    <YStack>
-      <SizableText>Points collected: {total}</SizableText>
-      <ExpandibleSection type="good" items={targetsMet}
-        title={`${targetsMet.length} targets met`}/>
-      <ExpandibleSection type="good" items={streaksKept}
-        title={`${streaksKept.length} streaks kept`}/>
-      <ExpandibleSection type="bad" items={targetsMissed}
-        title={`${targetsMissed.length} targets missed`}/>
-      <ExpandibleSection type="bad" items={streaksMissed}
-        title={`${streaksMissed.length} streaks lost`}/>
+    <YStack f={1} width='100%'>
+      <SizableText fos={16} col='#E43F3F'>{missed.length} Targets missed</SizableText>
+      <YStack ml={20}>{missed}</YStack>
+      <SizableText mt={20} fos={16} col='#53C041'>{met.length} Targets met</SizableText>
+      <YStack ml={20}>{met}</YStack>
     </YStack>
   )
 }

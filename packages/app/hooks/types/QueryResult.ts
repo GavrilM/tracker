@@ -6,8 +6,8 @@ export type QueryResult<T> = {
 }
 
 export type CollectReview = {
-  targetsMet: Array<string>,
-  targetsMissed: Array<string>,
+  targetsMet: Array<Array<string>>,
+  targetsMissed: Array<Array<string>>,
   streaksKept: Array<string>,
   streaksMissed: Array<string>,
   total: number,

@@ -48,9 +48,9 @@ export function genQuestionReview(metrics: Array<Metric>, pointLookup): CollectR
           result.streaksMissed.push(name)
       } else {
         if(diff >= 0)
-          result.targetsMet.push(`${name} by ${diff} ${unitStr}`)
+          result.targetsMet.push([name, `exceeded by ${diff} ${unitStr}`])
         else
-          result.targetsMissed.push(`${name} by ${-diff} ${unitStr}`)
+          result.targetsMissed.push([name,`missed by ${-diff} ${unitStr}`])
       }
     }
   })

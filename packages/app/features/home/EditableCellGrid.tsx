@@ -213,7 +213,8 @@ export const EditableCellGrid = ({ cellColors, cellLayouts, data }: EditableCell
             }}>
               <XStack>
                 <EditCell {...data[selectedId]}
-                  onPressOut={onCellPressOut}
+                  onPressOut={onCellPressOut} 
+                  category={colorMap[selectedId] || CellCategories.default}
                   onPressIn={e => {}} onColor={e => {}}/>
                 </XStack>
             </Animated.View>}

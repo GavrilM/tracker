@@ -26,7 +26,7 @@ export function AddSheet({ isOpen, onClose }: AddSheetProps) {
         <XStack jc="flex-end" p="$4">
           <FormButton onPress={onClose} type="secondary" icon={XCircle}>Exit without saving</FormButton>
         </XStack>
-        <WizardScreen wizardType={WizardType.metric} onComplete={onClose}/>
+        {isOpen && <WizardScreen wizardType={WizardType.metric} onComplete={onClose}/>}
       </Sheet.Frame>
     </Sheet>
   )

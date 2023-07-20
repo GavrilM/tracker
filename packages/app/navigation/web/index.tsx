@@ -18,7 +18,8 @@ const padding = 16
 const bodyHeight = `calc(100% - ${headerHeight}px)`
 
 export enum routes {
-  home = '/',
+  landing = '/',
+  home = '/dashboard',
   login = '/login',
   edit = '/edit',
   notebook = '/notebook',
@@ -48,7 +49,7 @@ export const WebNavigation = ({ children, pathname }) => {
 
   const [sheetOpen, setSheetOpen] = useState(false)
 
-  if (pathname === routes.login) {
+  if (pathname === routes.login || pathname === routes.landing) {
     return <>{children}</>
   }
 

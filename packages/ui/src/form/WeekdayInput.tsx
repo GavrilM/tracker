@@ -29,6 +29,7 @@ export function WeekdayInput({ label, multiple, value, values, onChange, errorMe
       onChange(v.map(v => parseInt(v)))
     }
   }
+
   const options = Object.values(Weekday)
     .slice(0,7)
     .map((v,i) => (
@@ -42,11 +43,11 @@ export function WeekdayInput({ label, multiple, value, values, onChange, errorMe
       <Label mr={24}>{label}</Label>
       {multiple && <ToggleGroup type='multiple' onValueChange={handleChange}
         value={values != undefined ? values.map(v => v.toString()) : undefined}
-        outlineColor={getOutlineColor(errorMessage)}>
+        outlineColor={getOutlineColor(errorMessage)} size='$4'>
         {options}
       </ToggleGroup>}
       {!multiple && <ToggleGroup type='single' onValueChange={handleChange}
-        value={value != undefined ? value.toString() : undefined}>
+        value={value != undefined ? value.toString() : undefined} size='$4'>
         {options}
       </ToggleGroup>}
       <ErrorText text={errorMessage}/>

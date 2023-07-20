@@ -1,0 +1,18 @@
+.hero {
+  font-family: 'Satoshi', sans-serif;
+}
+.buttonPrimary {
+  display: inline-block;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background-color: blue;
+  color: white;
+}
+.buttonSecondary {
+  display: inline-block;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  color: white;
+}

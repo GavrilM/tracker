@@ -1,13 +1,19 @@
-import { Card, Form, Input, H2, XStack, YStack, Label, Button, SizableText, Paragraph, Spinner } from "@my/ui";
+import { Card, Form, Input, H2, XStack, YStack, Label, Button, SizableText, Paragraph, Spinner, FormButton, TextInput } from "@my/ui";
 import * as Realm from "realm-web"
 import { useRealmApp } from "app/provider/realm";
 import { useEffect, useState } from "react";
 import { useRouter } from "solito/router";
+import { createParam } from 'solito'
 import { routes } from "app/navigation/web";
+import { Eye, EyeOff } from "@tamagui/lucide-icons";
+
+type LoginParams = {type: string}
+const { useParam } = createParam<LoginParams>()
 
 export function LoginScreen() {
   const realmApp = useRealmApp();
   const router = useRouter()
+  const [type, setType] = useParam('type')
   
   const [isSignup, setIsSignup] = useState(false);
   const toggleIsSignup = () => {
@@ -51,16 +57,20 @@ export function LoginScreen() {
   useEffect(() => {
     if(realmApp.currentUser)
       router.replace(routes.home)
+
+    if(type === 'trial') {
+      realmApp.logIn(Realm.Credentials.anonymous());
+    }
   })
-  if(realmApp.currentUser) {
+  if(realmApp.currentUser || type === 'trial') {
     return <Spinner />
   }
 
   return (
     <YStack f={1} ai="center" jc="center">
-      <Card width={400} height={600} p={16}>
+      <Card width={400} p={36}>
         <Form onSubmit={onFormSubmit}>
-          <H2>Lifelog Alpha</H2>
+          <H2>Lifelog (beta)</H2>
           <Paragraph mt={10} mb={30} lineHeight={16}>
             {isSignup
               ? "Enter your email and a password to create a new account."
@@ -68,20 +78,21 @@ export function LoginScreen() {
           </Paragraph>
           {/* <NonAuthErrorAlert /> */}
           <YStack>
-            <Label>Email Address</Label>
-            <Input onChangeText={setEmail}/>
-            {error.email && <SizableText color="red">{error.email}</SizableText>}
+            <TextInput onChange={setEmail} placeholder="Email" errorMessage={error.email || undefined}/>
           </YStack>
           
-          <YStack>
-            <Label>Password</Label>
-            <Input onChangeText={setPassword}/>
-            {error.password && <SizableText color="red">{error.password}</SizableText>}
-          </YStack>
+          <XStack mt={20}>
+            <TextInput onChange={setPassword} placeholder="Password" 
+              inputProps={{secureTextEntry: !showPassword}}
+              errorMessage={error.password || undefined}/>
+            <XStack px={10} ai='center' onPress={toggleShowPassword} opacity={.7} cursor="pointer">{showPassword ? <EyeOff/> : <Eye/>}</XStack>
+          </XStack>
           <Form.Trigger asChild>
-            <Button size="$4" mt={10} mb={20}>{isSignup ? "Create Account" : "Log In"}</Button>
+            <FormButton type="primary" size="$4" mt={20} mb={20}>
+              <SizableText textAlign="center">{isSignup ? "Create Account" : "Log In"}</SizableText>
+            </FormButton>
           </Form.Trigger>
-          <XStack onPress={toggleIsSignup}>
+          <XStack onPress={toggleIsSignup} cursor="pointer">
             <SizableText style={{textDecorationLine: "underline"}}>
               {isSignup
                 ? "Already have an account? Log In"

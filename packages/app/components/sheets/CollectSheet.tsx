@@ -1,6 +1,6 @@
 import { FormButton, FormCard, Sheet, XStack, YStack } from "@my/ui"
 import { XCircle } from "@tamagui/lucide-icons"
-import { WizardFlow } from "../wizard/WizardTypes"
+import { WizardFlow } from "../../features/wizard/WizardTypes"
 import { useState } from "react"
 import { useCollectPoints } from "app/hooks"
 

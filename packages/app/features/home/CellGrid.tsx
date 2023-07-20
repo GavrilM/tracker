@@ -4,7 +4,7 @@ import { Metric } from "app/hooks/types/Metric"
 import { useMemo, useState } from "react"
 import { CELL_WIDTH, genInitalLayout } from "./utils"
 import { genQuestions, getCurrentDate } from "app/hooks/common"
-import { CollectSheet } from "./CollectSheet"
+import { CollectSheet } from "../../components/sheets/CollectSheet"
 import { CollectFlow } from "../wizard/CollectFlow"
 import { WizardFlow } from "../wizard/WizardTypes"
 

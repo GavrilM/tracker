@@ -2,7 +2,7 @@ import { FormButton, FormCard, H2, ScrollView, Sheet, Spinner, XStack, DangerDia
 import { useEffect, useState } from "react"
 import { pick } from "lodash"
 import { useDeleteMetric, useEditMetric } from 'app/hooks';
-import { AddMetricFlow } from "../wizard/AddMetricFlow";
+import { AddMetricFlow } from "../../features/wizard/AddMetricFlow";
 import { Trash, XCircle } from "@tamagui/lucide-icons";
 import { Metric } from "app/hooks/types/Metric";
 

@@ -4,7 +4,7 @@ import { CELL_SIZE, CellCategories, getCategoryColor } from "@my/ui";
 import _ from "lodash"
 import { Edit2, Move } from "@tamagui/lucide-icons";
 import { useState } from 'react'
-import { ColorSheet } from "./ColorSheet";
+import { ColorSheet } from "../../components/sheets/ColorSheet";
 
 export type CellPoint = {
   timestamp: string,

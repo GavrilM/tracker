@@ -8,7 +8,7 @@ import { EventEmitter } from 'events'
 import { CELL_WIDTH, genInitalLayout } from "./utils";
 import { useSaveLayout } from "app/hooks";
 import { NavActionState, useSetNavAction } from "app/provider/context/NavActionContext";
-import { EditSheet } from "./EditSheet";
+import { EditSheet } from "../../components/sheets/EditSheet";
 import { EditCell } from "./EditCell";
 import { useDashboard } from "app/provider/context/DashboardContext";
 

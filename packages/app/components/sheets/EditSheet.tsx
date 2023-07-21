@@ -92,7 +92,7 @@ export function EditSheet({ isOpen, onClose, metric }: EditSheetProps) {
         damping: 40,
         stiffness: 450,
       }}>
-      <Sheet.Overlay />
+      <Sheet.Overlay bc='white'/>
       <Sheet.Handle />
       <Sheet.Frame>
         <XStack jc="space-between" ac="center" pl={20}>

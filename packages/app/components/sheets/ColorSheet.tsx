@@ -19,7 +19,7 @@ export function ColorSheet({ isOpen, selectedColor, onSelect, onClose }: ColorSh
         damping: 40,
         stiffness: 450,
       }}>
-      <Sheet.Handle />
+      <Sheet.Handle bc='white'/>
       <Sheet.Frame>
         <XStack jc="flex-end" p="$4">
           <FormButton onPress={onClose} type="secondary">Done</FormButton>

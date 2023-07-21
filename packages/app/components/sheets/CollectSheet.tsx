@@ -50,7 +50,7 @@ export function CollectSheet({ isOpen, onClose, flow }: CollectSheetProps) {
         stiffness: 450,
       }}>
       <Sheet.Overlay />
-      <Sheet.Handle />
+      <Sheet.Handle bc='white'/>
       <Sheet.Frame>
         <XStack jc="flex-end" p="$4">
           <FormButton onPress={handleExit} type="secondary" icon={XCircle}>Exit without saving</FormButton>

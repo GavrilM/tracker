@@ -1,7 +1,7 @@
 import { XStack, YStack } from "tamagui"
 import { Grid, Edit3, BookOpen, LogOut, RefreshCw } from "@tamagui/lucide-icons"
 import { Link } from "solito/link"
-import { Button, H1, ZStack } from "@my/ui"
+import { Button, FormButton, H1, SizableText, ZStack } from "@my/ui"
 import { useRealmApp } from "app/provider/realm"
 import { useApolloClient } from "@apollo/client"
 import { useNavTitle } from "app/provider/context/NavTitleContext"
@@ -9,6 +9,7 @@ import { NavActions } from "./NavActions"
 import { useNavAction } from "app/provider/context/NavActionContext"
 import { AddSheet } from "app/features/wizard/AddSheet"
 import { useState } from "react"
+import { SignUpSheet } from "app/components/sheets/SignUpSheet"
 
 const width = 60
 const headerHeight = 100
@@ -40,6 +41,7 @@ export const WebNavigation = ({ children, pathname }) => {
   const { logOut } = useRealmApp()
   const title = useNavTitle()
   const { refresh } = useNavAction()
+  const { currentUser } = useRealmApp()
 
   const client  = useApolloClient()
   const handleLogOut = () => {
@@ -47,7 +49,8 @@ export const WebNavigation = ({ children, pathname }) => {
     logOut()
   }
 
-  const [sheetOpen, setSheetOpen] = useState(false)
+  const [addCellOpen, setAddCellOpen] = useState(false)
+  const [signUpOpen, setSignUpOpen] = useState(false)
 
   if (pathname === routes.login || pathname === routes.landing) {
     return <>{children}</>
@@ -72,7 +75,7 @@ export const WebNavigation = ({ children, pathname }) => {
                 <RefreshCw size="$1"/></Button>
             }
           </XStack>
-          <NavActions pathname={pathname} onSheetOpen={() => setSheetOpen(true)}/>
+          <NavActions pathname={pathname} onSheetOpen={() => setAddCellOpen(true)}/>
         </XStack>
         {/* sidebar */}
         <YStack jc="space-between" ai="center" brw={borderWidth} brc={borderColor} mt={headerHeight}
@@ -94,9 +97,18 @@ export const WebNavigation = ({ children, pathname }) => {
         left={width} top={headerHeight}>
         {children}
       </YStack>
+      {
+        !currentUser?.profile.email && 
+        <YStack position="absolute" zIndex={100} p={16} bw={2} br={8} 
+          bc='$gray3' boc='$red10' bottom={10} right={10}>
+          <SizableText col='$red10' mb={10}>Your progress will not be saved.</SizableText>
+          <FormButton type="primary" onPress={() => setSignUpOpen(true)}>Sign Up</FormButton>
+        </YStack>
+      }
     </YStack>
     
-    <AddSheet isOpen={sheetOpen} onClose={() => setSheetOpen(false)}/>
+    <AddSheet isOpen={addCellOpen} onClose={() => setAddCellOpen(false)}/>
+    <SignUpSheet isOpen={signUpOpen} onClose={() => setSignUpOpen(false)}/>
     </>
   )
 }

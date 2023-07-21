@@ -98,7 +98,7 @@ export const WebNavigation = ({ children, pathname }) => {
         {children}
       </YStack>
       {
-        !currentUser?.profile.email && 
+        currentUser && !currentUser?.profile.email && 
         <YStack position="absolute" zIndex={100} p={16} bw={2} br={8} 
           bc='$gray3' boc='$red10' bottom={10} right={10}>
           <SizableText col='$red10' mb={10}>Your progress will not be saved.</SizableText>

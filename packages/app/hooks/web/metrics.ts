@@ -229,6 +229,7 @@ export const useEditMetric = (_id: string) => {
     refetchQueries: ['InitialMetrics']
   })
   const mutation = (data) => {
+    unsetNulls(data)
     const set = JSON.parse(JSON.stringify(data), omitTypename)
     fn({
       variables: {
@@ -246,4 +247,16 @@ export const useDeleteMetric = () => {
   return useMutation(DELETE_METRIC, {
     refetchQueries: ['InitialMetrics']
   })
+}
+
+function unsetNulls(data) {
+  if(!data.target) {
+    data.target_unset = true
+  }
+  if(data.limits.min == undefined) {
+    data.limits.min_unset = true
+  }
+  if(data.limits.max == undefined) {
+    data.limits.max_unset = true
+  }
 }

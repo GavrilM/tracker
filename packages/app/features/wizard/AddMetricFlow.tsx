@@ -54,7 +54,7 @@ export const AddMetricFlow: WizardFlow = [
     field: 'question',
     title: 'What\'s the right question to ask?',
     subtitle: 'Choose a good question that forces you to think about this Metric correctly',
-    validate: stepValue => stepValue?.length ? null : "Question is required",
+    validate: stepValue => stepValue?.length > 1 ? null : "Question is required",
     FormComponent: props => {
       const handleChange = v => props.onChange(v.charAt(v.length-1) !== '?' ? `${v}?` : v)
       return (
@@ -67,7 +67,7 @@ export const AddMetricFlow: WizardFlow = [
     title: 'How often should ask yourself this question?',
     subtitle: 'This is how frequently you collect data for this Metric',
     validate: value => {
-      if(!value || (!value.month_date && !value.weekdays && !value.days))
+      if(!value || (!value.month_date && !value.weekdays?.length && !value.days))
         return "Please choose a frequency"
       return null
     },

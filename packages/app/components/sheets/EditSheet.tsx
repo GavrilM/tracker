@@ -62,6 +62,7 @@ export function EditSheet({ isOpen, onClose, metric }: EditSheetProps) {
         setErrMsg(errStr)
         setErrField(field)
       } else {
+        v = v == undefined ? null : v
         const newValue = Object.assign(formValue, {[field]: v})
         if(field === 'view' && v.weekdays) {
           newValue['question_freq'] = {weekdays: v.weekdays}
@@ -92,8 +93,8 @@ export function EditSheet({ isOpen, onClose, metric }: EditSheetProps) {
         damping: 40,
         stiffness: 450,
       }}>
-      <Sheet.Overlay bc='white'/>
-      <Sheet.Handle />
+      <Sheet.Overlay />
+      <Sheet.Handle bc='white'/>
       <Sheet.Frame>
         <XStack jc="space-between" ac="center" pl={20}>
           <H2 mt={16}>Editing: {metric.name}</H2>

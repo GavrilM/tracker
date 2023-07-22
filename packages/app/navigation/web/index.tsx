@@ -8,8 +8,9 @@ import { useNavTitle } from "app/provider/context/NavTitleContext"
 import { NavActions } from "./NavActions"
 import { useNavAction } from "app/provider/context/NavActionContext"
 import { AddSheet } from "app/features/wizard/AddSheet"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SignUpSheet } from "app/components/sheets/SignUpSheet"
+import { NewUserExperience } from "app/features/nux/nux"
 
 const width = 60
 const headerHeight = 100
@@ -51,10 +52,19 @@ export const WebNavigation = ({ children, pathname }) => {
 
   const [addCellOpen, setAddCellOpen] = useState(false)
   const [signUpOpen, setSignUpOpen] = useState(false)
+  const [isNewUser, setNewUser] = useState(false)
+  const [showNux, setShowNux] = useState(false)
 
   if (pathname === routes.login || pathname === routes.landing) {
     return <>{children}</>
   }
+  useEffect(() => {
+    let isNew = currentUser != null && !currentUser?.profile.email != null
+    if(isNew) {
+      setShowNux(true)
+    }
+    setNewUser(isNew)
+  }, [currentUser])
 
   return (
     <>
@@ -98,7 +108,7 @@ export const WebNavigation = ({ children, pathname }) => {
         {children}
       </YStack>
       {
-        currentUser && !currentUser?.profile.email && 
+        isNewUser && !showNux &&
         <YStack position="absolute" zIndex={100} p={16} bw={2} br={8} 
           bc='$gray3' boc='$red10' bottom={10} right={10}>
           <SizableText col='$red10' mb={10}>Your progress will not be saved.</SizableText>
@@ -107,6 +117,7 @@ export const WebNavigation = ({ children, pathname }) => {
       }
     </YStack>
     
+    <NewUserExperience open={showNux} onComplete={() => setShowNux(false)}/>
     <AddSheet isOpen={addCellOpen} onClose={() => setAddCellOpen(false)}/>
     <SignUpSheet isOpen={signUpOpen} onClose={() => setSignUpOpen(false)}/>
     </>

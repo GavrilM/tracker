@@ -100,7 +100,8 @@ export function EditSheet({ isOpen, onClose, metric }: EditSheetProps) {
           <H2 mt={16}>Editing: {metric.name}</H2>
           <XStack jc="flex-end" p="$4" space>
             <FormButton onPress={onClose} type="secondary" icon={XCircle}>Exit without saving</FormButton>
-            <FormButton onPress={save} type="primary">Save Changes</FormButton>
+            <FormButton onPress={save} type={errMsg.length ? "disabled": "primary"} 
+              disabled={errMsg.length > 0}>Save Changes</FormButton>
           </XStack>
         </XStack>
         

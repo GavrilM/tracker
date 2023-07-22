@@ -54,16 +54,15 @@ export function NewUserExperience({ open, onComplete }) {
           </XStack>
 
           <Unspaced>
-            <Dialog.Close asChild>
-              <Button
-                position="absolute"
-                top="$3"
-                right="$3"
-                size="$2"
-                circular
-                icon={X}
-              />
-            </Dialog.Close>
+            <Button
+              position="absolute"
+              top="$3"
+              right="$3"
+              size="$2"
+              circular
+              icon={X}
+              onPress={onComplete}
+            />
           </Unspaced>
         </Dialog.Content>
       </Dialog.Portal>

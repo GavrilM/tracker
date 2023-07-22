@@ -55,16 +55,17 @@ export const WebNavigation = ({ children, pathname }) => {
   const [isNewUser, setNewUser] = useState(false)
   const [showNux, setShowNux] = useState(false)
 
-  if (pathname === routes.login || pathname === routes.landing) {
-    return <>{children}</>
-  }
   useEffect(() => {
-    let isNew = currentUser != null && !currentUser?.profile.email != null
+    let isNew = currentUser != null && currentUser?.profile.email == null
     if(isNew) {
       setShowNux(true)
     }
     setNewUser(isNew)
   }, [currentUser])
+
+  if (pathname === routes.login || pathname === routes.landing) {
+    return <>{children}</>
+  }
 
   return (
     <>

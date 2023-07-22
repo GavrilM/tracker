@@ -31,15 +31,20 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText, re
   const [errMsg, setErrMsg] = useState<string | undefined>()
   console.log(formValue, autofilled)
 
+  const saveFn = () => {
+    saveEvents.emit('saveForm')
+    back()
+  }
   useEffect(() => {
-    setNavAction({ 
-      close: back,
-      save: () => {
-        saveEvents.emit('saveForm')
-        back()
-      }
-    })
+    setNavAction({ close: back, save: saveFn })
   }, [])
+
+  useEffect(() => {
+    if(errMsg)
+      setNavAction({ close: back, save: null })
+    else
+      setNavAction({ close: back, save: saveFn })
+  }, [errMsg])
 
   saveEvents.removeAllListeners('saveForm')
   saveEvents.addListener('saveForm', () => {

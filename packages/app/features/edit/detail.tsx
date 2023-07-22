@@ -55,6 +55,9 @@ export function EditDetail() {
       if(errStr) {
         setErrMsg(errStr)
         setErrField(field)
+        setNavAction({
+          save: null
+        })
       } else {
         const newValue = Object.assign(formValue, {[field]: v})
         if(field === 'view' && v.weekdays) {

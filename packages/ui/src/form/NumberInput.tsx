@@ -106,7 +106,7 @@ export function NumberInput({
       {label}
 
       {isBounded &&
-        <YStack f={1} mt={16} ai="center">
+        <YStack f={1} mt={30} ai="center">
           {/* Slider */}
           <XStack f={1} ai="center">
             <SizableText mr={8}>{min}</SizableText>

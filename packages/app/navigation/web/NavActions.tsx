@@ -36,17 +36,21 @@ export const NavActions = ({ pathname, onSheetOpen }: NavActionProps) => {
       </XStack>
     )
   } else if(pathname !== routes.edit && pathname?.includes(routes.edit)) {
+    const disable = save == null
     return (
       <XStack space>
         <FormButton onPress={close} type="secondary" icon={<XCircle/>}>Exit without saving</FormButton>
-        <FormButton onPress={save} type="primary">Save changes</FormButton>
+        <FormButton onPress={save} type={disable ? "disabled": "primary"} 
+          disabled={disable}>Save changes</FormButton>
       </XStack>
     )
   } else if(pathname === routes.collect) {
+    const disable = save == null
     return (
       <XStack space>
         <FormButton onPress={close} type="secondary" icon={XCircle}>Exit without saving</FormButton>
-        <FormButton onPress={save} type="save" icon={CheckCircle}>Save and exit</FormButton>
+        <FormButton onPress={save} type={disable ? "disabled": "primary"}
+          disabled={disable} icon={CheckCircle}>Save and exit</FormButton>
       </XStack>
     )
   }

@@ -2,6 +2,7 @@ import { Button, styled } from "tamagui";
 
 export const FormButton = styled(Button, {
   color: 'white',
+  fontWeight: '500',
   variants: {
     type: {
       primary: {

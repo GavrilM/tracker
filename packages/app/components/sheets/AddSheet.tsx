@@ -1,6 +1,6 @@
 import { FormButton, Sheet, XStack } from "@my/ui"
-import { WizardScreen } from "./screen"
-import { WizardType } from "./WizardTypes"
+import { WizardScreen } from "../../features/wizard/screen"
+import { WizardType } from "../../features/wizard/WizardTypes"
 import { XCircle } from "@tamagui/lucide-icons"
 
 type AddSheetProps = {
@@ -21,7 +21,7 @@ export function AddSheet({ isOpen, onClose }: AddSheetProps) {
         stiffness: 450,
       }}>
       <Sheet.Overlay />
-      <Sheet.Handle />
+      <Sheet.Handle bc='white'/>
       <Sheet.Frame>
         <XStack jc="flex-end" p="$4">
           <FormButton onPress={onClose} type="secondary" icon={XCircle}>Exit without saving</FormButton>

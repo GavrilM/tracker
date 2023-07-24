@@ -1,4 +1,4 @@
-import { createTamagui } from 'tamagui'
+import { createFont, createTamagui } from 'tamagui'
 import { createInterFont } from '@tamagui/font-inter'
 import { shorthands } from '@tamagui/shorthands'
 import { themes, tokens } from '@tamagui/themes'
@@ -6,17 +6,18 @@ import { createMedia } from '@tamagui/react-native-media-driver'
 
 import { animations } from './animations'
 
-const headingFont = createInterFont({
+const headingFont = createFont({
+  family: 'Satoshi, Inter, Helvetica, Arial, sans-serif',
   size: {
-    6: 15,
-  },
-  transform: {
-    6: 'uppercase',
-    7: 'none',
+    10: 40,
+    9: 32,
+    8: 28,
+    7: 24
   },
   weight: {
     6: '400',
     7: '700',
+    10: '700'
   },
   color: {
     6: '$colorFocus',
@@ -26,29 +27,34 @@ const headingFont = createInterFont({
     5: 2,
     6: 1,
     7: 0,
-    8: -1,
-    9: -2,
-    10: -3,
-    12: -4,
-    14: -5,
-    15: -6,
-  },
-  face: {
-    700: { normal: 'InterBold' },
+    8: 0,
+    9: -1,
+    10: -2,
+    12: -2,
+    14: -3,
+    15: -4,
   },
 })
 
-const bodyFont = createInterFont(
+const bodyFont = createFont(
   {
-    face: {
-      700: { normal: 'InterBold' },
-    },
-  },
-  {
-    sizeSize: (size) => Math.round(size * 1.1),
-    sizeLineHeight: (size) => Math.round(size * 1.1 + (size > 20 ? 10 : 10)),
+    family: 'Satoshi, Inter, Helvetica, Arial, sans-serif',
+    size: {
+      true: 16,
+      1: 10,
+      2: 11,
+      3: 12,
+      4: 14,
+      5: 16,
+      6: 18,
+      7: 20,
+      8: 24,
+      9: 30,
+    }
   }
 )
+
+const numberFont = createInterFont()
 
 export const config = createTamagui({
   animations,
@@ -58,6 +64,7 @@ export const config = createTamagui({
   fonts: {
     heading: headingFont,
     body: bodyFont,
+    number: numberFont
   },
   themes,
   tokens,

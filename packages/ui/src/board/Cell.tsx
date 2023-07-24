@@ -52,11 +52,11 @@ export function Cell({ name, points, target, limits, question_freq, category, un
       const color = target && view.type !== MetricType.streak ? dir*summary >= dir*target?.value ? '#53C041' : '#E43F3F' : 'white'
       content = (
         <>
-          <SizableText fontSize={fos} fow='700' color={color}>
+          <SizableText fontSize={fos} fow='700' color={color} ff='$number'>
             {summary}
           </SizableText>
           <YStack height={SUMMARY_HEIGHT} jc='flex-end' pb={4}>
-            <SizableText >
+            <SizableText>
               {view.type === MetricType.streak ? getStreakUnits(summary, view) : units}
             </SizableText>
           </YStack>
@@ -80,7 +80,7 @@ export function Cell({ name, points, target, limits, question_freq, category, un
           {content}
         </XStack>
 
-        <SizableText selectable={false}>{getLabel(view, points.at(-1)?.timestamp)}</SizableText>
+        <SizableText fow='300' fos='$5' selectable={false} mb={5}>{getLabel(view, points.at(-1)?.timestamp)}</SizableText>
       </YStack>
       {collectable 
         ? <Button height={40} bc="rgba(224,224,224,.1)" hoverStyle={{bc: '$green10'}}

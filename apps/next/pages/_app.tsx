@@ -1,6 +1,5 @@
 import '@tamagui/core/reset.css'
-import '@tamagui/font-inter/css/400.css'
-import '@tamagui/font-inter/css/700.css'
+import '../styles/global.css'
 import 'raf/polyfill'
 
 import { NextThemeProvider, useRootTheme } from '@tamagui/next-theme'
@@ -18,7 +17,6 @@ function MyApp({ Component, pageProps }: SolitoAppProps) {
         <title>LifeLog | Comprehensive life tracking</title>
         <meta name="description" content="The most flexible life tracking tool" />
         <link rel="icon" href="/favicon.ico" />
-        <link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet" />
       </Head>
       <ThemeProvider>
         <WebNavigation pathname={usePathname()}>

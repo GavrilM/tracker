@@ -113,7 +113,7 @@ export function Wizard({ steps, onStep, onComplete, Review, submitButtonText, re
 
     content = (
       <>
-        <H1 ta="center">Step {stepNum + 1} of {steps.length}</H1>
+        <H1 ta="center" opacity={.2} mb='$4'>Step {stepNum + 1} of {steps.length}</H1>
         <FormCard
           title={title}
           subtitle={subtitle}

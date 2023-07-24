@@ -1,0 +1,45 @@
+body {
+  font-family: "Satoshi", sans-serif;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  font-weight: 300;
+  font-style: normal;
+  src: url("/fonts/Satoshi-Light.otf") format('opentype');
+}
+
+@font-face {
+  font-family: "Satoshi";
+  font-weight: 400;
+  font-style: normal;
+  src: url("/fonts/Satoshi-Regular.otf") format('opentype');
+}
+
+@font-face {
+  font-family: "Satoshi";
+  font-weight: 400;
+  font-style: italic;
+  src: url("/fonts/Satoshi-Italice.otf") format('opentype');
+}
+
+@font-face {
+  font-family: "Satoshi";
+  font-weight: 500;
+  font-style: normal;
+  src: url("/fonts/Satoshi-Medium.otf") format('opentype');
+}
+
+@font-face {
+  font-family: "Satoshi";
+  font-weight: 700;
+  font-style: normal;
+  src: url("/fonts/Satoshi-Bold.otf") format('opentype');
+}
+
+@font-face {
+  font-family: "Satoshi";
+  font-weight: 700;
+  font-style: italic;
+  src: url("/fonts/Satoshi-BoldItalic.otf") format('opentype');
+}

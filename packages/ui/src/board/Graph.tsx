@@ -39,7 +39,7 @@ export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, li
 
   return (
     <XStack pl={FONT_SIZE}>
-      <SizableText rotateZ='-90deg' position='absolute' left={-28} top={50} fos={FONT_SIZE}>{yunits}</SizableText>
+      <SizableText rotateZ='-90deg' position='absolute' left={-20} top={50} fos={FONT_SIZE}>{yunits}</SizableText>
       <Svg width={width} height={height} fill='#636363'>
         <G y={-bottomPadding}>
           <Line
@@ -50,7 +50,7 @@ export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, li
             stroke={axisLineColor}
             strokeWidth="1"
           />
-          <Text fontFamily='Inter' fontSize={13} x={leftPadding} y={height - 2}>
+          <Text fontFamily='Inter, sans-serif' fontSize={13} x={leftPadding} y={height - 2}>
             {limits?.min != undefined ? limits.min : 0}
           </Text>
           {target != undefined && <>
@@ -62,7 +62,7 @@ export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, li
               stroke={targetColor}
               strokeWidth="1"
             />
-            <Text fontFamily='Inter' fontSize={13} x={leftPadding} y={targetY - 2} fill={targetColor}>
+            <Text fontFamily='Inter, sans-serif' fontSize={13} x={leftPadding} y={targetY - 2} fill={targetColor}>
               {target.value}
             </Text>
           </>}
@@ -74,7 +74,7 @@ export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, li
             stroke={axisLineColor}
             strokeWidth="1"
           />
-          <Text fontFamily='Inter' fontSize={13} x={leftPadding} y={height * 0.2 - 2}>
+          <Text fontFamily='Inter, sans-serif' fontSize={13} x={leftPadding} y={height * 0.2 - 2}>
             {limits?.max != undefined ? limits.max : graph.max}
           </Text>
           <Path d={graph.curve} strokeWidth="4" fillOpacity={0}

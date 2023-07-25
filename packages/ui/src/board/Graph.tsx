@@ -89,14 +89,14 @@ export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, li
 function genGraph(data: Array<CellPoint>, limits?: Limits) {
   const max = limits?.max != undefined ? limits.max : _.max(data.map(val => val.value));
   const min = limits?.min != undefined ? limits.min : _.min(data.map(val => val.value));
-  const y = scaleLinear().domain([0, max]).range([GRAPH_HEIGHT, 25]);
+  const y = scaleLinear().domain([min, max]).range([GRAPH_HEIGHT, 25]);
 
   const x = scaleTime()
     .domain([new Date(data[data.length - 1].timestamp), new Date()])
     .range([10, GRAPH_WIDTH - 10]);
 
   const curvedLine = line<CellPoint>()
-    .defined(d => d.value)
+    .defined(d => d.value != undefined)
     .x(d => x(new Date(d.timestamp)))
     .y(d => y(d.value))
     .curve(curveBumpX)(data);

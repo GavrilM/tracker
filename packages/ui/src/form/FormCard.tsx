@@ -42,10 +42,13 @@ export function FormCard({
         <YStack bc="$gray3" p={25} br={12} w={450} h={height || 420}>
           <H3 mt="$2" fow='700' textAlign={center ? 'center' : "auto"}>{title}</H3>
           <Paragraph mt={16} lineHeight={20}>{subtitle}</Paragraph>
-          <YStack f={1} my={30} ai='center'>{children}</YStack>
+          <YStack f={1} my={16} ai='center'>{children}</YStack>
           <XStack space fd="row-reverse">
             {onComplete && 
-              <FormButton type="save" icon={CheckCircle} onPress={onComplete}>{completeText || 'Save'}</FormButton>}
+              <Form.Trigger disabled={disableContinue}>
+                <FormButton type={disableContinue ? "disabled" : "save"} icon={CheckCircle} onPress={onComplete}>
+                  {completeText || 'Save'}</FormButton>
+              </Form.Trigger>}
             {onContinue &&
               <Form.Trigger disabled={disableContinue}>
                 <FormButton type={disableContinue ? "disabled" : "primary"} icon={ArrowRightCircle} 

@@ -3,7 +3,7 @@ import { BoardColors, BoardLayouts } from "app/hooks/types/Dashboard"
 import { Metric } from "app/hooks/types/Metric"
 import { useMemo, useState } from "react"
 import { CELL_WIDTH, genInitalLayout } from "./utils"
-import { genQuestions, getCurrentDate } from "app/hooks/common"
+import { genQuestions } from "app/hooks/common"
 import { CollectSheet } from "../../components/sheets/CollectSheet"
 import { CollectFlow } from "../wizard/CollectFlow"
 import { WizardFlow } from "../wizard/WizardTypes"
@@ -12,9 +12,10 @@ type CellGridProps = {
   cellColors: BoardColors
   cellLayouts: BoardLayouts | null
   data: {[id: string] : Metric}
+  date: string
 }
 
-export const CellGrid = ({ cellColors, cellLayouts, data }: CellGridProps) => {
+export const CellGrid = ({ cellColors, cellLayouts, data, date }: CellGridProps) => {
   const [rowLen, setRowLen] = useState(0)
   const [sheetFlow, setSheetFlow] = useState<WizardFlow | undefined>()
 
@@ -24,7 +25,7 @@ export const CellGrid = ({ cellColors, cellLayouts, data }: CellGridProps) => {
   const layout = useMemo(() => 
     genInitalLayout(rowLen, Object.keys(data), cellLayouts), [rowLen, cellLayouts])
   const collectables = new Set(
-    genQuestions(Object.values(data), getCurrentDate())
+    genQuestions(Object.values(data), date)
       .map(m => m._id))
   
   const grid = layout.map((row, r) => {

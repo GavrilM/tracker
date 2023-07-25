@@ -1,16 +1,11 @@
-import {
-  Button,
-  Sheet,
-  Spinner,
-  useToast,
-} from '@my/ui'
-import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons'
+import { Spinner } from '@my/ui'
 import { useMetrics, useUserorRedirect } from 'app/hooks'
 import React, { useEffect, useState } from 'react'
 import { CellGrid } from './CellGrid'
 import { NavActionState, useNavAction, useSetNavAction } from 'app/provider/context/NavActionContext'
 import { EditableCellGrid } from './EditableCellGrid'
 import { useDashboard } from 'app/provider/context/DashboardContext'
+import { getCurrentDate } from 'app/hooks/common'
 
 export function HomeScreen() {
   const user = useUserorRedirect()
@@ -19,10 +14,15 @@ export function HomeScreen() {
   const setNavAction = useSetNavAction()
   const {loading, data, refetch} = useMetrics()
 
+  const [date, setDate] = useState(getCurrentDate())
+
   useEffect(() => {
     if(refetch) {
       setTimeout(() => refetch(), 1500)
-      setNavAction({refresh: () => refetch()})
+      setNavAction({refresh: () => {
+        setDate(getCurrentDate())
+        refetch()
+      }})
     }
   }, [refetch])
 
@@ -36,5 +36,5 @@ export function HomeScreen() {
   if(state === NavActionState.Editing)
     return <EditableCellGrid data={dataMap} cellLayouts={layouts} cellColors={colors || {}}/>
 
-  return <CellGrid data={dataMap} cellLayouts={layouts} cellColors={colors || {}}/>
+  return <CellGrid data={dataMap} cellLayouts={layouts} cellColors={colors || {}} date={date}/>
 }

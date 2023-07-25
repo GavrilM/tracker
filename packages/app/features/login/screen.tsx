@@ -59,7 +59,7 @@ export function LoginScreen() {
     if(realmApp.currentUser)
       router.replace(routes.home)
 
-    if(type === 'trial') {
+    if(!realmApp.currentUser && type === 'trial') {
       realmApp.logIn(Realm.Credentials.anonymous());
     }
   })

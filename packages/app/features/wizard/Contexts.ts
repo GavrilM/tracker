@@ -1,3 +1,4 @@
+import { getCurrentDate } from "app/hooks/common";
 import { createContext } from "react";
 
-export const CollectDateContext = createContext((new Date()).toISOString())
+export const CollectDateContext = createContext(getCurrentDate())

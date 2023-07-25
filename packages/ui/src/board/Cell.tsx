@@ -121,7 +121,7 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq
   // average or total: bound
   let xmin = formatDate(data[data.length - 1].timestamp).toISOString()
   if(view.base_unit && view.type !== MetricType.streak) { 
-    const now = moment()
+    const now = getCurrentDate()
     let diff = view.base_unit
     if(view.weekday != undefined) {
       diff = (((now.isoWeekday() - 1 - view.weekday) % 7) + 7) % 7
@@ -132,19 +132,19 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq
       if(now.date() <= date)
         now.subtract(1, 'month')
       now.date(date)
-      diff = moment().diff(now, 'day')
+      diff = getCurrentDate().diff(now, 'day')
     }
-    xmin = moment().subtract(diff, 'day').toISOString()
+    xmin = getCurrentDate().subtract(diff, 'day').toISOString()
     data = data.filter(d => d.timestamp >= xmin)
   }
   
-  const now = formatDate(Date.now())
+  const now = getCurrentDate()
   const dataPadded: Array<CellPoint> = []
   if(view.type === MetricType.graph) {
     if(question_freq.days === 1) {
       let i = 0
       while(now.toISOString() >= xmin){
-        if(i < data.length && now.diff(moment(data[i].timestamp), 'day') < 1) {
+        if(i < data.length && now.diff(formatDate(data[i].timestamp), 'day') < 1) {
           dataPadded.push(data[i])
           i++
         } else {
@@ -167,7 +167,7 @@ function formatData(data: Array<CellPoint>, view: CellViewOptions, question_freq
 }
 
 function processStreak(data, view, xmin, target) {
-  let now = formatDate(Date.now())
+  let now = getCurrentDate()
   const dataPadded: Array<CellPoint> = []
   let i = 0
   if(now.toISOString() === formatDate(data[i].timestamp).toISOString() 
@@ -275,3 +275,5 @@ function getStreakUnits(value, view) {
 function formatDate(date) {
   return moment(moment(date).format('YYYYMMDD'))
 }
+
+const getCurrentDate = () => formatDate(Date.now())

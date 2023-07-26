@@ -1,6 +1,6 @@
 import { CellCategories, MetricType } from "@my/ui"
 import { Point } from "./Point"
-import { CellViewOptions } from "@my/ui"
+import type { CellViewOptions } from "@my/ui"
 
 export enum TargetDirection {
   AtLeast = 'at least',

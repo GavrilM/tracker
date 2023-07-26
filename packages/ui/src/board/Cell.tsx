@@ -1,7 +1,8 @@
 import { Button, Card, SizableText, XStack, YStack } from "tamagui";
 import moment from 'moment'
 import { useMemo } from 'react'
-import { CELL_SIZE, CellCategories, CellViewOptions, MetricType, getCategoryColor } from "./CellTypes";
+import { CELL_SIZE, CellCategories, MetricType, getCategoryColor } from "./CellTypes";
+import type { CellViewOptions } from "./CellTypes"
 import { Weekday } from "../form/WeekdayInput";
 import { Graph } from "./Graph";
 import _ from "lodash"

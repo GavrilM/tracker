@@ -31,10 +31,10 @@ export function NewUserExperience({ open, onComplete }) {
           enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
           exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
           space
-          maw={400}
+          maw={500}
           position="relative"
         >
-          <Dialog.Title>{title}</Dialog.Title>
+          <Dialog.Title mt={20}>{title}</Dialog.Title>
           <Dialog.Description>
             {description}
           </Dialog.Description>

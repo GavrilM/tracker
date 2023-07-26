@@ -42,7 +42,7 @@ export function TextInput({
   })
   // TODO: replace with theme colors
   let labelStyle = {
-    mt: '$-.5',
+    mt: '$-2',
     size: '$5'
   }
   let borderStyle = {

@@ -11,6 +11,7 @@ import { AddSheet } from "app/components/sheets/AddSheet"
 import { useEffect, useState } from "react"
 import { SignUpSheet } from "app/components/sheets/SignUpSheet"
 import { NewUserExperience } from "app/features/nux/nux"
+import { useRouter } from "solito/router"
 
 const width = 60
 const headerHeight = 100
@@ -43,9 +44,11 @@ export const WebNavigation = ({ children, pathname }) => {
   const title = useNavTitle()
   const { refresh } = useNavAction()
   const { currentUser } = useRealmApp()
+  const router = useRouter()
 
   const client  = useApolloClient()
   const handleLogOut = () => {
+    router.replace(routes.login)
     client.resetStore()
     logOut()
   }

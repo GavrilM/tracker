@@ -124,7 +124,7 @@ export function NumberInput({
             <SizableText ml={8}>{max}</SizableText>
           </XStack>
           {/* Slider Labels */}
-          <XStack width="100%" jc="space-between">
+          <XStack width="100%" jc="space-between" mt={8}>
             <SizableText>{min_label}</SizableText>
             <SizableText>{max_label}</SizableText>
           </XStack>

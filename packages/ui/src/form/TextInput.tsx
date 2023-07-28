@@ -69,12 +69,11 @@ export function TextInput({
         <ZStack>
           <Label {...labelStyle} color={getLabelColor(errorMessage)}>{placeholder}</Label>
           <Input ref={inputRef} value={value} {...inputProps}
-            unstyled mt='$6' mb='$2' fos={30} pr={40}
+            unstyled mt='$6' mb='$2' fos={30} pr={48}
             onFocus={() => setFocused(true)} onBlur={handleBlur} onChangeText={handleChange}/>
         </ZStack>
         {value.length > 0 &&
-          <YStack onPress={e => setValue('')} 
-            style={{top: 27, right: 10, position:'absolute'}}>
+          <YStack onPress={e => setValue('')} position='absolute' top={27} right={10}>
             <XCircle size='$2.5'/>
           </YStack>
         }

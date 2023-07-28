@@ -4,6 +4,7 @@
   justify-content: center;
   --link: rgb(54, 158, 255);
   overflow-y: hidden;
+  color: white;
 }
 
 .content {
@@ -26,7 +27,7 @@
 }
 
 .hero {
-  min-height: 80vh;
+  min-height: 90vh;
   font-family: Satoshi, sans-serif;
   display: flex;
   align-items: center;
@@ -83,6 +84,13 @@
   border: 2px solid white;
 }
 
+.downarrow {
+  position: absolute;
+  bottom: 30px;
+  height: 20px;
+  width: auto !important;
+}
+
 .decoration {
   position: absolute;
   transform: rotate(45deg);
@@ -96,7 +104,6 @@
 }
 
 section.detail {
-  height: 80vh;
   min-height: 500px;
   display: flex;
   align-items: center;
@@ -146,13 +153,13 @@ section.detail {
 .detail img {
   width: 40vw;
   max-width: 400px;
-  margin-right: 5vw;
+  margin-right: 10vw;
 }
 
 .cta {
   width: 100%;
   height: 70vh;
-  margin-bottom: 10vh;
+  margin: 10vh 0;
   background-color: rgba(22, 129, 153, .1);
   display: flex;
   flex-direction: column;
@@ -169,7 +176,7 @@ section.detail {
 }
 .cta img {
   position: absolute;
-  left: 60vw;
+  left: 50vw;
   top: 55vh;
   max-width: 30vw;
 }
@@ -178,22 +185,22 @@ section.detail {
   .content {
     padding: 0 20px;
   }
-  .decoration {
+  .decoration, .downarrow {
     display: none;
   }
   .hero {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 100px;
   }
   .hero h1 {
-    margin-top: 80px;
     font-size: 40px;
     line-height: 44px;
   }
   section.detail {
     display: flex;
-    min-height: 100vh;
+    min-height: 80vh;
     height: auto;
     flex-direction: column;
     justify-content: space-evenly;

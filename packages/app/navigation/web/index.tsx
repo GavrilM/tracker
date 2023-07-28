@@ -12,6 +12,7 @@ import { useEffect, useState } from "react"
 import { SignUpSheet } from "app/components/sheets/SignUpSheet"
 import { NewUserExperience } from "app/features/nux/nux"
 import { useRouter } from "solito/router"
+import { useErrorBoundary } from "react-error-boundary";
 
 const width = 60
 const headerHeight = 100

@@ -164,7 +164,8 @@ export function LoginScreen() {
           }
         </Form>
       </Card>
-      <SizableText position="absolute" top={20} left={40} fow='700' fos='$8'>Lifelog</SizableText>
+      <SizableText position="absolute" top={20} left={40} fow='700' fos='$8'
+        onPress={() => router.push('/')} cursor="pointer">Lifelog</SizableText>
     </YStack>
   );
 }

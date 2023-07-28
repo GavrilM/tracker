@@ -33,6 +33,8 @@ export function NewUserExperience({ open, onComplete }) {
           space
           maw={500}
           position="relative"
+          left={x}
+          top={y}
         >
           <Dialog.Title mt={20}>{title}</Dialog.Title>
           <Dialog.Description>

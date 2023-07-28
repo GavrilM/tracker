@@ -27,7 +27,7 @@ export default function LandingPage() {
             <ul>
               <li>Rate your mood every day on a scale from 1 to 10</li>
               <li>Count the amount of desserts you eat every week</li>
-              <li>Keep score of your spouse&rsquo;s complaints every month (joking)</li>
+              <li>Keep score of your spouse&rsquo;s complaints every month (joking 🤪)</li>
               <li>Maintain a streak of days you&rsquo;ve resisted temptation 😏</li>
             </ul>
             <Link href="/login?type=trial">Try it →</Link>

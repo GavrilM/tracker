@@ -26,7 +26,7 @@ const axisLineColor = '#646464'
 
 export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, limits, bottomPadding, leftPadding, yunits }: GraphProps) {
   const graph = useMemo(() => genGraph(data, limits), [data, limits])
-  const y = scaleLinear().domain([0, graph.max]).range([height, 25])
+  const y = scaleLinear().domain([graph.min, graph.max]).range([height, 25])
   const targetY = y(target?.value)
   const dir = target?.direction === "at least" ? 1 : -1
   let targetColor = '#850000'
@@ -88,7 +88,7 @@ export function Graph({ width=GRAPH_WIDTH, height=GRAPH_HEIGHT, data, target, li
 
 function genGraph(data: Array<CellPoint>, limits?: Limits) {
   const max = limits?.max != undefined ? limits.max : _.max(data.map(val => val.value));
-  const min = limits?.min != undefined ? limits.min : _.min(data.map(val => val.value));
+  const min = limits?.min != undefined ? limits.min : Math.min(0,_.min(data.map(val => val.value)));
   const y = scaleLinear().domain([min, max]).range([GRAPH_HEIGHT, 25]);
 
   const x = scaleTime()
@@ -105,7 +105,7 @@ function genGraph(data: Array<CellPoint>, limits?: Limits) {
     max,
     min,
   // @ts-ignore
-    last: data[data.findIndex(p => p.value)],
+    last: data[data.findIndex(p => p.value != undefined)],
     curve: curvedLine!,
   };
 };

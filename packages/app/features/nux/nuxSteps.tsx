@@ -5,6 +5,8 @@ export const NuxSteps = [
   {
     title: 'Welcome to Lifelog!',
     description: 'This is your dashboard, which shows an overview of everything you\'re tracking.',
+    x: 0,
+    y: 0,
     Mask: function() {
       return (
         <XStack style={styles.overlay} height='100%' width='100%'/>
@@ -15,6 +17,8 @@ export const NuxSteps = [
     title: 'These are Cells.',
     description: `Every Cell shows a graph or a summary number for a Metric that you\'re tracking.\n
      Metrics are whatever you want to track, anything from calories to number of compliments.`,
+    x: 0,
+    y: 100,
     Mask: function() {
       return (
         <>
@@ -29,6 +33,8 @@ export const NuxSteps = [
   {
     title: 'Collecting data is easy peasy.',
     description: 'You can collect a single data point from the dashboard, or easily enter all your data at once. We recommend establishing a daily habit of collecting data.',
+    x: 0,
+    y: 100,
     Mask: function() {
       return (
         <>
@@ -43,8 +49,8 @@ export const NuxSteps = [
   {
     title: 'Make this dashboard yours.',
     description: 'You can move Cells around and color-categorize them.',
-    x: 100,
-    y: 200,
+    x: 0,
+    y: -100,
     Mask: function() {
       return (
         <>
@@ -58,8 +64,8 @@ export const NuxSteps = [
   {
     title: 'Get started with your first Metric.',
     description: 'What do you want to measure? Mood? Productivity? A daily streak? As long as you can put a number on it, the sky\'s the limit.',
-    x: 100,
-    y: 200,
+    x: 0,
+    y: -100,
     Mask: function() {
       return (
         <>

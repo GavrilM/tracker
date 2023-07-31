@@ -46,13 +46,13 @@ export function FormCard({
           <XStack space fd="row-reverse">
             {onComplete && 
               <Form.Trigger disabled={disableContinue}>
-                <FormButton type={disableContinue ? "disabled" : "save"} icon={CheckCircle} onPress={onComplete}>
-                  {completeText || 'Save'}</FormButton>
+                <FormButton type={disableContinue ? "disabled" : "save"} icon={CheckCircle}
+                  onPress={onComplete} disabled={disableContinue}>{completeText || 'Save'}</FormButton>
               </Form.Trigger>}
             {onContinue &&
               <Form.Trigger disabled={disableContinue}>
                 <FormButton type={disableContinue ? "disabled" : "primary"} icon={ArrowRightCircle} 
-                  onPress={onContinue}>Continue</FormButton>
+                  onPress={onContinue} disabled={disableContinue}>Continue</FormButton>
               </Form.Trigger>
             }
             {onSkip && <FormButton type="discourage" icon={CornerUpRight} onPress={onSkip}>Skip</FormButton>}

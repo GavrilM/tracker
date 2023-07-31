@@ -63,9 +63,11 @@ export const WebNavigation = ({ children, pathname }) => {
     let isNew = currentUser != null && currentUser?.profile.email == null
     if(isNew) {
       setShowNux(true)
+    } else {
+      setShowNux(false)
     }
     setNewUser(isNew)
-  }, [currentUser])
+  }, [currentUser, currentUser?.profile])
 
   if (pathname === routes.login || pathname === routes.landing) {
     return <>{children}</>

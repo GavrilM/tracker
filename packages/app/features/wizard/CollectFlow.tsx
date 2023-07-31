@@ -41,21 +41,27 @@ export function CollectFlow(metrics: Array<Metric>): WizardFlow {
           metric_id: {link: _id},
           point_id: {link: point_id},
           text
-        } 
+        }
         obj['note'] = text ? note : undefined
         if(typeof v === 'number') {
           obj['value'] = v
           onChange(obj)
           setValue(v)
-        } 
+        }
         else if (typeof v === 'string') {
-          note['text'] = v
-          obj['note'] = note
-          onChange(obj)
           setText(v)
+          if(value != undefined) {
+            note['text'] = v
+            obj['note'] = v.length ? note : undefined
+            onChange(obj)
+          } else {
+            onChange(undefined)
+          }
         }        
-        else
+        else {
+          setValue(undefined)
           onChange(undefined)
+        }
       }
 
       let input = (

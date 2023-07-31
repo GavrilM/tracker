@@ -94,7 +94,7 @@ export function NumberInput({
           ? <XStack onPress={decrement} mr={16}><MinusCircle color='$gray10'/></XStack>
           : <XStack width={40}/>}
 
-        <Input placeholder="#" value={value === 0 || value ? value.toString() : ''} keyboardType='numeric' onChangeText={handleChange}
+        <Input placeholder="#" value={value === 0 || value ? value.toString() : ''} keyboardType='decimal-pad' onChangeText={handleChange}
           maw={80} ta="center" bc="white" color="black" bw={2} autoFocus={autofocus} 
           focusStyle={{outlineColor: getOutlineColor(errorMsg), outlineStyle: 'solid', outlineWidth:4}} />
 

@@ -107,7 +107,7 @@ export function AddMetricReview(props) {
   let unitStr = props.units ? props.units : '(unitless)'
   let targetStr = `Your target is to achieve ${props.target?.direction} ${props.target?.value} ${unitStr}.`
   if(props.view.type === MetricType.streak)
-    targetStr = `Your target is to answer ${props.target ? 'yes': 'no'}`
+    targetStr = `Your target is to answer ${props.target.value ? 'yes': 'no'}`
   const [_, periodStrings] = getPeriod(props.view)
 
   return (

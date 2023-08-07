@@ -19,7 +19,7 @@ export function genQuestions(metrics: Array<Metric>, targetDate: string): Array<
       const monthDate = parseInt(question_freq.month_date.slice(0,-2))
       return monthDate === date.date()
     } else if(question_freq.weekdays != undefined) {
-      return question_freq.weekdays.includes(date.day())
+      return question_freq.weekdays.includes(date.isoWeekday() - 1 % 7)
     } else {
       if(!last_point?.timestamp)
         return true
